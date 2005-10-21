@@ -1,0 +1,45 @@
+Repository creation implementation
+----------------------------------
+
+A. Right click on background
+   -------------------------
+   Right button click on a empty space on NautilusContentView will 
+   deselect existing selections and display a context menu with "Create repository" menu.
+   on selecting the menu following will be done. 
+   
+   
+   1. Checks current directory is empty. if not return.
+   2. Popup up the repository creation dialog with repository name
+      entry box set to basename of the current path.
+     1.1 if user select bdb radio button, enables checkbuttons
+         'Disable transaction commit' and 'Disable log remove'.
+     1.2 if user select fsfs radio button, disables checkbuttons
+         'Disable transaction commit' and 'Disable log remove'.
+     1.3 if 'create' button clicked, checks repository name in the 
+         entry box is a valid filename if valid, compares basename
+         of the current path with repository name in the entry box,
+         if same current path will be taken as the fullpath for
+         repos creation else appends repository name in the entry
+         box to the current path and resultant path with be taken as
+         fullpath.
+     1.4 checks write permission of the current path (not fullpath)
+     1.5 if writable, calls repos_creation functions with fullpath
+         from the svn library, to create repository
+     1.6 checks the return value of the repos_creation function, if
+         function exits with an error, show the error msg else 
+         close the repository creation dialog.
+     1.7 on cancel button, closes the dialog box.
+
+2. Right click on a file/directory
+   --------------------------------------    
+   Right button click on a single directory selection will only display
+   context menu with "Create repository" menu. Right click on multiple
+   selection (files and directory) or on a file will not show
+   "Create repository" option. if "Create repository" option is chosen
+   same step as above will be executed.
+
+3. Click on Toolbar option 'Create Repository'
+   ------------------------------------------
+   
+
+
