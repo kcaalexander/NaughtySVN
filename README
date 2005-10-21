@@ -1,0 +1,261 @@
+################################################################
+#                 NaughtySVN 0.0.1 README file.                #
+#           (C) Copyright 2005, Alexander Thomas (AT)          #
+#                      All rights reserved                     #
+#                                                              #
+# NOTE: THIS IS A EVALUATION/REVIEW RELEASE !!!                #
+#       THIS VERSION HAS NOT BEEN TESTED PROPERLY AND MAY      #
+#       DO ABSOLUTELY NOTHING! USE AT YOUR OWN RISK.           #
+#                                                              #
+# STATUTORY WARNING: Smoking is injurious to health.           #
+#                                                              #
+#                                                              #
+# ADVICE: If you want a stable version of NaughtySVN,          #
+#         please use 0.0.0 release (stable dream release).     #
+################################################################
+
+
+
+#################
+Table of Contents
+#################
+
+  - Overview
+  - Expected Features and its Status
+  - Architecture and Design
+  - Dependencies
+  - Building & Installing
+  - What happens while installing
+  - Invocation/Running
+  - Known Issues/Fixme's/Todo's
+  - What to Evaluate/Review
+
+--------
+Overview
+--------
+NaughtySVN (NSVN) is a easy-to-use GUI based Subversion client which
+works as an extension toNautilus File Manager (Graphical shell for
+the GNOME desktop enviornment). Inspired by TortoiseSVN, Its an effort
+primarily for on-technical people to use subversion.
+
+
+NaughtySVN (NSVN) is a GUI based Subversion (SVN) client which works
+on top of Nautilus File Manager (Graphical shell for the GNOME desktop
+enviornment). Its an effort primarily for non-technical people to use
+subversion. Inspiration to develop such a tool was got from TortoiseSVN
+(another Open Source file manger based subversion clients), and most of the 
+ideas and concepts are taken from the same.
+
+NSVN has a graphical interface which can be activated from Nautilus
+file browsing window. Its graphical windows are designed to be simple and
+easy to use, which  will allow users to create and administer subversion
+repository, checkout and commit working copies, handling working copies,
+browsing repositories and working copies, handling remote repositories and
+working copies etc.
+
+
+--------------------------------
+Expected Features and its Status
+--------------------------------
+
+I choose this feature list to develop a reasonably good framework
+and to test capabilities of Nautilus before I make source code available
+to other developers. Also I want other developers to get a fell of
+what I am expecting with this tool. Status of each expected feature is
+given in brackets next to each feature.
+
+  - An easy-to-use GUI interface (partially done): This GUI interface
+    windows will help users to type-in required informations while using
+    each NSVN commands. New windows will be added as and when new commands
+    are added to NSVN or whenever it is required.
+
+     * Repository creation window (Done)
+     * Checkout window (New)
+     * Commit window (New)
+     * Info property page (New)
+     * Preference window (Started)
+     * About window (Started)
+
+  - Integrating with nautilus (Started): By making use of
+    libnautilus-extension add menu items to item and background context
+    menus, add items to toolbar, add custom notebook page in file
+    properties dialog in nautilus file browser.
+
+     * 'Create Repository' context menu item in item and background context
+       menu and toolbar (Done)
+     * 'Checkout' context menu item in item and background context menu (New)
+     * 'Commit' context menu item in item and background context menu (New)
+     * 'Property page for info' a page need to be added in properties dialog
+     for showing info details.
+     * 'Preference' context menu item in item and background context menu (New)
+     * 'About' context menu item in item and background context menu (New)
+
+  - Show and Hide context menu items (Started): 'Preference' and 'About' menu
+    items will be shown all the time. 'Property page for info' will be show in
+    only if the selected item is a entity in repository or in working copy or
+    repository or working copy itself. 'Commit' will be shown only if selected
+    item is a working copy path. 'Checkout' will be shown if selected item is
+    an empty directory or if selected item is part of working copy.
+    'Create Repository' shown if the selected item is an empty directory.
+
+  - Create Repository (done)
+
+  - Commit working copy (New)
+
+  - Checkout repository to working copy (New)
+
+  - Information on repository and working copy (New)
+
+  - Integrate gconf for NSVN configuration parameters and user preference
+
+
+-----------------------
+Architecture and Design
+-----------------------
+
+
+------------
+Dependencies
+------------
+
+The following packages and libraries are required by NaughtySVN:
+
+  * Gnome 1.4
+
+  * Subversion 1.2.3
+
+  * libsvn_client-1
+
+  * libsvn_repos-1
+
+  * libsvn_subr-1
+
+  * libsvn_fs-1
+
+  * libsvn_wc-1
+
+  * Nautilus 2.9.0
+
+  * libNautilus-Extension 2.9.0
+
+  * GLib 2.0
+
+  * GModules 2.0
+
+  * GThread 2.0
+
+  * GTK 2.0
+
+  * LibGnome 2.0
+
+  * LibGnomeUI 2.0
+
+  * Gnome-VFS 2.0
+
+  * Gnome-VFS-Module 2.0
+
+  * LibGlade 2.0
+
+  * libpng 3.0
+
+  * Apache 2.0
+
+  * libapr 0.9.6
+
+  * libaprutil 0.9.6
+
+  * libdb 4.3
+
+  * neon 0.24.7
+
+
+---------------------
+Building & Installing
+---------------------
+
+See ./INSTALL for a details building and installation document. Following
+is a simple way to build and install NSVN.
+
+   1. 'cd' to topmost directory of NSVN and type ./autogen.sh
+
+   2. 'make' to compile NSVN
+
+   3. 'make install' to install NSVN.
+
+
+----------------------------
+What happens on installation
+----------------------------
+
+'make install' will install NSVN in following order
+
+ - Shared and static libraries from nautilus module of NSVN
+   will be copied to nautilus_extension loadable module directory.
+   Installation script retrieves the nautilus extension directory using
+   'pkg-config' tool and file 'libnautilus-extension.pc'.
+
+    * nautilus/libnautilus-naughtysvn.so will be copied to
+      nautilus_extension_libdir/nautilus/extensions-1.0/
+
+    * nautilus/libnautilus-naughtysvn.la will be copied to
+      nautilus_extension_libdir/nautilus/extensions-1.0/
+
+    * nautilus/libnautilus-naughtysvn.a will be copied to
+      nautilus_extension_libdir/nautilus/extensions-1.0/
+
+
+ - Shared and static libraries from svn module of NSVN will be
+   copied to default library directory. Then svn module header file
+   will be copied to default include directory.
+
+    * svn/libsvn-naughtysvn.so will be copied to $libdir
+
+    * svn/libsvn-naughtysvn.la will be copied to $libdir
+
+    * svn/libsvn-naughtysvn.a will be copied to $libdir
+
+    * svn/svn_naughtysvn.h will be copied to $includedir
+
+ - NaughtySVN executable, user interface glade and pixmaps
+   files will be copied to default bin directory, default share
+   or data directories
+
+   * nsvn/naughtysvn will be copied to $bindir
+
+   * nsvn/naughtysvn.glade will be copied to gladedir
+
+
+------------------
+Invocation/Running
+------------------
+
+NaughtySVN is tightly coupled with subversion and nautilus and is not
+designed to invoke it sepratly from command line. But in the interest
+of developers and to test svn and nsvn modules faster, they can call
+the 'naughtysvn' excutable from command line use following format
+
+   naughtysvn MID=NSVN CMD=command list_of_arguments ...
+
+   where 'MID=NSVN' is a magic id used to transfer NSVN related data
+from nautlius to NSVN, 'command' is the command to be executed by nsvn
+and 'list_of_arguments' are list of arugments need to execute the command
+seprated by space. for example:
+
+   naughtysvn MID=NSVN CMD=create_repos /tmp/repos
+
+
+---------------------------
+Known Issues/Fixme's/Todo's
+---------------------------
+ 
+ Search for FIXME/TODO in source code for more details...
+ 
+-----------------------
+What to Evaluate/Review
+-----------------------
+
+
+
+Thank you. 
+-Alexander Thomas (AT)
+Saturday, September 17 2005
