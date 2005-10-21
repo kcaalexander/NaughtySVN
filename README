@@ -11,7 +11,7 @@
 #                                                              #
 #                                                              #
 # ADVICE: If you want a stable version of NaughtySVN,          #
-#         please use 0.0.0 release (stable dream release).     #
+#   please download 0.0.0 release (stable dream release) :-).  #
 ################################################################
 
 
@@ -33,18 +33,11 @@ Table of Contents
 --------
 Overview
 --------
+
 NaughtySVN (NSVN) is a easy-to-use GUI based Subversion client which
-works as an extension toNautilus File Manager (Graphical shell for
+works as an extension to Nautilus File Manager (Graphical shell for
 the GNOME desktop enviornment). Inspired by TortoiseSVN, Its an effort
-primarily for on-technical people to use subversion.
-
-
-NaughtySVN (NSVN) is a GUI based Subversion (SVN) client which works
-on top of Nautilus File Manager (Graphical shell for the GNOME desktop
-enviornment). Its an effort primarily for non-technical people to use
-subversion. Inspiration to develop such a tool was got from TortoiseSVN
-(another Open Source file manger based subversion clients), and most of the 
-ideas and concepts are taken from the same.
+primarily for non-technical people to use subversion.
 
 NSVN has a graphical interface which can be activated from Nautilus
 file browsing window. Its graphical windows are designed to be simple and
@@ -60,7 +53,7 @@ Expected Features and its Status
 
 I choose this feature list to develop a reasonably good framework
 and to test capabilities of Nautilus before I make source code available
-to other developers. Also I want other developers to get a fell of
+to other developers. Also I want other developers to get a feel of
 what I am expecting with this tool. Status of each expected feature is
 given in brackets next to each feature.
 
@@ -87,8 +80,8 @@ given in brackets next to each feature.
      * 'Commit' context menu item in item and background context menu (New)
      * 'Property page for info' a page need to be added in properties dialog
      for showing info details.
-     * 'Preference' context menu item in item and background context menu (New)
-     * 'About' context menu item in item and background context menu (New)
+     * 'Preference' context menu item in item and background context menu (Started)
+     * 'About' context menu item in item and background context menu (Started)
 
   - Show and Hide context menu items (Started): 'Preference' and 'About' menu
     items will be shown all the time. 'Property page for info' will be show in
@@ -102,16 +95,18 @@ given in brackets next to each feature.
 
   - Commit working copy (New)
 
-  - Checkout repository to working copy (New)
+  - Checkout repository to working copy (Started)
 
   - Information on repository and working copy (New)
 
-  - Integrate gconf for NSVN configuration parameters and user preference
+  - Integrate gconf for NSVN configuration parameters and user preference(New)
 
 
 -----------------------
 Architecture and Design
 -----------------------
+
+See trunk/notes/arch for more details
 
 
 ------------
@@ -250,11 +245,6 @@ Known Issues/Fixme's/Todo's
  
  Search for FIXME/TODO in source code for more details...
  
------------------------
-What to Evaluate/Review
------------------------
-
-
 
 Thank you. 
 -Alexander Thomas (AT)
