@@ -554,7 +554,7 @@ sub Console_WriteError_InvalidOption
 
 sub GenerateHeaders
 {
-    my $EXTRACT = "/home/alexander/wc/NaughtySVN/intltool-extract";
+    my $EXTRACT = "/home/alexander/wc/naughtysvn/trunk/intltool-extract";
     chomp $EXTRACT;
 
     $EXTRACT = $ENV{"INTLTOOL_EXTRACT"} if $ENV{"INTLTOOL_EXTRACT"};
