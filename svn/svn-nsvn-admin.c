@@ -34,6 +34,7 @@
 #include "svn_naughtysvn.h"
 #include "svn-nsvn-private.h"
 
+#include <stdlib.h>
 int
 nsvn_admin_create_repos (void *n, int bdb_nosync,
                          int bdb_autorm,
