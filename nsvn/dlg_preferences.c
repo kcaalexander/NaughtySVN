@@ -46,6 +46,9 @@ nsvn_dlg_preferences (GtkWidget *widget,
 {
   GladeXML *dlg_gui;
   GtkWidget *window;
+  GtkWidget *cfgdir_ent;
+  GtkWidget *ok_btn;
+  GtkWidget *cancel_btn;
 
   /* Error-out if supporting glade file missing in default path. */
   dlg_gui = glade_xml_new (GLADEDIR "/" DLG_GLADE_FILE, NULL, NULL);
@@ -55,14 +58,23 @@ nsvn_dlg_preferences (GtkWidget *widget,
       return EXIT_FAILURE;
     }
 
-  /* Getting Widgets in repository creation dialog */
+  /* Getting Widgets in repository creation dialog. */
   window = glade_xml_get_widget (dlg_gui, "preferences_dialog");
+  cfgdir_ent = glade_xml_get_widget (dlg_gui, "preferences_configdir_ent");
+  ok_btn = glade_xml_get_widget (dlg_gui, "preferences_ok_btn");
+  cancel_btn = glade_xml_get_widget (dlg_gui, "preferences_cancel_btn");
 
+  /* Connecting widgets to callbacks. */
   g_signal_connect (G_OBJECT (window), "destroy",
                     G_CALLBACK (nsvn__destory_window),
                     dlg_gui);
+  g_signal_connect (G_OBJECT (cancel_btn), "clicked",
+                    G_CALLBACK (nsvn__destory_window),
+                    dlg_gui);
+
   
   /* Activating dialog box */
+  gtk_widget_grab_focus (cfgdir_ent);
   gtk_widget_show (window);
 
   return EXIT_SUCCESS;

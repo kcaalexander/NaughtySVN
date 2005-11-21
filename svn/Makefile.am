@@ -3,9 +3,9 @@
 ## FIXME: All subversion related paths are hard coded, we need to change
 ##        this to variables
 
-# SVN_CFLAGS="`../svn-config --cflags`"
-# SVN_LIBS="`../svn-config --libs`"
-# APR_CFLAGS =`apr-config --includes`
+#SVN_CFLAGS=`../svn-config --cflags`
+#SVN_LIBS=`../svn-config --libs`
+APR_CFLAGS =`apr-config --includes`
 INCLUDES = \
 	-DPACKAGE_DATA_DIR=\""$(datadir)"\" \
 	-DPACKAGE_LOCALE_DIR=\""$(prefix)/$(DATADIRNAME)/locale"\" \
@@ -17,7 +17,7 @@ INCLUDES = \
         -DSVN_DEBUG -DAP_DEBUG -Wpointer-arith -Wwrite-strings -Wshadow \
         -I/usr/local/include/subversion-1 \
         -I/usr/include/neon \
-        -I$(APR_CFLAGS) \
+        $(APR_CFLAGS) \
         -I/usr/local/BerkeleyDB.4.3/include
 
 svn_naughtysvn_includedir=$(includedir)

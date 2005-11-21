@@ -18,9 +18,11 @@ naughtysvn_SOURCES = \
 	main.c \
         window_list.h \
         global.c global.h \
+        gconf.c gconf.h \
 	dlg_reposcreate.c dlg_reposcreate.h \
         dlg_aboutnsvn.c dlg_aboutnsvn.h \
-        dlg_preferences.c dlg_preferences.h
+        dlg_preferences.c dlg_preferences.h \
+        dlg_checkout.c dlg_checkout.h
 
 naughtysvn_LDADD = @PACKAGE_LIBS@ \
                    $(INTLLIBS) \

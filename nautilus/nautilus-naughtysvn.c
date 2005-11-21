@@ -113,9 +113,9 @@ nsvn_create_menuitem_checkout (NautilusMenuProvider *provider,
   char *uri;
   char *path;
 
-  if (!files && files->next != NULL)
+  if (!files)// && files->next != NULL)
     return NULL;
-
+#if 1
   file = NAUTILUS_FILE_INFO (files->data);
   scheme = nautilus_file_info_get_uri_scheme (file);
   uri = nautilus_file_info_get_uri (file);
@@ -128,7 +128,7 @@ nsvn_create_menuitem_checkout (NautilusMenuProvider *provider,
       g_free (scheme);
       return NULL;
     }
-
+#endif
   item = nautilus_menu_item_new ("NautilusNSVN::FT_Checkout",
                                  _("NaughtySVN Checkout"),
                                  _("Checkout out a Subversion repository"),
@@ -139,11 +139,9 @@ nsvn_create_menuitem_checkout (NautilusMenuProvider *provider,
   items = g_list_append (items, item);
 
   return items;
-
-   
-
-
 }
+
+
 static GList*
 nsvn_create_menuitem_preferences (NautilusMenuProvider *provider,
                                   GtkWidget *widget,
@@ -260,7 +258,7 @@ nautilus_nsvn_get_background_items (NautilusMenuProvider *provider,
 
   files = g_list_append (files, current_folder);
 
-  items = nsvn_create_menuitem_reposcreate (provider, widget, 
+  items = nsvn_create_menuitem_reposcreate (provider, widget,
                                             files, items);
 
   return items;
@@ -271,16 +269,14 @@ nautilus_nsvn_get_file_items (NautilusMenuProvider *provider,
                               GtkWidget *widget,
                               GList *files)
 {
-
   GList *items = NULL;
-  items = nsvn_create_menuitem_reposcreate (provider, widget, 
+
+  items = nsvn_create_menuitem_reposcreate (provider, widget,
                                             files, items);
   items = nsvn_create_menuitem_aboutnsvn (provider, widget,
                                           files, items);
-
   items = nsvn_create_menuitem_preferences (provider, widget,
                                             files, items);
-
   items = nsvn_create_menuitem_checkout (provider, widget,
                                          files, items);
   return items;

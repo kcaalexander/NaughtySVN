@@ -1,6 +1,6 @@
 /*
 * ====================================================================
-* Header file for NaughtySVN about dialog box.
+* Header file for NaughtySVN checkout dialog box.
 * Copyright (c) 2005, All rights reserved for Alexander Thomas (AT)
 *
 * 
@@ -10,11 +10,11 @@
 * ====================================================================
 */
 
-#ifndef NSVN_DLG_PREFERENCES_H
-#define NSVN_DLG_PREFERENCES_H
+#ifndef NSVN_DLG_CHECKOUT_H
+#define NSVN_DLG_CHECKOUT_H
 
 gboolean
-nsvn_dlg_preferences  (GtkWidget *widget,
-                       gpointer user_data);
+nsvn_dlg_checkout (GtkWidget *widget,
+                   gpointer user_data);
 
-#endif /* NSVN_DLG_PREFERENCES_H */
+#endif /* NSVN_DLG_CHECKOUT_H */

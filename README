@@ -117,7 +117,7 @@ The following packages and libraries are required by NaughtySVN:
 
   * Gnome 1.4
 
-  * Subversion 1.2.3
+  * Subversion 1.2
 
   * libsvn_client-1
 
@@ -169,15 +169,18 @@ Building & Installing
 ---------------------
 
 See ./INSTALL for a details building and installation document. Following
-is a simple way to build and install NSVN.
+is a simple way to build and install NSVN. Subversion include and library
+paths are all  hard coded, so in case of problems please make appropriate
+changes in ./svn/Makefile.am.
 
-   1. 'cd' to topmost directory of NSVN and type ./autogen.sh
+   1. 'cd' to top most directory of NSVN and type './autogen.sh'
 
    2. 'make' to compile NSVN
 
    3. 'make install' to install NSVN.
 
-
+   4. 'pkill -9 nautilus' kill all nautilus instances
+   
 ----------------------------
 What happens on installation
 ----------------------------

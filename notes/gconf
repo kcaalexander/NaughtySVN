@@ -1,0 +1,68 @@
+
+GConf Introduction
+------------------
+GConf is a configuration data storage mechanism scheduled to ship with GNOME 2.0.
+GConf does work without GNOME however; it can be used with plain GTK+, Xlib, KDE,
+or even text mode applications as well.Here are some of the features of GConf:
+
+   * Replaceable backend architecture. GConf currently has a single backend that
+     stores configuration data in XML-format text files; however, the architecture
+     allows a Registry-like binary database backend, an LDAP backend, or even a
+     full-blown SQL database backend.
+
+   * Configuration key documentation. Applications can install documentation along
+     with their configuration data, explaining the possible settings and the effect
+     of each configuration key.
+
+   * Data change notification service. If configuration data is changed, all
+     interested applications are notified. The notification service works across the
+     network, affecting all login sessions for a single user. Notification is also
+     useful if multiple application instances are running. GNOME 2.0 uses this
+     feature to let user interface configuration take effect on-the-fly without
+     restarting any applications.
+
+
+Configuration Server
+--------------------
+GConf is implemented as a per-user daemon called gconfd.  gconfd actually accesses
+the user's configuration backends by dynamically loading the appropriate backend
+modules. gconfd is also in charge of sending out notifications to interested
+applications when configuration values are modified.
+
+One gconfd should exist per user at any given time. If a user logs in to two machines
+simultaneously, gconfd will run on the first machine, and the second machine will
+access it over the network.
+
+gconfd talks to applications using CORBA as a transport. This is purely an
+implementation detail; a custom protocol over sockets could have been used or could
+be used in the future. Directly accessing the CORBA interface is not supported.
+Application programmers do not see CORBA while using GConf.
+
+In general, gconfd is not visible to the application programmer. It is automatically
+launched as required. (Internally, the OAF object activation framework is used to
+obtain an object reference for the gconfd CORBA server.)
+
+Because all database access goes via gconfd, locking is not really an issue. gconfd
+also aggressively caches configuration values, because all applications can share the
+same cache.
+
+
+Schemas
+-------
+In addition to the primitive types mentioned earlier (integer, string, etc.) the GConf
+database can store a schema. A schema is a description of a key; it includes a short
+description of the key, a longer documentation paragraph, the type of the key, a default
+value for the key, and the name of the application owning the key. Schemas are primarily
+intended for use by a regedit-style tool; such a tool can display the documentation for
+a key, and validate the type of any values you enter for the key.
+
+Because schemas are simply values in the database, they can be referenced by key name.
+Conventionally, all schemas are below the /schemas toplevel directory.
+
+Applications come with a special schema file which encodes the schema information in a
+human-editable text format. When the application is installed, the gconftool program
+shipped with GConf is used to insert the schema information into the GConf database.
+Also, all applications should install their schema file to a system-wide directory
+(specified in the GConf documentation). This allows system administrators to re-install
+all schemas into a different GConf backend with a single command (something like
+gconftool --install-schema-file /etc/gconf/schemas/*).

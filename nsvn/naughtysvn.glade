@@ -868,7 +868,6 @@ NaughtySVN.</property>
 <widget class="GtkWindow" id="checkout_dialog">
   <property name="border_width">5</property>
   <property name="width_request">527</property>
-  <property name="visible">True</property>
   <property name="title" translatable="yes">NaughtySVN Checkout</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_CENTER_ON_PARENT</property>
@@ -980,9 +979,9 @@ NaughtySVN.</property>
 		  <property name="right_padding">5</property>
 
 		  <child>
-		    <widget class="GtkTable" id="table3">
+		    <widget class="GtkTable" id="checkout_url_tbl">
 		      <property name="visible">True</property>
-		      <property name="n_rows">2</property>
+		      <property name="n_rows">1</property>
 		      <property name="n_columns">5</property>
 		      <property name="homogeneous">False</property>
 		      <property name="row_spacing">5</property>
@@ -1033,34 +1032,6 @@ NaughtySVN.</property>
 		      </child>
 
 		      <child>
-			<widget class="GtkLabel" id="checkout_url1_lbl">
-			  <property name="visible">True</property>
-			  <property name="label" translatable="yes">URL 1</property>
-			  <property name="use_underline">False</property>
-			  <property name="use_markup">False</property>
-			  <property name="justify">GTK_JUSTIFY_LEFT</property>
-			  <property name="wrap">False</property>
-			  <property name="selectable">False</property>
-			  <property name="xalign">0</property>
-			  <property name="yalign">0.5</property>
-			  <property name="xpad">0</property>
-			  <property name="ypad">0</property>
-			  <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
-			  <property name="width_chars">-1</property>
-			  <property name="single_line_mode">False</property>
-			  <property name="angle">0</property>
-			</widget>
-			<packing>
-			  <property name="left_attach">0</property>
-			  <property name="right_attach">1</property>
-			  <property name="top_attach">0</property>
-			  <property name="bottom_attach">1</property>
-			  <property name="x_options">fill</property>
-			  <property name="y_options"></property>
-			</packing>
-		      </child>
-
-		      <child>
 			<widget class="GtkLabel" id="checkout_peg1_lbl">
 			  <property name="visible">True</property>
 			  <property name="label" translatable="yes">&lt;b&gt;@&lt;/b&gt;</property>
@@ -1089,140 +1060,6 @@ NaughtySVN.</property>
 		      </child>
 
 		      <child>
-			<widget class="GtkLabel" id="checkout_url2_lbl">
-			  <property name="visible">True</property>
-			  <property name="sensitive">False</property>
-			  <property name="label" translatable="yes">URL 2</property>
-			  <property name="use_underline">False</property>
-			  <property name="use_markup">False</property>
-			  <property name="justify">GTK_JUSTIFY_LEFT</property>
-			  <property name="wrap">False</property>
-			  <property name="selectable">False</property>
-			  <property name="xalign">0</property>
-			  <property name="yalign">0.5</property>
-			  <property name="xpad">0</property>
-			  <property name="ypad">0</property>
-			  <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
-			  <property name="width_chars">-1</property>
-			  <property name="single_line_mode">False</property>
-			  <property name="angle">0</property>
-			</widget>
-			<packing>
-			  <property name="left_attach">0</property>
-			  <property name="right_attach">1</property>
-			  <property name="top_attach">1</property>
-			  <property name="bottom_attach">2</property>
-			  <property name="x_options">fill</property>
-			  <property name="y_options"></property>
-			</packing>
-		      </child>
-
-		      <child>
-			<widget class="GtkEntry" id="checkout_url2_ent">
-			  <property name="visible">True</property>
-			  <property name="sensitive">False</property>
-			  <property name="can_focus">True</property>
-			  <property name="editable">True</property>
-			  <property name="visibility">True</property>
-			  <property name="max_length">0</property>
-			  <property name="text" translatable="yes"></property>
-			  <property name="has_frame">True</property>
-			  <property name="invisible_char">*</property>
-			  <property name="activates_default">False</property>
-			</widget>
-			<packing>
-			  <property name="left_attach">1</property>
-			  <property name="right_attach">2</property>
-			  <property name="top_attach">1</property>
-			  <property name="bottom_attach">2</property>
-			  <property name="y_options"></property>
-			</packing>
-		      </child>
-
-		      <child>
-			<widget class="GtkLabel" id="checkout_peg2_lbl">
-			  <property name="visible">True</property>
-			  <property name="sensitive">False</property>
-			  <property name="label" translatable="yes">&lt;b&gt;@&lt;/b&gt;</property>
-			  <property name="use_underline">False</property>
-			  <property name="use_markup">True</property>
-			  <property name="justify">GTK_JUSTIFY_LEFT</property>
-			  <property name="wrap">False</property>
-			  <property name="selectable">False</property>
-			  <property name="xalign">0.5</property>
-			  <property name="yalign">0.5</property>
-			  <property name="xpad">0</property>
-			  <property name="ypad">0</property>
-			  <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
-			  <property name="width_chars">-1</property>
-			  <property name="single_line_mode">False</property>
-			  <property name="angle">0</property>
-			</widget>
-			<packing>
-			  <property name="left_attach">2</property>
-			  <property name="right_attach">3</property>
-			  <property name="top_attach">1</property>
-			  <property name="bottom_attach">2</property>
-			  <property name="x_options">fill</property>
-			  <property name="y_options"></property>
-			</packing>
-		      </child>
-
-		      <child>
-			<widget class="GtkEntry" id="checkout_peg_ent">
-			  <property name="width_request">50</property>
-			  <property name="visible">True</property>
-			  <property name="sensitive">False</property>
-			  <property name="can_focus">True</property>
-			  <property name="editable">True</property>
-			  <property name="visibility">True</property>
-			  <property name="max_length">0</property>
-			  <property name="text" translatable="yes"></property>
-			  <property name="has_frame">True</property>
-			  <property name="invisible_char">*</property>
-			  <property name="activates_default">False</property>
-			</widget>
-			<packing>
-			  <property name="left_attach">3</property>
-			  <property name="right_attach">4</property>
-			  <property name="top_attach">1</property>
-			  <property name="bottom_attach">2</property>
-			  <property name="x_options"></property>
-			  <property name="y_options"></property>
-			</packing>
-		      </child>
-
-		      <child>
-			<widget class="GtkButton" id="checkout_del_btn">
-			  <property name="visible">True</property>
-			  <property name="sensitive">False</property>
-			  <property name="can_focus">True</property>
-			  <property name="relief">GTK_RELIEF_NORMAL</property>
-			  <property name="focus_on_click">True</property>
-
-			  <child>
-			    <widget class="GtkImage" id="image10">
-			      <property name="visible">True</property>
-			      <property name="stock">gtk-close</property>
-			      <property name="icon_size">4</property>
-			      <property name="xalign">0.5</property>
-			      <property name="yalign">0.5</property>
-			      <property name="xpad">0</property>
-			      <property name="ypad">0</property>
-			    </widget>
-			  </child>
-			</widget>
-			<packing>
-			  <property name="left_attach">4</property>
-			  <property name="right_attach">5</property>
-			  <property name="top_attach">1</property>
-			  <property name="bottom_attach">2</property>
-			  <property name="x_options">fill</property>
-			  <property name="y_options"></property>
-			</packing>
-		      </child>
-
-		      <child>
 			<widget class="GtkButton" id="checkout_add_btn">
 			  <property name="visible">True</property>
 			  <property name="can_focus">True</property>
@@ -1244,6 +1081,34 @@ NaughtySVN.</property>
 			<packing>
 			  <property name="left_attach">4</property>
 			  <property name="right_attach">5</property>
+			  <property name="top_attach">0</property>
+			  <property name="bottom_attach">1</property>
+			  <property name="x_options">fill</property>
+			  <property name="y_options"></property>
+			</packing>
+		      </child>
+
+		      <child>
+			<widget class="GtkLabel" id="label25">
+			  <property name="visible">True</property>
+			  <property name="label" translatable="yes">URL 1</property>
+			  <property name="use_underline">False</property>
+			  <property name="use_markup">False</property>
+			  <property name="justify">GTK_JUSTIFY_LEFT</property>
+			  <property name="wrap">False</property>
+			  <property name="selectable">False</property>
+			  <property name="xalign">0</property>
+			  <property name="yalign">0.5</property>
+			  <property name="xpad">0</property>
+			  <property name="ypad">0</property>
+			  <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
+			  <property name="width_chars">-1</property>
+			  <property name="single_line_mode">False</property>
+			  <property name="angle">0</property>
+			</widget>
+			<packing>
+			  <property name="left_attach">0</property>
+			  <property name="right_attach">1</property>
 			  <property name="top_attach">0</property>
 			  <property name="bottom_attach">1</property>
 			  <property name="x_options">fill</property>
@@ -1422,34 +1287,15 @@ NaughtySVN.</property>
 			      <property name="has_frame">True</property>
 			      <property name="invisible_char">*</property>
 			      <property name="activates_default">False</property>
+			      <accessibility>
+				<atkrelation target="checkout_revfnum_rad" type="controlled-by"/>
+			      </accessibility>
 			    </widget>
 			    <packing>
 			      <property name="left_attach">1</property>
 			      <property name="right_attach">2</property>
 			      <property name="top_attach">1</property>
 			      <property name="bottom_attach">2</property>
-			      <property name="y_options"></property>
-			    </packing>
-			  </child>
-
-			  <child>
-			    <widget class="GtkEntry" id="checkout_revfdate_ent">
-			      <property name="visible">True</property>
-			      <property name="sensitive">False</property>
-			      <property name="can_focus">True</property>
-			      <property name="editable">True</property>
-			      <property name="visibility">True</property>
-			      <property name="max_length">0</property>
-			      <property name="text" translatable="yes"></property>
-			      <property name="has_frame">True</property>
-			      <property name="invisible_char">*</property>
-			      <property name="activates_default">False</property>
-			    </widget>
-			    <packing>
-			      <property name="left_attach">1</property>
-			      <property name="right_attach">2</property>
-			      <property name="top_attach">2</property>
-			      <property name="bottom_attach">3</property>
 			      <property name="y_options"></property>
 			    </packing>
 			  </child>
@@ -1465,6 +1311,9 @@ PREV</property>
 			      <property name="add_tearoffs">False</property>
 			      <property name="has_frame">True</property>
 			      <property name="focus_on_click">True</property>
+			      <accessibility>
+				<atkrelation target="checkout_revtkword_rad" type="controlled-by"/>
+			      </accessibility>
 			    </widget>
 			    <packing>
 			      <property name="left_attach">1</property>
@@ -1473,6 +1322,23 @@ PREV</property>
 			      <property name="bottom_attach">4</property>
 			      <property name="x_options">fill</property>
 			      <property name="y_options">fill</property>
+			    </packing>
+			  </child>
+
+			  <child>
+			    <widget class="GnomeDateEdit" id="checkout_revfdate_ent">
+			      <property name="visible">True</property>
+			      <property name="sensitive">False</property>
+			      <property name="dateedit_flags">GNOME_DATE_EDIT_24_HR</property>
+			      <property name="lower_hour">7</property>
+			      <property name="upper_hour">19</property>
+			    </widget>
+			    <packing>
+			      <property name="left_attach">1</property>
+			      <property name="right_attach">2</property>
+			      <property name="top_attach">2</property>
+			      <property name="bottom_attach">3</property>
+			      <property name="y_options"></property>
 			    </packing>
 			  </child>
 			</widget>
@@ -1641,34 +1507,15 @@ PREV</property>
 			      <property name="has_frame">True</property>
 			      <property name="invisible_char">*</property>
 			      <property name="activates_default">False</property>
+			      <accessibility>
+				<atkrelation target="checkout_revtnum_rad" type="controlled-by"/>
+			      </accessibility>
 			    </widget>
 			    <packing>
 			      <property name="left_attach">1</property>
 			      <property name="right_attach">2</property>
 			      <property name="top_attach">1</property>
 			      <property name="bottom_attach">2</property>
-			      <property name="y_options"></property>
-			    </packing>
-			  </child>
-
-			  <child>
-			    <widget class="GtkEntry" id="checkout_revtdate_ent">
-			      <property name="visible">True</property>
-			      <property name="sensitive">False</property>
-			      <property name="can_focus">True</property>
-			      <property name="editable">True</property>
-			      <property name="visibility">True</property>
-			      <property name="max_length">0</property>
-			      <property name="text" translatable="yes"></property>
-			      <property name="has_frame">True</property>
-			      <property name="invisible_char">*</property>
-			      <property name="activates_default">False</property>
-			    </widget>
-			    <packing>
-			      <property name="left_attach">1</property>
-			      <property name="right_attach">2</property>
-			      <property name="top_attach">2</property>
-			      <property name="bottom_attach">3</property>
 			      <property name="y_options"></property>
 			    </packing>
 			  </child>
@@ -1684,6 +1531,9 @@ PREV</property>
 			      <property name="add_tearoffs">False</property>
 			      <property name="has_frame">True</property>
 			      <property name="focus_on_click">True</property>
+			      <accessibility>
+				<atkrelation target="checkout_revtkword_rad" type="controlled-by"/>
+			      </accessibility>
 			    </widget>
 			    <packing>
 			      <property name="left_attach">1</property>
@@ -1692,6 +1542,23 @@ PREV</property>
 			      <property name="bottom_attach">4</property>
 			      <property name="x_options">fill</property>
 			      <property name="y_options">fill</property>
+			    </packing>
+			  </child>
+
+			  <child>
+			    <widget class="GnomeDateEdit" id="checkout_revtdate_ent">
+			      <property name="visible">True</property>
+			      <property name="sensitive">False</property>
+			      <property name="dateedit_flags">GNOME_DATE_EDIT_24_HR</property>
+			      <property name="lower_hour">7</property>
+			      <property name="upper_hour">19</property>
+			    </widget>
+			    <packing>
+			      <property name="left_attach">1</property>
+			      <property name="right_attach">2</property>
+			      <property name="top_attach">2</property>
+			      <property name="bottom_attach">3</property>
+			      <property name="y_options"></property>
 			    </packing>
 			  </child>
 			</widget>
@@ -1761,7 +1628,7 @@ PREV</property>
 	  <property name="spacing">5</property>
 
 	  <child>
-	    <widget class="GtkButton" id="checkout_co_btn">
+	    <widget class="GtkButton" id="checkout_cout_btn">
 	      <property name="visible">True</property>
 	      <property name="can_default">True</property>
 	      <property name="can_focus">True</property>

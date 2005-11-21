@@ -53,8 +53,9 @@ am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(gladedir)"
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
 am_naughtysvn_OBJECTS = main.$(OBJEXT) global.$(OBJEXT) \
-	dlg_reposcreate.$(OBJEXT) dlg_aboutnsvn.$(OBJEXT) \
-	dlg_preferences.$(OBJEXT)
+	gconf.$(OBJEXT) dlg_reposcreate.$(OBJEXT) \
+	dlg_aboutnsvn.$(OBJEXT) dlg_preferences.$(OBJEXT) \
+	dlg_checkout.$(OBJEXT)
 naughtysvn_OBJECTS = $(am_naughtysvn_OBJECTS)
 am__DEPENDENCIES_1 =
 naughtysvn_DEPENDENCIES = $(am__DEPENDENCIES_1)
@@ -259,9 +260,11 @@ naughtysvn_SOURCES = \
 	main.c \
         window_list.h \
         global.c global.h \
+        gconf.c gconf.h \
 	dlg_reposcreate.c dlg_reposcreate.h \
         dlg_aboutnsvn.c dlg_aboutnsvn.h \
-        dlg_preferences.c dlg_preferences.h
+        dlg_preferences.c dlg_preferences.h \
+        dlg_checkout.c dlg_checkout.h
 
 naughtysvn_LDADD = @PACKAGE_LIBS@ \
                    $(INTLLIBS) \
@@ -344,8 +347,10 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dlg_aboutnsvn.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dlg_checkout.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dlg_preferences.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/dlg_reposcreate.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/gconf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/global.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main.Po@am__quote@
 

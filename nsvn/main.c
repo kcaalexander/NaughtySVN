@@ -22,7 +22,7 @@ static const nsvn_command commands_list[] = {
   {"CMD=create_repos", nsvn_dlg_reposcreate},
   {"CMD=about_nsvn", nsvn_dlg_aboutnsvn},
   {"CMD=preferences", nsvn_dlg_preferences},
-//  {"CMD=checkout", nsvn_dlg_checkout},
+  {"CMD=checkout", nsvn_dlg_checkout},
   {NULL, NULL}
 };
 

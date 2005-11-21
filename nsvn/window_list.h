@@ -17,6 +17,7 @@
 #include "dlg_reposcreate.h"
 #include "dlg_aboutnsvn.h"
 #include "dlg_preferences.h"
+#include "dlg_checkout.h"
 
 typedef gboolean
 (*nsvn_command_func_t) (GtkWidget *widget,
