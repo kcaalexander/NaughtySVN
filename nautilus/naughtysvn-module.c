@@ -24,9 +24,9 @@
 void
 nautilus_module_initialize (GTypeModule *module)
 {
-   nautilus_nsvn_register_type (module);
-   bindtextdomain (GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
-   bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
+  nautilus_nsvn_register_type (module);
+  bindtextdomain (GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
+  bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 }
 
 
