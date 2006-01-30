@@ -29,8 +29,8 @@ static const nsvn_command commands_list[] = {
 int
 main (int argc, char *argv[])
 {
- int i = 0;
- gboolean found=FALSE;
+  int i = 0;
+  gboolean found=FALSE;
 
 #ifdef ENABLE_NLS
   bindtextdomain (GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
@@ -52,14 +52,14 @@ and is not expected to be called from command line\n");
 
   while (commands_list[i].cmd != NULL)
     {
-       if (argv[i] != NULL &&
-           strcasecmp(commands_list[i].cmd, argv[2]) == 0 &&
-           commands_list[i].cmd_func != NULL)
-         {
-           if (commands_list[i].cmd_func (NULL, argv[3]) == EXIT_SUCCESS)
-             found = TRUE;
-         }
-       i = i + 1;
+      if (argv[i] != NULL &&
+          strcasecmp(commands_list[i].cmd, argv[2]) == 0 &&
+          commands_list[i].cmd_func != NULL)
+        {
+          if (commands_list[i].cmd_func (NULL, argv[3]) == EXIT_SUCCESS)
+            found = TRUE;
+        }
+      i = i + 1;
     }
     
   if (found)
