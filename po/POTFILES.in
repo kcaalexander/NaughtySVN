@@ -1,8 +1,15 @@
 # List of source files containing translatable strings.
-
+nsvn/dlg_aboutnsvn.c
+nsvn/dlg_checkout.c
+nsvn/dlg_preferences.c
+nsvn/dlg_reposcreate.c
+nsvn/gconf.c
+nsvn/global.c
+nsvn/main.c
+svn/svn-nsvn-admin.c
+svn/svn-nsvn-init.c
+svn/svn-nsvn-repos.c
+svn/svn-nsvn-wc.c
+svn/svn-nsvn-common.c
 nautilus/naughtysvn-module.c
 nautilus/nautilus-naughtysvn.c
-src/main.c
-src/interface.c
-src/callbacks.c
-src/support.c
