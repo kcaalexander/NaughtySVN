@@ -1,0 +1,70 @@
+%define release 6
+%define prefix  /usr
+%define name	@PACKAGE@
+%define version @VERSION@
+
+Summary:	An easy-to-use Subversion GUI client
+Name:		%{name}
+Version:    	%{version}
+Release:	%{release}
+Copyright:	Apache/BSD
+Vendor:		
+URL:		http://naughtysvn.tigris.org
+Group:		Applications/Archiving
+Source0:	%{name}-%{version}.tar.gz
+Packager:       Alexander Thomas (AT) <alexander@collab.net>
+BuildRoot:	%{_builddir}/%{name}-%{version}-root
+Requires:       glib2 >= @GLIB_REQUIRED@
+Requires:       gtk2 >= @GTK_REQUIRED@
+Requires:	libgnome >= @LIBGNOME_REQUIRED@
+Requires:	libgnomeui >= @LIBGNOMEUI_REQUIRED@
+Requires:	gnome-vfs2 >= @GNOME_VFS_REQUIRED@
+Requires:	libglade2 >= @LIBGLADE_REQUIRED@
+Requires:	bonobo-activation >= @BONOBO_ACTIVATION_REQUIRED@
+Requires:	libbonobo >= @LIBBONOBO_REQUIRED@
+Requires:	libbonoboui >= @LIBBONOBOUI_REQUIRED@
+BuildRequires:	glib2-devel >= @GLIB_REQUIRED@
+BuildRequires:	gtk2-devel >= @GTK_REQUIRED@
+BuildRequires:	libgnome-devel >= @LIBGNOME_REQUIRED@
+BuildRequires:	libgnomeui-devel >= @LIBGNOMEUI_REQUIRED@
+BuildRequires:	gnome-vfs2-devel >= @GNOME_VFS_REQUIRED@
+BuildRequires:	libglade2-devel >= @LIBGLADE_REQUIRED@
+BuildRequires:	bonobo-activation-devel >= @BONOBO_ACTIVATION_REQUIRED@
+BuildRequires:	libbonobo-devel >= @LIBBONOBO_REQUIRED@
+BuildRequires:	libbonoboui-devel >= @LIBBONOBOUI_REQUIRED@
+Docdir:         %{prefix}/share/doc
+
+%description
+NaughtySVN is an easy-to-use GUI based Subversion client which
+works as an extension to Nautilus File Manager (Graphical shell for
+the GNOME desktop enviornment).
+
+This means that you can operate Subversion from Nautilus file browsing
+window, which include create and administer subversion repository,
+checkout and commit working copies, handling working copies, browsing
+repositories and working copies, handling remote repositories and working
+copies etc.
+
+%prep
+%setup 
+
+%build
+%configure 
+make
+
+%install
+rm -rf $RPM_BUILD_ROOT
+make DESTDIR=$RPM_BUILD_ROOT install
+doxygen docs/doxygen.conf
+
+%clean
+rm -rf $RPM_BUILD_ROOT
+
+%files
+%defattr(-,root,root)
+# list of files to install here
+
+%post
+# run gconftool-2 utility
+
+%postun
