@@ -133,6 +133,7 @@ nsvn_create_menuitem_checkout (NautilusMenuProvider *provider,
                                  _("NaughtySVN Checkout"),
                                  _("Checkout out a Subversion repository"),
                                  NULL);
+  g_object_set_data (G_OBJECT (item), "files", file);
   g_signal_connect (item, "activate", G_CALLBACK (nsvn_checkout),
                     provider);
 
