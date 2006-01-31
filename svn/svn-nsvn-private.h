@@ -15,12 +15,14 @@
 #include <apr_pools.h>
 #include <svn_pools.h>
 #include <svn_error.h>
+#include <svn_client.h>
 
 typedef struct naughtysvn_t {
   svn_error_t *err;
   apr_status_t apr_err;
   apr_allocator_t *allocator;
   apr_pool_t *pool;
+  svn_client_ctx_t *ctx;
 
   const char *config_dir;
 
