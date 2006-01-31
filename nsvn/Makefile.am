@@ -3,6 +3,9 @@
 glade_DATA = naughtysvn.glade
 gladedir = $(datadir)/$(PACKAGE_NAME)/glade
 
+pixmap_DATA = pixmaps/user_icon.png
+pixmapdir = $(datadir)/$(PACKAGE_NAME)/glade
+
 INCLUDES = \
 	-DPACKAGE_DATA_DIR=\""$(datadir)"\" \
 	-DPACKAGE_LOCALE_DIR=\""$(prefix)/$(DATADIRNAME)/locale"\" \
@@ -32,5 +35,6 @@ naughtysvn_LDADD = @PACKAGE_LIBS@ \
 kill_existing_nautilus=`/usr/bin/pkill -9 nautilus`
 
 EXTRA_DIST =    \
-        $(glade_DATA)
+        $(glade_DATA) \
+        $(pixmap_DATA)
 
