@@ -41,36 +41,36 @@ nsvn_wc_check_is_wcpath (void *n,
                          const char *wc_path,
                          int *wc_format)
 {
-   naughtysvn_t *nsvn;
-   int format;
+  naughtysvn_t *nsvn;
+  int format;
 
-   if (wc_path == NULL)
-     return EXIT_SUCCESS;
+  if (wc_path == NULL)
+    return EXIT_SUCCESS;
  
-   if (n == NULL)
-     nsvn = nsvn_base_init (NULL);
-   else
-     nsvn = (naughtysvn_t*) n;
+  if (n == NULL)
+    nsvn = nsvn_base_init (NULL);
+  else
+    nsvn = (naughtysvn_t*) n;
 
-   if (nsvn == NULL)
-     return EXIT_FAILURE;
+  if (nsvn == NULL)
+    return EXIT_FAILURE;
 
-   nsvn->err = svn_wc_check_wc (svn_path_internal_style (wc_path,
-                                  nsvn->pool),
-                                &format, nsvn->pool);
+  nsvn->err = svn_wc_check_wc (svn_path_internal_style (wc_path,
+                                 nsvn->pool),
+                               &format, nsvn->pool);
 
-   if (nsvn->err || format == 0)
-     {
-        if (n == NULL)
-          nsvn = nsvn_base_uninit (nsvn);
-        return EXIT_FAILURE;
-     }
+  if (nsvn->err || format == 0)
+    {
+      if (n == NULL)
+        nsvn = nsvn_base_uninit (nsvn);
+      return EXIT_FAILURE;
+    }
 
-   if (wc_format != NULL)
-     *wc_format = format;
+  if (wc_format != NULL)
+    *wc_format = format;
 
-   if (n == NULL)
-     nsvn = nsvn_base_uninit (nsvn);
+  if (n == NULL)
+    nsvn = nsvn_base_uninit (nsvn);
 
-   return EXIT_SUCCESS;
+  return EXIT_SUCCESS;
 }
