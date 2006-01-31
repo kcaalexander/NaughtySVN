@@ -89,14 +89,14 @@ nsvn__create_repository  (GtkWidget *widget,
   txt = gtk_entry_get_text (GTK_ENTRY(entry));
   if (g_strcasecmp (txt, "") == 0 )
     {
-       const char *buttons[] = {"OK", NULL};
-       Show_Msgbox (window, FALSE, "Error",
-                    "Repository name invalid ...",
-                    GNOME_MESSAGE_BOX_ERROR,
-                    buttons);
-       gtk_entry_set_text (GTK_ENTRY(entry),
-                           g_path_get_basename(path));
-       return;
+      const char *buttons[] = {"OK", NULL};
+      Show_Msgbox (window, FALSE, "Error",
+                   "Repository name invalid ...",
+                   GNOME_MESSAGE_BOX_ERROR,
+                   buttons);
+      gtk_entry_set_text (GTK_ENTRY(entry),
+                          g_path_get_basename(path));
+      return;
     }
   
   if (g_strcasecmp (g_path_get_basename(path), txt) != 0)
@@ -123,14 +123,14 @@ nsvn__create_repository  (GtkWidget *widget,
   if (nsvn_admin_create_repos (nsvn, is_sync, is_logrm,
                                fs_type, NULL, newpath) == EXIT_FAILURE)
     {
-       const char *buttons[] = {"OK", NULL};
-       Show_Msgbox (window, FALSE, "Error",
-                    "Repository creation failed ...",
-                    GNOME_MESSAGE_BOX_ERROR,
-                    buttons);
+      const char *buttons[] = {"OK", NULL};
+      Show_Msgbox (window, FALSE, "Error",
+                   "Repository creation failed ...",
+                   GNOME_MESSAGE_BOX_ERROR,
+                   buttons);
     }
   else
-       gtk_widget_destroy (window);
+      gtk_widget_destroy (window);
 
   nsvn = nsvn_base_uninit (nsvn);
   
