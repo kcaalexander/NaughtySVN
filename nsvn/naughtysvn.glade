@@ -1089,7 +1089,7 @@ NaughtySVN.</property>
 		      </child>
 
 		      <child>
-			<widget class="GtkLabel" id="label25">
+			<widget class="GtkLabel" id="checkout_url1_lbl">
 			  <property name="visible">True</property>
 			  <property name="label" translatable="yes">URL 1</property>
 			  <property name="use_underline">False</property>
@@ -1185,7 +1185,7 @@ NaughtySVN.</property>
 			  <property name="column_spacing">3</property>
 
 			  <child>
-			    <widget class="GtkRadioButton" id="checkout_revfnone_rad">
+			    <widget class="GtkRadioButton" id="checkout_revnone_rad">
 			      <property name="visible">True</property>
 			      <property name="can_focus">True</property>
 			      <property name="label" translatable="yes">None</property>
@@ -1207,7 +1207,7 @@ NaughtySVN.</property>
 			  </child>
 
 			  <child>
-			    <widget class="GtkRadioButton" id="checkout_revfnum_rad">
+			    <widget class="GtkRadioButton" id="checkout_revnum_rad">
 			      <property name="visible">True</property>
 			      <property name="can_focus">True</property>
 			      <property name="label" translatable="yes">Numeric</property>
@@ -1217,7 +1217,7 @@ NaughtySVN.</property>
 			      <property name="active">False</property>
 			      <property name="inconsistent">False</property>
 			      <property name="draw_indicator">True</property>
-			      <property name="group">checkout_revfnone_rad</property>
+			      <property name="group">checkout_revnone_rad</property>
 			    </widget>
 			    <packing>
 			      <property name="left_attach">0</property>
@@ -1230,7 +1230,7 @@ NaughtySVN.</property>
 			  </child>
 
 			  <child>
-			    <widget class="GtkRadioButton" id="checkout_revfdate_rad">
+			    <widget class="GtkRadioButton" id="checkout_revdate_rad">
 			      <property name="visible">True</property>
 			      <property name="can_focus">True</property>
 			      <property name="label" translatable="yes">Date</property>
@@ -1240,7 +1240,7 @@ NaughtySVN.</property>
 			      <property name="active">False</property>
 			      <property name="inconsistent">False</property>
 			      <property name="draw_indicator">True</property>
-			      <property name="group">checkout_revfnone_rad</property>
+			      <property name="group">checkout_revnone_rad</property>
 			    </widget>
 			    <packing>
 			      <property name="left_attach">0</property>
@@ -1253,7 +1253,7 @@ NaughtySVN.</property>
 			  </child>
 
 			  <child>
-			    <widget class="GtkRadioButton" id="checkout_revfkword_rad">
+			    <widget class="GtkRadioButton" id="checkout_revkword_rad">
 			      <property name="visible">True</property>
 			      <property name="can_focus">True</property>
 			      <property name="label" translatable="yes">Keyword</property>
@@ -1263,7 +1263,7 @@ NaughtySVN.</property>
 			      <property name="active">False</property>
 			      <property name="inconsistent">False</property>
 			      <property name="draw_indicator">True</property>
-			      <property name="group">checkout_revfnone_rad</property>
+			      <property name="group">checkout_revnone_rad</property>
 			    </widget>
 			    <packing>
 			      <property name="left_attach">0</property>
@@ -1276,57 +1276,7 @@ NaughtySVN.</property>
 			  </child>
 
 			  <child>
-			    <widget class="GtkEntry" id="checkout_revfnum_ent">
-			      <property name="visible">True</property>
-			      <property name="sensitive">False</property>
-			      <property name="can_focus">True</property>
-			      <property name="editable">True</property>
-			      <property name="visibility">True</property>
-			      <property name="max_length">0</property>
-			      <property name="text" translatable="yes"></property>
-			      <property name="has_frame">True</property>
-			      <property name="invisible_char">*</property>
-			      <property name="activates_default">False</property>
-			      <accessibility>
-				<atkrelation target="checkout_revfnum_rad" type="controlled-by"/>
-			      </accessibility>
-			    </widget>
-			    <packing>
-			      <property name="left_attach">1</property>
-			      <property name="right_attach">2</property>
-			      <property name="top_attach">1</property>
-			      <property name="bottom_attach">2</property>
-			      <property name="y_options"></property>
-			    </packing>
-			  </child>
-
-			  <child>
-			    <widget class="GtkComboBoxEntry" id="checkout_revfkword_cmb">
-			      <property name="visible">True</property>
-			      <property name="sensitive">False</property>
-			      <property name="items" translatable="yes">HEAD
-BASE
-COMMITTED
-PREV</property>
-			      <property name="add_tearoffs">False</property>
-			      <property name="has_frame">True</property>
-			      <property name="focus_on_click">True</property>
-			      <accessibility>
-				<atkrelation target="checkout_revtkword_rad" type="controlled-by"/>
-			      </accessibility>
-			    </widget>
-			    <packing>
-			      <property name="left_attach">1</property>
-			      <property name="right_attach">2</property>
-			      <property name="top_attach">3</property>
-			      <property name="bottom_attach">4</property>
-			      <property name="x_options">fill</property>
-			      <property name="y_options">fill</property>
-			    </packing>
-			  </child>
-
-			  <child>
-			    <widget class="GnomeDateEdit" id="checkout_revfdate_ent">
+			    <widget class="GnomeDateEdit" id="checkout_revdate_ent">
 			      <property name="visible">True</property>
 			      <property name="sensitive">False</property>
 			      <property name="dateedit_flags">GNOME_DATE_EDIT_24_HR</property>
@@ -1339,6 +1289,50 @@ PREV</property>
 			      <property name="top_attach">2</property>
 			      <property name="bottom_attach">3</property>
 			      <property name="y_options"></property>
+			    </packing>
+			  </child>
+
+			  <child>
+			    <widget class="GtkSpinButton" id="checkout_revnum_ent">
+			      <property name="visible">True</property>
+			      <property name="sensitive">False</property>
+			      <property name="can_focus">True</property>
+			      <property name="climb_rate">1</property>
+			      <property name="digits">0</property>
+			      <property name="numeric">True</property>
+			      <property name="update_policy">GTK_UPDATE_IF_VALID</property>
+			      <property name="snap_to_ticks">True</property>
+			      <property name="wrap">False</property>
+			      <property name="adjustment">1 1 1500000 1 10 10</property>
+			    </widget>
+			    <packing>
+			      <property name="left_attach">1</property>
+			      <property name="right_attach">2</property>
+			      <property name="top_attach">1</property>
+			      <property name="bottom_attach">2</property>
+			      <property name="y_options"></property>
+			    </packing>
+			  </child>
+
+			  <child>
+			    <widget class="GtkComboBoxEntry" id="checkout_revkword_cmb">
+			      <property name="visible">True</property>
+			      <property name="sensitive">False</property>
+			      <property name="items" translatable="yes">HEAD
+BASE
+COMMITTED
+PREV</property>
+			      <property name="add_tearoffs">False</property>
+			      <property name="has_frame">True</property>
+			      <property name="focus_on_click">True</property>
+			    </widget>
+			    <packing>
+			      <property name="left_attach">1</property>
+			      <property name="right_attach">2</property>
+			      <property name="top_attach">3</property>
+			      <property name="bottom_attach">4</property>
+			      <property name="x_options">fill</property>
+			      <property name="y_options">fill</property>
 			    </packing>
 			  </child>
 			</widget>
@@ -1377,215 +1371,54 @@ PREV</property>
 	      </child>
 
 	      <child>
-		<widget class="GtkFrame" id="frame5">
+		<widget class="GtkVBox" id="vbox10">
 		  <property name="visible">True</property>
-		  <property name="label_xalign">0</property>
-		  <property name="label_yalign">0.5</property>
-		  <property name="shadow_type">GTK_SHADOW_ETCHED_IN</property>
+		  <property name="homogeneous">True</property>
+		  <property name="spacing">10</property>
 
 		  <child>
-		    <widget class="GtkAlignment" id="alignment13">
-		      <property name="visible">True</property>
-		      <property name="xalign">0.5</property>
-		      <property name="yalign">0.5</property>
-		      <property name="xscale">1</property>
-		      <property name="yscale">1</property>
-		      <property name="top_padding">5</property>
-		      <property name="bottom_padding">5</property>
-		      <property name="left_padding">5</property>
-		      <property name="right_padding">5</property>
-
-		      <child>
-			<widget class="GtkTable" id="table5">
-			  <property name="visible">True</property>
-			  <property name="n_rows">4</property>
-			  <property name="n_columns">2</property>
-			  <property name="homogeneous">True</property>
-			  <property name="row_spacing">3</property>
-			  <property name="column_spacing">3</property>
-
-			  <child>
-			    <widget class="GtkRadioButton" id="checkout_revtnone_rad">
-			      <property name="visible">True</property>
-			      <property name="can_focus">True</property>
-			      <property name="label" translatable="yes">None</property>
-			      <property name="use_underline">True</property>
-			      <property name="relief">GTK_RELIEF_NORMAL</property>
-			      <property name="focus_on_click">True</property>
-			      <property name="active">True</property>
-			      <property name="inconsistent">False</property>
-			      <property name="draw_indicator">True</property>
-			    </widget>
-			    <packing>
-			      <property name="left_attach">0</property>
-			      <property name="right_attach">1</property>
-			      <property name="top_attach">0</property>
-			      <property name="bottom_attach">1</property>
-			      <property name="x_options">fill</property>
-			      <property name="y_options"></property>
-			    </packing>
-			  </child>
-
-			  <child>
-			    <widget class="GtkRadioButton" id="checkout_revtnum_rad">
-			      <property name="visible">True</property>
-			      <property name="can_focus">True</property>
-			      <property name="label" translatable="yes">Numeric</property>
-			      <property name="use_underline">True</property>
-			      <property name="relief">GTK_RELIEF_NORMAL</property>
-			      <property name="focus_on_click">True</property>
-			      <property name="active">False</property>
-			      <property name="inconsistent">False</property>
-			      <property name="draw_indicator">True</property>
-			      <property name="group">checkout_revtnone_rad</property>
-			    </widget>
-			    <packing>
-			      <property name="left_attach">0</property>
-			      <property name="right_attach">1</property>
-			      <property name="top_attach">1</property>
-			      <property name="bottom_attach">2</property>
-			      <property name="x_options">fill</property>
-			      <property name="y_options"></property>
-			    </packing>
-			  </child>
-
-			  <child>
-			    <widget class="GtkRadioButton" id="checkout_revtdate_rad">
-			      <property name="visible">True</property>
-			      <property name="can_focus">True</property>
-			      <property name="label" translatable="yes">Date</property>
-			      <property name="use_underline">True</property>
-			      <property name="relief">GTK_RELIEF_NORMAL</property>
-			      <property name="focus_on_click">True</property>
-			      <property name="active">False</property>
-			      <property name="inconsistent">False</property>
-			      <property name="draw_indicator">True</property>
-			      <property name="group">checkout_revtnone_rad</property>
-			    </widget>
-			    <packing>
-			      <property name="left_attach">0</property>
-			      <property name="right_attach">1</property>
-			      <property name="top_attach">2</property>
-			      <property name="bottom_attach">3</property>
-			      <property name="x_options">fill</property>
-			      <property name="y_options"></property>
-			    </packing>
-			  </child>
-
-			  <child>
-			    <widget class="GtkRadioButton" id="checkout_revtkword_rad">
-			      <property name="visible">True</property>
-			      <property name="can_focus">True</property>
-			      <property name="label" translatable="yes">Keyword</property>
-			      <property name="use_underline">True</property>
-			      <property name="relief">GTK_RELIEF_NORMAL</property>
-			      <property name="focus_on_click">True</property>
-			      <property name="active">False</property>
-			      <property name="inconsistent">False</property>
-			      <property name="draw_indicator">True</property>
-			      <property name="group">checkout_revtnone_rad</property>
-			    </widget>
-			    <packing>
-			      <property name="left_attach">0</property>
-			      <property name="right_attach">1</property>
-			      <property name="top_attach">3</property>
-			      <property name="bottom_attach">4</property>
-			      <property name="x_options">fill</property>
-			      <property name="y_options"></property>
-			    </packing>
-			  </child>
-
-			  <child>
-			    <widget class="GtkEntry" id="checkout_revtnum_ent">
-			      <property name="visible">True</property>
-			      <property name="sensitive">False</property>
-			      <property name="can_focus">True</property>
-			      <property name="editable">True</property>
-			      <property name="visibility">True</property>
-			      <property name="max_length">0</property>
-			      <property name="text" translatable="yes"></property>
-			      <property name="has_frame">True</property>
-			      <property name="invisible_char">*</property>
-			      <property name="activates_default">False</property>
-			      <accessibility>
-				<atkrelation target="checkout_revtnum_rad" type="controlled-by"/>
-			      </accessibility>
-			    </widget>
-			    <packing>
-			      <property name="left_attach">1</property>
-			      <property name="right_attach">2</property>
-			      <property name="top_attach">1</property>
-			      <property name="bottom_attach">2</property>
-			      <property name="y_options"></property>
-			    </packing>
-			  </child>
-
-			  <child>
-			    <widget class="GtkComboBoxEntry" id="checkout_revtkword_cmb">
-			      <property name="visible">True</property>
-			      <property name="sensitive">False</property>
-			      <property name="items" translatable="yes">HEAD
-BASE
-COMMITTED
-PREV</property>
-			      <property name="add_tearoffs">False</property>
-			      <property name="has_frame">True</property>
-			      <property name="focus_on_click">True</property>
-			      <accessibility>
-				<atkrelation target="checkout_revtkword_rad" type="controlled-by"/>
-			      </accessibility>
-			    </widget>
-			    <packing>
-			      <property name="left_attach">1</property>
-			      <property name="right_attach">2</property>
-			      <property name="top_attach">3</property>
-			      <property name="bottom_attach">4</property>
-			      <property name="x_options">fill</property>
-			      <property name="y_options">fill</property>
-			    </packing>
-			  </child>
-
-			  <child>
-			    <widget class="GnomeDateEdit" id="checkout_revtdate_ent">
-			      <property name="visible">True</property>
-			      <property name="sensitive">False</property>
-			      <property name="dateedit_flags">GNOME_DATE_EDIT_24_HR</property>
-			      <property name="lower_hour">7</property>
-			      <property name="upper_hour">19</property>
-			    </widget>
-			    <packing>
-			      <property name="left_attach">1</property>
-			      <property name="right_attach">2</property>
-			      <property name="top_attach">2</property>
-			      <property name="bottom_attach">3</property>
-			      <property name="y_options"></property>
-			    </packing>
-			  </child>
-			</widget>
-		      </child>
-		    </widget>
+		    <placeholder/>
 		  </child>
 
 		  <child>
-		    <widget class="GtkLabel" id="label24">
+		    <placeholder/>
+		  </child>
+
+		  <child>
+		    <widget class="GtkCheckButton" id="checkout_nrecurse_chk">
 		      <property name="visible">True</property>
-		      <property name="label" translatable="yes">&lt;b&gt;Revision to&lt;/b&gt;</property>
-		      <property name="use_underline">False</property>
-		      <property name="use_markup">True</property>
-		      <property name="justify">GTK_JUSTIFY_LEFT</property>
-		      <property name="wrap">False</property>
-		      <property name="selectable">False</property>
-		      <property name="xalign">0.5</property>
-		      <property name="yalign">0.5</property>
-		      <property name="xpad">0</property>
-		      <property name="ypad">0</property>
-		      <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
-		      <property name="width_chars">-1</property>
-		      <property name="single_line_mode">False</property>
-		      <property name="angle">0</property>
+		      <property name="can_focus">True</property>
+		      <property name="label" translatable="yes">Non Recursive Checkout</property>
+		      <property name="use_underline">True</property>
+		      <property name="relief">GTK_RELIEF_NORMAL</property>
+		      <property name="focus_on_click">True</property>
+		      <property name="active">False</property>
+		      <property name="inconsistent">False</property>
+		      <property name="draw_indicator">True</property>
 		    </widget>
 		    <packing>
-		      <property name="type">label_item</property>
+		      <property name="padding">0</property>
+		      <property name="expand">False</property>
+		      <property name="fill">False</property>
+		    </packing>
+		  </child>
+
+		  <child>
+		    <widget class="GtkCheckButton" id="checkout_Ignextn_chk">
+		      <property name="visible">True</property>
+		      <property name="can_focus">True</property>
+		      <property name="label" translatable="yes">Ignore External Definitions</property>
+		      <property name="use_underline">True</property>
+		      <property name="relief">GTK_RELIEF_NORMAL</property>
+		      <property name="focus_on_click">True</property>
+		      <property name="active">False</property>
+		      <property name="inconsistent">False</property>
+		      <property name="draw_indicator">True</property>
+		    </widget>
+		    <packing>
+		      <property name="padding">0</property>
+		      <property name="expand">False</property>
+		      <property name="fill">False</property>
 		    </packing>
 		  </child>
 		</widget>

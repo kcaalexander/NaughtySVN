@@ -33,7 +33,8 @@ libsvn_naughtysvn_la_SOURCES = \
         svn-nsvn-admin.c \
         svn-nsvn-init.c \
         svn-nsvn-wc.c \
-        svn-nsvn-repos.c
+        svn-nsvn-repos.c \
+        svn-nsvn-common.c
 
 libsvn_naughtysvn_la_LDFLAGS = -module -avoid-version
 libsvn_naughtysvn_la_LIBADD =  /usr/lib/libneon.la \
