@@ -32,12 +32,11 @@
 #include "svn_time.h"
 
 #include "svn_naughtysvn.h"
-#include "svn-nsvn-private.h"
 
 #include <stdlib.h>
 
 int
-nsvn_admin_create_repos (void *n, int bdb_nosync,
+nsvn_admin_create_repos (nsvn_t *n, int bdb_nosync,
                          int bdb_autorm,
                          const char *fs_type,
                          const char *config_dir,
@@ -45,12 +44,12 @@ nsvn_admin_create_repos (void *n, int bdb_nosync,
 {
   svn_repos_t *repos;
   apr_hash_t *config;
-  naughtysvn_t *nsvn;
+  nsvn_t *nsvn;
 
   if (n == NULL)
     nsvn = nsvn_base_init (NULL);
   else
-    nsvn = (naughtysvn_t*) n;
+    nsvn = (nsvn_t*) n;
 
   if (nsvn == NULL)
     return EXIT_FAILURE;

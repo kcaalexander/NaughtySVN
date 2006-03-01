@@ -29,7 +29,7 @@ svn_naughtysvndir = $(libdir)
 svn_naughtysvn_LTLIBRARIES = libsvn-naughtysvn.la
 
 libsvn_naughtysvn_la_SOURCES = \
-        svn-nsvn-private.h \
+        svn-nsvn-types.h \
         svn-nsvn-admin.c \
         svn-nsvn-init.c \
         svn-nsvn-wc.c \

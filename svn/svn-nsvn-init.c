@@ -33,7 +33,6 @@
 #include "svn_time.h"
 
 #include "svn_naughtysvn.h"
-#include "svn-nsvn-private.h"
 
 static int
 nsvn_base__init_apr (void)
@@ -53,17 +52,17 @@ nsvn_base__init_apr (void)
 }
 
 
-void*
+nsvn_t*
 nsvn_base_init (const char *config_dir)
 {
-  naughtysvn_t *nsvn;
+  nsvn_t *nsvn;
 
   /* Initializing apr module. */
   if (nsvn_base__init_apr() == EXIT_FAILURE)
     return NULL;
 
   /* Allocating memory for NSVN internal data structure. */
-  nsvn = (naughtysvn_t*) calloc (1, sizeof(naughtysvn_t));
+  nsvn = (nsvn_t*) calloc (1, sizeof(nsvn_t));
   if (nsvn == NULL)
     return NULL;
     
@@ -107,17 +106,15 @@ nsvn_base_init (const char *config_dir)
   if (nsvn->err)
     return nsvn_base_uninit (nsvn);
 
-  return (void*) nsvn;
+  return nsvn;
 }
 
 
-void*
-nsvn_base_uninit (void *n)
+nsvn_t*
+nsvn_base_uninit (nsvn_t *nsvn)
 {
-  naughtysvn_t *nsvn;
-  if (n)
+  if (nsvn)
     {
-      nsvn = (naughtysvn_t*) n;
       if (nsvn->config_dir)
         free ((void*)nsvn->config_dir);
        
@@ -136,24 +133,22 @@ nsvn_base_uninit (void *n)
   return NULL;
 }
 
-void*
-nsvn_base_reinit (void *n, const char *config_dir)
+nsvn_t*
+nsvn_base_reinit (nsvn_t *nsvn, const char *config_dir)
 {
-  nsvn_base_uninit (n);
+  nsvn_base_uninit (nsvn);
    
   return (nsvn_base_init (config_dir));
 }
 
-void*
-nsvn_base_clear (void *n)
+nsvn_t*
+nsvn_base_clear (nsvn_t *nsvn)
 {
-  naughtysvn_t *nsvn = (naughtysvn_t*) n;
-
   if (nsvn)
     {
       svn_error_clear (nsvn->err);
       apr_pool_clear (nsvn->pool);
     }
 
-  return n;
+  return nsvn;
 }

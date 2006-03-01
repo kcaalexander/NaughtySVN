@@ -32,25 +32,27 @@
 #include "svn_time.h"
 
 #include "svn_naughtysvn.h"
-#include "svn-nsvn-private.h"
 
 #include <stdlib.h>
 
 int
-nsvn_common_parse_revision (void *n,
+nsvn_common_parse_revision (nsvn_t *n,
                             void *start_rev,
                             void *end_rev,
                             const char *rev_range)
 {
-  naughtysvn_t *nsvn;
+  nsvn_t *nsvn;
   apr_pool_t *subpool;
 
+  /* ### Replace this block with a macro.  Something like:
+     nsvn = NSVN_ASSURE_INSTANCE(NULL);
+  */
   if (n == NULL)
     nsvn = nsvn_base_init (NULL);
   else
-    nsvn = (naughtysvn_t*) n;
+    nsvn = (nsvn_t*) n;
 
-  if (!nsvn || !rev_range)
+  if (nsvn == NULL || rev_range == NULL)
     return EXIT_FAILURE;
 
   subpool = svn_pool_create (nsvn->pool);

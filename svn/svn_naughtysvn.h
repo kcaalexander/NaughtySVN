@@ -13,26 +13,30 @@
 #ifndef SVN_NAUGHTYSVN_H
 #define SVN_NAUGHTYSVN_H
 
-/* Initilization and Uninitization functions. */
+#include "svn-nsvn-types.h"
 
-void*
+/* ### Use an opaque type like ... */
+typedef struct naughtysvn_t nsvn_t;
+
+/* Initilization and uninitization functions. */
+nsvn_t*
 nsvn_base_init (const char *config_path);
 
-void*
-nsvn_base_uninit (void *instance);
+nsvn_t*
+nsvn_base_uninit (nsvn_t *instance);
 
-void*
-nsvn_base_reinit (void *instance,
+nsvn_t*
+nsvn_base_reinit (nsvn_t *instance,
                   const char *config_dir);
 
-void*
-nsvn_base_clear (void *instance);
+nsvn_t*
+nsvn_base_clear (nsvn_t *instance);
 
 
 /* Repository admin functions. */
 
 int 
-nsvn_admin_create_repos (void *instance,
+nsvn_admin_create_repos (nsvn_t *instance,
                          int bdb_nosync,
                          int bdb_autorm,
                          const char *fs_type,
@@ -43,7 +47,7 @@ nsvn_admin_create_repos (void *instance,
 /* Working copy functions. */
 
 int
-nsvn_wc_check_is_wcpath (void *instance,
+nsvn_wc_check_is_wcpath (nsvn_t *instance,
                          const char *wc_path,
                          int *wc_format);
 
@@ -51,16 +55,15 @@ nsvn_wc_check_is_wcpath (void *instance,
 /* Repository functions. */
 
 int
-nsvn_repos_checkout (void *n, const char *repos,
+nsvn_repos_checkout (nsvn_t *instance, const char *repos,
                      const char *path,
-                     const char *pegrev,
                      const char *rev,
                      int non_recurse,
                      int ign_external);
 /* General NaughtySVN functions. */
 
 int
-nsvn_common_parse_revision (void *n,
+nsvn_common_parse_revision (nsvn_t *instance,
                             void *start_rev,
                             void *end_rev,
                             const char *rev_range);

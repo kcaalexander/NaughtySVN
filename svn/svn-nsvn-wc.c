@@ -34,14 +34,13 @@
 #include "svn_time.h"
 
 #include "svn_naughtysvn.h"
-#include "svn-nsvn-private.h"
 
 int
-nsvn_wc_check_is_wcpath (void *n,
+nsvn_wc_check_is_wcpath (nsvn_t *n,
                          const char *wc_path,
                          int *wc_format)
 {
-  naughtysvn_t *nsvn;
+  nsvn_t *nsvn;
   int format;
 
   if (wc_path == NULL)
@@ -50,7 +49,7 @@ nsvn_wc_check_is_wcpath (void *n,
   if (n == NULL)
     nsvn = nsvn_base_init (NULL);
   else
-    nsvn = (naughtysvn_t*) n;
+    nsvn = (nsvn_t*) n;
 
   if (nsvn == NULL)
     return EXIT_FAILURE;
