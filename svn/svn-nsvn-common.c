@@ -32,6 +32,7 @@
 #include "svn_time.h"
 
 #include "svn_naughtysvn.h"
+#include "svn-nsvn-types.h"
 
 #include <stdlib.h>
 

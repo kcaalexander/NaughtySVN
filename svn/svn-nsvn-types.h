@@ -12,9 +12,9 @@
 
 #ifndef SVN_NSVN_PRIVATE_H
 #define SVN_NSVN_PRIVATE_H
-#include <apr_pools.h>
-#include <svn_error.h>
-#include <svn_client.h>
+#include "apr_pools.h"
+#include "svn_error.h"
+#include "svn_client.h"
 
 typedef struct naughtysvn_t {
   svn_error_t *err;

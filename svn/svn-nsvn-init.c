@@ -33,6 +33,7 @@
 #include "svn_time.h"
 
 #include "svn_naughtysvn.h"
+#include "svn-nsvn-types.h"
 
 static int
 nsvn_base__init_apr (void)

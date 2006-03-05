@@ -34,6 +34,7 @@
 #include "svn_time.h"
 
 #include "svn_naughtysvn.h"
+#include "svn-nsvn-types.h"
 
 int
 nsvn_wc_check_is_wcpath (nsvn_t *n,

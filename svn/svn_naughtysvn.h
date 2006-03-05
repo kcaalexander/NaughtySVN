@@ -13,9 +13,6 @@
 #ifndef SVN_NAUGHTYSVN_H
 #define SVN_NAUGHTYSVN_H
 
-#include "svn-nsvn-types.h"
-
-/* ### Use an opaque type like ... */
 typedef struct naughtysvn_t nsvn_t;
 
 /* Initilization and uninitization functions. */
@@ -60,6 +57,8 @@ nsvn_repos_checkout (nsvn_t *instance, const char *repos,
                      const char *rev,
                      int non_recurse,
                      int ign_external);
+
+
 /* General NaughtySVN functions. */
 
 int
