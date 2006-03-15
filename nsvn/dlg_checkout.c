@@ -20,17 +20,26 @@
 #include <glade/glade.h>
 #include <libgnomevfs/gnome-vfs-utils.h>
 
-#include "svn/svn_naughtysvn.h"
+#include "svn/naughtysvn.h"
 #include "global.h"
 
 #define DLG_GLADE_FILE  "naughtysvn.glade"
 #define CO_MAX_URL 10
 #define CO_URLLBL_NAME "checkout_url%d_lbl"
 #define CO_URLENT_NAME "checkout_url%d_ent"
-#define CO_PEGLBL_NAME "checkout_peg%d_lbl"
-#define CO_PEGENT_NAME "checkout_peg%d_ent"
+#define CO_DIRBTN_NAME "checkout_dir%d_btn"
 #define CO_URLADD_NAME "checkout_add_btn"
 #define CO_URLDEL_NAME "checkout_del_btn"
+#define URLADD_EXTRA_DATA "URLADD_EXTRA_DATA"
+
+
+static int
+nsvn__add_url_item (GtkWidget *widget,
+                    GladeXML *user_data);
+
+static int
+nsvn__remove_url_item (GtkWidget *widget,
+                       gpointer user_data);
 
 
 static int
@@ -97,135 +106,96 @@ nsvn__get_revstr (GladeXML *window)
 
 
 static int
-nsvn__checkout_url (GtkWidget *widget,
-                    GladeXML *user_data)
+nsvn__destory_filechooser_window (GtkWidget *widget,
+                                  gpointer user_data)
 {
-  GtkWidget *window;
-  GtkWidget *wcpath_wid;
-  GtkWidget *url_tbl;
-  GtkWidget *wid;
-  unsigned int nrows, i;
-  char *wcpath_name;
-  gboolean nrecurse = FALSE;
-  gboolean ignextn = FALSE;
-  void *nsvn;
-  char *revstr;
-
-  window = glade_xml_get_widget (user_data, "checkout_dialog");
-  wcpath_wid = glade_xml_get_widget (user_data, "checkout_wcpath_ent");
-  url_tbl = glade_xml_get_widget (user_data, "checkout_url_tbl");
-
-  /* Check wc_path. */
-  wcpath_name = (char*) gtk_entry_get_text (GTK_ENTRY (wcpath_wid));
-  wcpath_name = g_strstrip (wcpath_name);
-
-  if ((revstr = nsvn__get_revstr (user_data)) == NULL)
-    revstr = g_strdup ("HEAD");
-
-  /* Check non recurive. */
-  wid = glade_xml_get_widget (user_data, "checkout_nrecurse_chk");
-  nrecurse = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (wid));
-
-  /* Check Ignore externals. */
-  wid = glade_xml_get_widget (user_data, "checkout_ignextn_chk");
-  ignextn = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (wid));
-
-  nrows = GTK_TABLE (url_tbl)->nrows;
-  for (i=1; i<=nrows; i++)
-    {
-      GtkWidget *url_wid;
-      GtkWidget *peg_wid;
-      char widname [25];
-      char *url;
-      char *pegrev;
-
-      nsvn = nsvn_base_init (NULL);
-
-      /* Getting URL. */
-      sprintf (widname, CO_URLENT_NAME, i);
-      url_wid = g_object_get_data (G_OBJECT (window), widname);
-      url = (char*) gtk_entry_get_text (GTK_ENTRY (url_wid));
-      url = g_strstrip (url);
-      /* Do nothing if no urls are supplied. */
-      if (!url[0] && i == 1)
-        return 1;
-
-      /* Getting Peg revision for the corresponding URL. */
-      sprintf (widname, CO_PEGENT_NAME, i);
-      peg_wid = g_object_get_data (G_OBJECT (window), widname);
-      pegrev = (char*) gtk_entry_get_text (GTK_ENTRY (peg_wid));
-      pegrev = g_strstrip (pegrev);
-      if (nsvn_repos_checkout (nsvn, url, wcpath_name,
-                               revstr,
-                               pegrev[0] ? pegrev : "HEAD",
-                               nrecurse,
-                               ignextn) == EXIT_FAILURE)
-        {
-          const char *buttons[] = {"OK", NULL};
-          Show_Msgbox (window, FALSE, "Error",
-                       "Repository creation failed ...",
-                       GNOME_MESSAGE_BOX_ERROR,
-                       buttons);
-        }
-      else
-        gtk_widget_destroy (window);
- 
-
-      nsvn = nsvn_base_uninit (nsvn);
-    }
-
-  g_free (revstr);
-  gtk_widget_destroy (window);
-  g_object_unref (G_OBJECT(user_data));
-  gtk_main_quit ();
+  gtk_widget_hide (GTK_WIDGET(user_data));
   return 0;
 }
 
 
 static int
-nsvn__remove_url_item (GtkWidget *widget,
-                       gpointer user_data)
+nsvn__select_filechooser_window (GtkWidget *widget,
+                                 gpointer user_data)
 {
+  GSList *lst, *item;
   GtkWidget *window;
+  GtkWidget *parent;
   GtkWidget *url_tbl;
-  GtkWidget *wid;
   unsigned int nrows;
-  char wid_name [25];
+  char wid_name[25];
+  char *extra_data;
 
-  window = glade_xml_get_widget (user_data, "checkout_dialog");
+  window = glade_xml_get_widget (user_data, "filechooser_dialog");
+  parent = glade_xml_get_widget (user_data, "checkout_dialog");
   url_tbl = glade_xml_get_widget (user_data, "checkout_url_tbl");
-  nrows = GTK_TABLE (url_tbl)->nrows;
 
-  if (nrows >= 2)
+  extra_data = g_object_get_data (G_OBJECT(window), URLADD_EXTRA_DATA);
+  
+  lst = gtk_file_chooser_get_uris (GTK_FILE_CHOOSER(window));
+  item = lst;
+
+  nrows = atoi (extra_data);
+  while (item != NULL)
     {
-      sprintf (wid_name, CO_URLLBL_NAME, nrows);
-      wid = g_object_get_data (G_OBJECT (window), wid_name);
-      gtk_widget_destroy (wid);
+      GtkWidget *wid;
 
       sprintf (wid_name, CO_URLENT_NAME, nrows);
-      wid = g_object_get_data (G_OBJECT (window), wid_name);
-      gtk_widget_destroy (wid);
-
-      sprintf (wid_name, CO_PEGLBL_NAME, nrows);
-      wid = g_object_get_data (G_OBJECT (window), wid_name);
-      gtk_widget_destroy (wid);
-
-      sprintf (wid_name, CO_PEGENT_NAME, nrows);
-      wid = g_object_get_data (G_OBJECT (window), wid_name);
-      gtk_widget_destroy (wid);
-
-      if (nrows == 2)
+      wid = g_object_get_data (G_OBJECT (parent), wid_name);
+      if (wid)
+        gtk_entry_set_text (GTK_ENTRY (wid), (char*)item->data);
+      item = item->next;
+      if (item != NULL && GTK_TABLE (url_tbl)->nrows == nrows)
         {
-          sprintf (wid_name, CO_URLDEL_NAME);
-          wid = g_object_get_data (G_OBJECT (window), wid_name);
-          gtk_widget_destroy (wid);
+          nsvn__add_url_item (parent, (GladeXML*) user_data);
+          nrows = GTK_TABLE (url_tbl)->nrows;
         }
-
-      gtk_table_resize (GTK_TABLE(url_tbl), nrows-1, 5);
+      else
+        nrows ++;
     }
+  g_slist_free (lst);
 
+  gtk_widget_hide (GTK_WIDGET(window));
   return 0;
 }
+
+
+static int
+nsvn__choose_dir_item (GtkWidget *widget,
+                       GladeXML *user_data)
+{
+  GtkWidget *window;
+  GtkWidget *parent;
+  GtkWidget *cancel;
+  GtkWidget *select;
+  char *extra_data;
+
+  window = glade_xml_get_widget (user_data, "filechooser_dialog");
+  parent = glade_xml_get_widget (user_data, "checkout_dialog");
+  cancel = glade_xml_get_widget (user_data, "filechooser_cancel_btn");
+  select = glade_xml_get_widget (user_data, "filechooser_select_btn");
+
+  extra_data = g_object_get_data (G_OBJECT(widget), URLADD_EXTRA_DATA); 
+  g_object_set_data (G_OBJECT(window), URLADD_EXTRA_DATA, extra_data);
+
+  gtk_window_set_modal (GTK_WINDOW (window), TRUE);
+  gtk_window_set_transient_for (GTK_WINDOW (window),
+                                GTK_WINDOW (parent));
+
+  g_signal_connect (G_OBJECT (window), "delete_event",
+                    G_CALLBACK (gtk_true),
+                    window);
+  g_signal_connect (G_OBJECT (cancel), "clicked",
+                    G_CALLBACK (nsvn__destory_filechooser_window),
+                    window);
+  g_signal_connect (G_OBJECT (select), "clicked",
+                    G_CALLBACK (nsvn__select_filechooser_window),
+                    user_data);
+
+  gtk_widget_show (window);
+  return 0;
+}
+
 
 static int
 nsvn__add_url_item (GtkWidget *widget,
@@ -233,12 +203,13 @@ nsvn__add_url_item (GtkWidget *widget,
 {
   GtkWidget *window;
   GtkWidget *url_tbl;
-  GtkWidget *img_wid;
+  GtkWidget *lbl_wid;
   char url_lbl[10];
   char wid_name[25];
   GtkWidget *wid;
   const char *val = NULL;
   unsigned int nrows;
+  char *extra_data;
 
   window = glade_xml_get_widget (user_data, "checkout_dialog");
   url_tbl = glade_xml_get_widget (user_data, "checkout_url_tbl");
@@ -276,34 +247,35 @@ nsvn__add_url_item (GtkWidget *widget,
                     nrows, nrows+1,
                     (GtkAttachOptions) (GTK_EXPAND | GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
-  /* @ label. */
-  wid = gtk_label_new (_("<b>@</b>"));
-  sprintf (wid_name, CO_PEGLBL_NAME, nrows+1);
+  /* File chooser button. */
+  wid = gtk_button_new ();
+  sprintf (wid_name, CO_DIRBTN_NAME, nrows+1);
   g_object_set_data (G_OBJECT (window), wid_name, wid);
+  extra_data = g_strdup_printf ("%u", nrows+1);
+  g_object_set_data (G_OBJECT (wid), URLADD_EXTRA_DATA, extra_data);
   gtk_widget_show (wid);
   gtk_table_attach (GTK_TABLE (url_tbl), wid, 2, 3,
                     nrows, nrows+1,
-                    (GtkAttachOptions) (0),
+                    (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
-  gtk_label_set_use_markup (GTK_LABEL (wid), TRUE);
-  /* peg text entry. */
-  wid = gtk_entry_new ();
-  sprintf (wid_name, CO_PEGENT_NAME, nrows+1);
-  g_object_set_data (G_OBJECT (window), wid_name, wid);
-  gtk_widget_show (wid);
-  gtk_table_attach (GTK_TABLE (url_tbl), wid, 3, 4,
-                    nrows, nrows+1,
-                    (GtkAttachOptions) (0),
-                    (GtkAttachOptions) (0), 0, 0);
-  gtk_widget_set_size_request (wid, 50, -1);
+  g_signal_connect (G_OBJECT (wid), "clicked",
+                    G_CALLBACK (nsvn__choose_dir_item),
+                    user_data);
+  lbl_wid = gtk_label_new (_("<b>...</b>"));
+  gtk_label_set_use_markup (GTK_LABEL (lbl_wid), TRUE);
+  gtk_widget_show (lbl_wid);
+  gtk_container_add (GTK_CONTAINER (wid), lbl_wid);
 
+  /* URL remove button. */
   if (nrows == 1)
     {
+      GtkWidget *img_wid;
+
       wid = gtk_button_new ();
       sprintf (wid_name, CO_URLDEL_NAME);
       g_object_set_data (G_OBJECT (window), wid_name, wid);
       gtk_widget_show (wid);
-      gtk_table_attach (GTK_TABLE (url_tbl), wid, 4, 5,
+      gtk_table_attach (GTK_TABLE (url_tbl), wid, 3, 4,
                         nrows, nrows+1,
                         (GtkAttachOptions) (GTK_FILL),
                         (GtkAttachOptions) (0), 0, 0);
@@ -313,6 +285,129 @@ nsvn__add_url_item (GtkWidget *widget,
       img_wid = gtk_image_new_from_stock ("gtk-close", GTK_ICON_SIZE_BUTTON);
       gtk_widget_show (img_wid);
       gtk_container_add (GTK_CONTAINER (wid), img_wid);
+    }
+
+  return 0;
+}
+
+
+static int
+nsvn__checkout_url (GtkWidget *widget,
+                    GladeXML *user_data)
+{
+  GtkWidget *window;
+  GtkWidget *wcpath_wid;
+  GtkWidget *url_tbl;
+  GtkWidget *wid;
+  unsigned int nrows, i;
+  char *wcpath_name;
+  gboolean nrecurse = FALSE;
+  gboolean ignextn = FALSE;
+  void *nsvn;
+  char *revstr;
+
+  window = glade_xml_get_widget (user_data, "checkout_dialog");
+  wcpath_wid = glade_xml_get_widget (user_data, "checkout_wcpath_ent");
+  url_tbl = glade_xml_get_widget (user_data, "checkout_url_tbl");
+
+  /* Check wc_path. */
+  wcpath_name = (char*) gtk_entry_get_text (GTK_ENTRY (wcpath_wid));
+  wcpath_name = g_strstrip (wcpath_name);
+
+  if ((revstr = nsvn__get_revstr (user_data)) == NULL)
+    revstr = g_strdup ("HEAD");
+
+  /* Check non recurive. */
+  wid = glade_xml_get_widget (user_data, "checkout_nrecurse_chk");
+  nrecurse = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (wid));
+
+  /* Check Ignore externals. */
+  wid = glade_xml_get_widget (user_data, "checkout_ignextn_chk");
+  ignextn = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (wid));
+
+  nrows = GTK_TABLE (url_tbl)->nrows;
+  for (i=1; i<=nrows; i++)
+    {
+      GtkWidget *url_wid;
+      char widname [25];
+      char *url;
+      char *wcpath;
+      //TODO: Not a good idea to reinit and uninit nsvn library while in loop
+      nsvn = nsvn_base_init (NULL);
+
+      /* Getting URL. */
+      sprintf (widname, CO_URLENT_NAME, i);
+      url_wid = g_object_get_data (G_OBJECT (window), widname);
+      url = (char*) gtk_entry_get_text (GTK_ENTRY (url_wid));
+      url = g_strstrip (url);
+      /* Do nothing if no urls are supplied. */
+      if (!url[0] && i == 1)
+        return 1;
+      if (nrows > 1)
+        wcpath = g_strdup_printf ("%s/%s", wcpath_name,
+                                  g_path_get_basename (url));
+      else
+        wcpath = g_strdup (wcpath_name);
+                                  
+      if (nsvn_repos_checkout (nsvn, url, wcpath,
+                               revstr, nrecurse,
+                               ignextn) == EXIT_FAILURE)
+        {
+          const char *buttons[] = {"OK", NULL};
+          Show_Msgbox (window, FALSE, "Error",
+                       "Repository creation failed ...",
+                       GNOME_MESSAGE_BOX_ERROR,
+                       buttons);
+        }
+      
+      g_free (wcpath);
+      nsvn = nsvn_base_uninit (nsvn);
+    }
+
+  g_free (revstr);
+  gtk_widget_destroy (window);
+  g_object_unref (G_OBJECT(user_data));
+  gtk_main_quit ();
+  return 0;
+}
+
+
+static int
+nsvn__remove_url_item (GtkWidget *widget,
+                       gpointer user_data)
+{
+  GtkWidget *window;
+  GtkWidget *url_tbl;
+  GtkWidget *wid;
+  unsigned int nrows;
+  char wid_name [25];
+
+  window = glade_xml_get_widget (user_data, "checkout_dialog");
+  url_tbl = glade_xml_get_widget (user_data, "checkout_url_tbl");
+  nrows = GTK_TABLE (url_tbl)->nrows;
+
+  if (nrows >= 2)
+    {
+      sprintf (wid_name, CO_URLLBL_NAME, nrows);
+      wid = g_object_get_data (G_OBJECT (window), wid_name);
+      gtk_widget_destroy (wid);
+
+      sprintf (wid_name, CO_URLENT_NAME, nrows);
+      wid = g_object_get_data (G_OBJECT (window), wid_name);
+      gtk_widget_destroy (wid);
+
+      sprintf (wid_name, CO_DIRBTN_NAME, nrows);
+      wid = g_object_get_data (G_OBJECT (window), wid_name);
+      gtk_widget_destroy (wid);
+
+      if (nrows == 2)
+        {
+          sprintf (wid_name, CO_URLDEL_NAME);
+          wid = g_object_get_data (G_OBJECT (window), wid_name);
+          gtk_widget_destroy (wid);
+        }
+
+      gtk_table_resize (GTK_TABLE(url_tbl), nrows-1, 5);
     }
 
   return 0;
@@ -339,11 +434,10 @@ nsvn_dlg_checkout (GtkWidget *widget,
   GtkWidget *cout_btn;
   GtkWidget *cancel_btn;
   GtkWidget *wcpath_ent;
-  GtkWidget *urladd_btn;
-  GtkWidget *url_ent;
   GtkWidget *url_lbl;
-  GtkWidget *peg_ent;
-  GtkWidget *peg_lbl;
+  GtkWidget *url_ent;
+  GtkWidget *urladd_btn;
+  GtkWidget *dir_btn;
   GtkWidget *rad_wid;
   GtkWidget *rel_wid;
 
@@ -367,12 +461,11 @@ nsvn_dlg_checkout (GtkWidget *widget,
   g_object_set_data (G_OBJECT(window), "checkout_url1_lbl", url_lbl);
   url_ent = glade_xml_get_widget (dlg_gui, "checkout_url1_ent");
   g_object_set_data (G_OBJECT(window), "checkout_url1_ent", url_ent);
-  peg_lbl = glade_xml_get_widget (dlg_gui, "checkout_peg1_lbl");
-  g_object_set_data (G_OBJECT(window), "checkout_peg1_lbl", peg_lbl);
-  peg_ent = glade_xml_get_widget (dlg_gui, "checkout_peg1_ent");
-  g_object_set_data (G_OBJECT(window), "checkout_peg1_ent", peg_ent);
   urladd_btn = glade_xml_get_widget (dlg_gui, "checkout_add_btn");
   g_object_set_data (G_OBJECT(window), "checkout_add_btn", urladd_btn);
+  dir_btn = glade_xml_get_widget (dlg_gui, "checkout_dir1_btn");
+  g_object_set_data (G_OBJECT(window), "checkout_dir1_btn", dir_btn);
+  g_object_set_data (G_OBJECT (dir_btn), URLADD_EXTRA_DATA, g_strdup ("1"));
 
   /* Connecting callbacks to widget. */
   g_signal_connect (G_OBJECT (window), "destroy",
@@ -386,6 +479,9 @@ nsvn_dlg_checkout (GtkWidget *widget,
                     dlg_gui);
   g_signal_connect (G_OBJECT (urladd_btn), "clicked",
                     G_CALLBACK (nsvn__add_url_item),
+                    dlg_gui);
+  g_signal_connect (G_OBJECT (dir_btn), "clicked",
+                    G_CALLBACK (nsvn__choose_dir_item),
                     dlg_gui);
 
   /* Connecting signal from revision types. */
