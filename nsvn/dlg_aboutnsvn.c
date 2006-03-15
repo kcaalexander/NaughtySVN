@@ -48,7 +48,8 @@ nsvn_dlg_aboutnsvn (GtkWidget *widget,
   GtkWidget *window;
 
   /* Error-out if supporting glade file missing in default path. */
-  dlg_gui = glade_xml_new (GLADEDIR "/" DLG_GLADE_FILE, NULL, NULL);
+  dlg_gui = glade_xml_new (GLADEDIR "/" DLG_GLADE_FILE,
+                           "about_dialog", NULL);
   if (!dlg_gui)
     {
       g_warning ("Could not find " GLADEDIR "/" DLG_GLADE_FILE "\n");

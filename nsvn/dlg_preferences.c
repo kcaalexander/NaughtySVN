@@ -51,7 +51,8 @@ nsvn_dlg_preferences (GtkWidget *widget,
   GtkWidget *cancel_btn;
 
   /* Error-out if supporting glade file missing in default path. */
-  dlg_gui = glade_xml_new (GLADEDIR "/" DLG_GLADE_FILE, NULL, NULL);
+  dlg_gui = glade_xml_new (GLADEDIR "/" DLG_GLADE_FILE,
+                           "preferences_dialog", NULL);
   if (!dlg_gui)
     {
       g_warning ("Could not find " GLADEDIR "/" DLG_GLADE_FILE "\n");
