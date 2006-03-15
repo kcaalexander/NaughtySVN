@@ -32,7 +32,7 @@
 #include "svn_props.h"
 #include "svn_time.h"
 
-#include "svn_naughtysvn.h"
+#include "naughtysvn.h"
 #include "svn-nsvn-types.h"
 
 static int

@@ -31,7 +31,7 @@
 #include "svn_props.h"
 #include "svn_time.h"
 
-#include "svn_naughtysvn.h"
+#include "naughtysvn.h"
 #include "svn-nsvn-types.h"
 
 #include <stdlib.h>
@@ -76,4 +76,3 @@ nsvn_common_parse_revision (nsvn_t *n,
 
   return EXIT_SUCCESS;
 }
-
