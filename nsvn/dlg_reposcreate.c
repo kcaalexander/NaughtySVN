@@ -20,7 +20,7 @@
 #include <glade/glade.h>
 #include <libgnomevfs/gnome-vfs-utils.h>
 
-#include "svn/svn_naughtysvn.h"
+#include "svn/naughtysvn.h"
 #include "global.h"
 
 #define DLG_GLADE_FILE  "naughtysvn.glade"
@@ -64,7 +64,7 @@ static void
 nsvn__create_repository  (GtkWidget *widget,
                           GladeXML *user_data)
 {
-  void *nsvn;
+  nsvn_t *nsvn;
   GtkWidget *entry;
   GtkWidget *window;
   GtkWidget *fsfs;
@@ -87,7 +87,7 @@ nsvn__create_repository  (GtkWidget *widget,
 
   path = g_object_get_data (G_OBJECT(window), "path");
   txt = gtk_entry_get_text (GTK_ENTRY(entry));
-  if (g_strcasecmp (txt, "") == 0 )
+  if (g_strcasecmp (txt, "") == 0)
     {
       const char *buttons[] = {"OK", NULL};
       Show_Msgbox (window, FALSE, "Error",
@@ -107,11 +107,11 @@ nsvn__create_repository  (GtkWidget *widget,
                             path, NULL);
 
   if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(fsfs)))
-    fs_type = strdup ("fsfs");
+    fs_type = g_strdup ("fsfs");
 
   if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(bdb)))
     { 
-      fs_type = strdup ("bdb");
+      fs_type = g_strdup ("bdb");
       is_sync = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(sync));
       is_logrm = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(logrm));
     }
