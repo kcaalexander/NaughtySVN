@@ -19,7 +19,7 @@
 #include <gtk/gtk.h>
 #include <glade/glade.h>
 
-#include "svn/svn_naughtysvn.h"
+#include "svn/naughtysvn.h"
 #include "global.h"
 
 #define DLG_GLADE_FILE  "naughtysvn.glade"
