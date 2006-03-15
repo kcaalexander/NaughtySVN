@@ -5,7 +5,8 @@
 
 #SVN_CFLAGS=`../svn-config --cflags`
 #SVN_LIBS=`../svn-config --libs`
-APR_CFLAGS =`apr-config --includes`
+APR_CFLAGS =`apr-config --includes --cflags`
+APR_LIBS =`apr-config --libs`
 INCLUDES = \
 	-DPACKAGE_DATA_DIR=\""$(datadir)"\" \
 	-DPACKAGE_LOCALE_DIR=\""$(prefix)/$(DATADIRNAME)/locale"\" \
@@ -16,19 +17,17 @@ INCLUDES = \
         -Wmissing-declarations -pthread -DNEON_ZLIB -DNEON_SSL \
         -DSVN_DEBUG -DAP_DEBUG -Wpointer-arith -Wwrite-strings -Wshadow \
         -I/usr/local/include/subversion-1 \
-        -I/usr/include/neon \
-        $(APR_CFLAGS) \
-        -I/usr/local/BerkeleyDB.4.3/include
+        $(APR_CFLAGS)
 
-svn_naughtysvn_includedir=$(includedir)
+naughtysvn_includedir=$(includedir)
 
-svn_naughtysvn_include_HEADERS=svn_naughtysvn.h
+naughtysvn_include_HEADERS=naughtysvn.h
 
-svn_naughtysvndir = $(libdir)
+naughtysvndir = $(libdir)
 
-svn_naughtysvn_LTLIBRARIES = libsvn-naughtysvn.la
+naughtysvn_LTLIBRARIES = libnaughtysvn.la
 
-libsvn_naughtysvn_la_SOURCES = \
+libnaughtysvn_la_SOURCES = \
         svn-nsvn-types.h \
         svn-nsvn-admin.c \
         svn-nsvn-init.c \
@@ -36,19 +35,14 @@ libsvn_naughtysvn_la_SOURCES = \
         svn-nsvn-repos.c \
         svn-nsvn-common.c
 
-libsvn_naughtysvn_la_LDFLAGS = -module -avoid-version
-libsvn_naughtysvn_la_LIBADD =  /usr/lib/libneon.la \
-                               -L/usr/local/lib \
-                               -L/usr/local/apache2/lib \
-                               -laprutil-0 -lgdbm -ldb-4.3 \
-                               -lexpat -lapr-0 -lrt -lm \
-                               -lcrypt -lnsl  -lpthread \
-                               -ldl -lsvn_client-1 -lsvn_repos-1 \
-                               -lsvn_subr-1 -lsvn_fs-1
+libnaughtysvn_la_LDFLAGS = -module -avoid-version  $(APR_LIBS)
+libnaughtysvn_la_LIBADD = -lgdbm -ldb-4.3 -lexpat \
+                          -lsvn_client-1 -lsvn_repos-1 \
+                          -lsvn_subr-1 -lsvn_fs-1
 
 #pkgconfigdir=$(libdir)/pkgconfig
-#pkgconfig_DATA=libsvn_naughtysvn.pc
+#pkgconfig_DATA=libnaughtysvn.pc
 
 #EXTRA_DIST = \
-#        libsvn_naughtysvn.pc.in
+#        libnaughtysvn.pc.in
 
