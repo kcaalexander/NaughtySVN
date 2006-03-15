@@ -4,12 +4,13 @@ glade_DATA = naughtysvn.glade
 gladedir = $(datadir)/$(PACKAGE_NAME)/glade
 
 pixmap_DATA = pixmaps/user_icon.png
-pixmapdir = $(datadir)/$(PACKAGE_NAME)/glade
+pixmapdir = $(datadir)/$(PACKAGE_NAME)/pixmaps
 
 INCLUDES = \
 	-DPACKAGE_DATA_DIR=\""$(datadir)"\" \
 	-DPACKAGE_LOCALE_DIR=\""$(prefix)/$(DATADIRNAME)/locale"\" \
         -DGLADEDIR=\""$(gladedir)"\" \
+        -DPIXDIR=\""$(pixmapdir)"\" \
 	@PACKAGE_CFLAGS@ \
        -Wall -g \
        -I$(top_builddir)
@@ -30,7 +31,7 @@ naughtysvn_SOURCES = \
 naughtysvn_LDADD = @PACKAGE_LIBS@ \
                    $(INTLLIBS) \
                    -L$(top_builddir)/svn \
-                   -lsvn-naughtysvn
+                   -lnaughtysvn
 
 kill_existing_nautilus=`/usr/bin/pkill -9 nautilus`
 
