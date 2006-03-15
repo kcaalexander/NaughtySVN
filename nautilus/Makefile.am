@@ -1,8 +1,10 @@
 ## Process this file with automake to produce Makefile.in
+pixmapdir = $(datadir)/$(PACKAGE_NAME)/pixmaps
 
 INCLUDES = \
 	-DPACKAGE_DATA_DIR=\""$(datadir)"\" \
 	-DPACKAGE_LOCALE_DIR=\""$(prefix)/$(DATADIRNAME)/locale"\" \
+        -DPIXDIR=\""$(pixmapdir)"\" \
         $(NAUTILUS_CFLAGS) \
         $(PACKAGE_CFLAGS) \
         -I$(top_srcdir) \

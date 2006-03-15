@@ -133,7 +133,7 @@ nsvn_create_menuitem_checkout (NautilusMenuProvider *provider,
   item = nautilus_menu_item_new ("NautilusNSVN::FT_Checkout",
                                  _("NaughtySVN Checkout"),
                                  _("Checkout out a Subversion repository"),
-                                 NULL);
+                                 PIXDIR "/checkout.png");
   g_object_set_data (G_OBJECT (item), "files", file);
   g_signal_connect (item, "activate", G_CALLBACK (nsvn_checkout),
                     provider);
@@ -155,7 +155,7 @@ nsvn_create_menuitem_preferences (NautilusMenuProvider *provider,
   item = nautilus_menu_item_new ("NautilusNSVN::FT_Preferences",
                                  _("NaughtySVN Preferences"),
                                  _("Global  NaughtySVN with preferences"),
-                                 NULL);
+                                 PIXDIR "/preferences-general.png");
   g_signal_connect (item, "activate", G_CALLBACK (nsvn_preferences),
                     provider);
 
@@ -176,7 +176,7 @@ nsvn_create_menuitem_aboutnsvn (NautilusMenuProvider *provider,
   item = nautilus_menu_item_new ("NautilusNSVN::FT_About_Nsvn",
                                  _("About NaughtySVN"),
                                  _("All about NaughtySVN"),
-                                 NULL);
+                                 PIXDIR "/user_icon.png");
   g_signal_connect (item, "activate", G_CALLBACK (nsvn_about_nsvn),
                     provider);
 
@@ -214,9 +214,9 @@ nsvn_create_menuitem_reposcreate (NautilusMenuProvider *provider,
           return NULL;
         }
       item = nautilus_menu_item_new ("NautilusNSVN::FT_Create_Repos",
-                                     _("Create Repository"),
+                                     _("NaughtySVN Create Repository"),
                                      _("Create FSFS/BDB subversion repository"),
-                                     NULL);
+                                     PIXDIR "/create_repos.png");
       g_object_set_data (G_OBJECT (item), "files", file);
       g_signal_connect (item, "activate",
                         G_CALLBACK (nsvn_repos_create),

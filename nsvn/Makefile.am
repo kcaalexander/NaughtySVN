@@ -3,7 +3,10 @@
 glade_DATA = naughtysvn.glade
 gladedir = $(datadir)/$(PACKAGE_NAME)/glade
 
-pixmap_DATA = pixmaps/user_icon.png
+pixmap_DATA = pixmaps/user_icon.png \
+              pixmaps/checkout.png \
+              pixmaps/create_repos.png \
+              pixmaps/preferences-general.png
 pixmapdir = $(datadir)/$(PACKAGE_NAME)/pixmaps
 
 INCLUDES = \
