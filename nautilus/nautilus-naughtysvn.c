@@ -26,8 +26,9 @@
 #include <libnautilus-extension/nautilus-extension-types.h>
 #include <libnautilus-extension/nautilus-file-info.h>
 #include <libnautilus-extension/nautilus-menu-provider.h>
+#include <libnautilus-extension/nautilus-property-page-provider.h>
 #include "nautilus-naughtysvn.h"
-#include "svn/svn_naughtysvn.h"
+#include "svn/naughtysvn.h"
 
 
 static GObjectClass *parent_class;
@@ -346,3 +347,79 @@ nautilus_nsvn_register_type (GTypeModule *module)
                                NAUTILUS_TYPE_MENU_PROVIDER,
                                &menu_provider_iface_info);
 }
+
+#if NSVN_NEW_FEATURE
+static GType nsvn_prop_type = 0;
+df
+GtkWidget *
+nsvn_properties_view_page (const char *location)
+{
+  printf ("Property page location [%s]\n", location);
+  return (gtk_label_new ("This a test"));
+}
+
+
+static GList *
+nsvn_properties_get_pages (NautilusPropertyPageProvider *provider,
+                           GList *files)
+{
+  GList *pages = NULL;
+  NautilusFileInfo *file;
+  char *uri = NULL;
+  GtkWidget *page, *label;
+  NautilusPropertyPage *property_page;
+  guint i;
+  gboolean found = FALSE;
+
+  /* okay, make the page */
+  file = NAUTILUS_FILE_INFO (files->data);
+  uri = nautilus_file_info_get_uri (file);
+  label = gtk_label_new (_("NaughtySVN"));
+  page = nsvn_properties_view_page (uri);
+  property_page = nautilus_property_page_new ("NaughtySVNProperties",
+                                              label, page);
+
+  pages = g_list_prepend (pages, property_page);
+
+  g_free (uri);
+  return pages;
+}
+
+
+static void
+property_page_provider_iface_init (NautilusPropertyPageProviderIface *iface)
+{
+  iface->get_pages = nsvn_properties_get_pages;
+}
+
+
+void
+nautilus_nsvn_prop_register_type (GTypeModule *module)
+{
+  static const GTypeInfo info = {
+              sizeof (GObjectClass),
+              (GBaseInitFunc) NULL,
+              (GBaseFinalizeFunc) NULL,
+              (GClassInitFunc) NULL,
+              NULL,
+              NULL,
+              sizeof (GObject),
+              0,
+              (GInstanceInitFunc) NULL
+  };
+  
+  static const GInterfaceInfo property_page_provider_iface_info = {
+              (GInterfaceInitFunc)property_page_provider_iface_init,
+              NULL,
+              NULL
+  };
+
+  nsvn_prop_type = g_type_module_register_type (module,
+                                                G_TYPE_OBJECT,
+                                                "NaughtySVNProperties",
+                                                &info, 0);
+  g_type_module_add_interface (module, nsvn_prop_type,
+                               NAUTILUS_TYPE_PROPERTY_PAGE_PROVIDER,
+                               &property_page_provider_iface_info);
+}
+#endif
