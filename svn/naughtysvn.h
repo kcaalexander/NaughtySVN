@@ -15,6 +15,9 @@
 
 typedef struct naughtysvn_t nsvn_t;
 
+#define NSVN_FS_TYPE_BDB   SVN_FS_TYPE_BDB
+#define NSVN_FS_TYPE_FSFS  SVN_FS_TYPE_FSFS
+
 /* Initilization and uninitization functions. */
 nsvn_t*
 nsvn_base_init (const char *config_path);
