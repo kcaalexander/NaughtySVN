@@ -24,4 +24,4 @@ libnautilus_naughtysvn_la_SOURCES =     \
 libnautilus_naughtysvn_la_LDFLAGS = -module -avoid-version
 libnautilus_naughtysvn_la_LIBADD  = $(NAUTILUS_LIBS) \
                                     -L$(top_builddir)/svn \
-                                    -lsvn-naughtysvn
+                                    -lnaughtysvn
