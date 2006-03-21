@@ -3,7 +3,7 @@
 
 srcdir=`dirname $0`
 test -z "$srcdir" && srcdir=.
-
+ACLOCAL_FLAGS="-I m4"
 DIE=0
 
 if [ -n "$GNOME2_DIR" ]; then
