@@ -16,7 +16,7 @@ INCLUDES = \
         -g -g -Wall -Wmissing-prototypes -Wstrict-prototypes \
         -Wmissing-declarations -pthread -DNEON_ZLIB -DNEON_SSL \
         -DSVN_DEBUG -DAP_DEBUG -Wpointer-arith -Wwrite-strings -Wshadow \
-        -I/usr/local/include/subversion-1 \
+        $(SVN_CFLAGS) \
         $(APR_CFLAGS)
 
 naughtysvn_includedir=$(includedir)

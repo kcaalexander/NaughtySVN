@@ -32,7 +32,7 @@ AC_DEFUN([AM_CHECK_SVN_HEADER],
   fi
 
   dnl Exportingites of AC_LIB_LINKFLAGS_BODY.
-  SVN_CFLAGS="-I$SVN_INCLUDE/subversion-1"
+  SVN_CFLAGS="-I $SVN_INCLUDE/subversion-1"
   AC_SUBST(SVN_CFLAGS)
 ])
 
