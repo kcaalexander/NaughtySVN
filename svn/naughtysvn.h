@@ -61,6 +61,14 @@ nsvn_wc_add (nsvn_t *instance,
              int no_autoprops);
 
 
+int
+nsvn_wc_propset (nsvn_t *instance,
+                 const char *wc_path,
+                 const char *propname,
+                 const char *propval,
+                 int recurse,
+                 int skip_check);
+
 
 /* Repository functions. */
 

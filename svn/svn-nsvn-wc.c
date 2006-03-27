@@ -112,3 +112,52 @@ nsvn_wc_add (nsvn_t *instance,
   return EXIT_SUCCESS;
 }
 
+
+int
+nsvn_wc_propset (nsvn_t *instance,
+                 const char *wc_path,
+                 const char *propname,
+                 const char *propval,
+                 int recurse,
+                 int skip_check)
+{
+  nsvn_t *nsvn;
+  const svn_string_t *svn_propval = NULL;
+  const char *propval_utf8;
+
+  if (instance == NULL)
+    nsvn = nsvn_base_init (NULL);
+  else
+    nsvn = instance;
+
+  if (nsvn == NULL)
+    return EXIT_FAILURE;
+
+  nsvn->err = svn_utf_cstring_to_utf8 (&propval_utf8, propval,
+                                       nsvn->pool);
+  if (nsvn->err)
+    {
+      if (instance == NULL)
+        nsvn = nsvn_base_uninit (nsvn);
+      return EXIT_FAILURE;
+    }
+
+  if (propval)
+    svn_propval = svn_string_create (propval_utf8, nsvn->pool);
+
+  nsvn->err = svn_client_propset2 (propname, svn_propval, wc_path,
+                                   recurse, skip_check, nsvn->ctx,
+                                   nsvn->pool);
+
+  if (nsvn->err)
+    {
+      if (instance == NULL)
+        nsvn = nsvn_base_uninit (nsvn);
+      return EXIT_FAILURE;
+    }
+
+  if (instance == NULL)
+    nsvn = nsvn_base_uninit (nsvn);
+
+  return EXIT_SUCCESS;
+}
