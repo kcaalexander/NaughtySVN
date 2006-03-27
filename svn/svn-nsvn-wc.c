@@ -74,3 +74,41 @@ nsvn_wc_check_is_wcpath (nsvn_t *n,
 
   return EXIT_SUCCESS;
 }
+
+
+int
+nsvn_wc_add (nsvn_t *instance,
+             const char *path,
+             int nonrecurse,
+             int force,
+             int no_ignore,
+             int autoprops,
+             int no_autoprops)
+{
+  nsvn_t *nsvn;
+
+  if (instance == NULL)
+    nsvn = nsvn_base_init (NULL);
+  else
+    nsvn = (nsvn_t*) instance;
+
+  if (nsvn == NULL)
+    return EXIT_FAILURE;
+
+  nsvn->err = svn_client_add3 (path, (! nonrecurse),
+                               force, no_ignore,
+                               nsvn->ctx, nsvn->pool);
+
+  if (nsvn->err)
+    {
+      if (instance == NULL)
+        nsvn = nsvn_base_uninit (nsvn);
+      return EXIT_FAILURE;
+    }
+
+  if (instance == NULL)
+    nsvn = nsvn_base_uninit (nsvn);
+
+  return EXIT_SUCCESS;
+}
+

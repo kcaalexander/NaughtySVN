@@ -51,6 +51,16 @@ nsvn_wc_check_is_wcpath (nsvn_t *instance,
                          const char *wc_path,
                          int *wc_format);
 
+int
+nsvn_wc_add (nsvn_t *instance,
+             const char *path,
+             int non_recurse,
+             int force,
+             int no_ignore,
+             int autoprops,
+             int no_autoprops);
+
+
 
 /* Repository functions. */
 
