@@ -161,3 +161,135 @@ nsvn_wc_propset (nsvn_t *instance,
 
   return EXIT_SUCCESS;
 }
+
+
+int
+nsvn_wc_commit (nsvn_t *instance,
+                const char **target_list,
+                int recurse,
+                int keep_locks)
+{
+  nsvn_t *nsvn;
+//  const char *target_utf8;
+  unsigned int i = 0;
+  apr_array_header_t *target = NULL;
+  svn_commit_info_t *commit_info = NULL;
+
+  if (instance == NULL)
+    nsvn = nsvn_base_init (NULL);
+  else
+    nsvn = instance;
+
+  if (nsvn == NULL)
+    return EXIT_FAILURE;
+
+  while (target_list[i] != NULL)
+    {
+      //TODO: Target should be in UTF-8
+      svn_cstring_split_append (target, target_list[i],
+                                "", TRUE, nsvn->pool);
+      i++;
+    }
+
+  nsvn->err = svn_client_commit3 (&commit_info,
+                                  target, recurse,
+                                  keep_locks,
+                                  nsvn->ctx,
+                                  nsvn->pool);
+
+  if (nsvn->err)
+    {
+      if (instance == NULL)
+        nsvn = nsvn_base_uninit (nsvn);
+      return EXIT_FAILURE;
+    }
+
+  return EXIT_SUCCESS;
+}
+
+
+int
+nsvn_wc_info (nsvn_t *instance,
+              const char *path,
+              const char *rev,
+              void *callback,
+              void *callback_data,
+              int recurse)
+{
+  nsvn_t *nsvn;
+  svn_opt_revision_t peg_rev;
+  svn_opt_revision_t revision;
+  const char *truepath;
+
+  if (instance == NULL)
+    nsvn = nsvn_base_init (NULL);
+  else
+    nsvn = instance;
+
+  nsvn_common_parse_revision (nsvn, &revision, NULL, rev ? rev : "HEAD");
+  nsvn->err = svn_opt_parse_path (&peg_rev, &truepath, path, nsvn->pool);
+
+  if (!nsvn->err)
+    {
+      if ((svn_path_is_url(path))
+          && (peg_rev.kind == svn_opt_revision_unspecified))
+        peg_rev.kind = svn_opt_revision_head;
+
+      nsvn->err = svn_client_info (path, &peg_rev, &revision,
+                                   callback, callback_data,
+                                   recurse, nsvn->ctx, nsvn->pool);
+    }
+
+  if (nsvn->err)
+    {
+      if (instance == NULL)
+        nsvn = nsvn_base_uninit (nsvn);
+      return EXIT_FAILURE;
+    }
+
+  if (instance == NULL)
+    nsvn = nsvn_base_uninit (nsvn);
+
+  return EXIT_SUCCESS;
+}
+
+
+int
+nsvn_wc_status (nsvn_t *instance,
+                const char *path,
+                void *callback,
+                void *callback_data,
+                int recurse,
+                int verbose,
+                int update,
+                int no_ignore,
+                int ignore_externals)
+{
+  nsvn_t *nsvn;
+  svn_opt_revision_t rev;
+  svn_revnum_t repos_rev = SVN_INVALID_REVNUM;
+
+  if (instance == NULL)
+    nsvn = nsvn_base_init (NULL);
+  else
+    nsvn = instance;
+
+  rev.kind = svn_opt_revision_head;
+
+  nsvn->err = svn_client_status2 (&repos_rev, path, &rev,
+                                  callback, callback_data,
+                                  recurse, verbose, update,
+                                  no_ignore, ignore_externals,
+                                  nsvn->ctx, nsvn->pool);
+  if (nsvn->err)
+    {
+      if (instance == NULL)
+        nsvn = nsvn_base_uninit (nsvn);
+      return EXIT_FAILURE;
+    }
+
+  if (instance == NULL)
+    nsvn = nsvn_base_uninit (nsvn);
+
+  return EXIT_SUCCESS;
+}

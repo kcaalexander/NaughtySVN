@@ -107,6 +107,9 @@ nsvn_base_init (const char *config_dir)
   if (nsvn->err)
     return nsvn_base_uninit (nsvn);
 
+  nsvn->cfg = apr_hash_get(nsvn->ctx->config, SVN_CONFIG_CATEGORY_CONFIG,
+                           APR_HASH_KEY_STRING);
+
   return nsvn;
 }
 
@@ -153,3 +156,104 @@ nsvn_base_clear (nsvn_t *nsvn)
 
   return nsvn;
 }
+
+nsvn_t*
+nsvn_base_setup_auth (nsvn_t *instance,
+                      const char *username,
+                      const char *password,
+                      int non_interactive,
+                      int no_auth_cache)
+{
+  if (!instance)
+    return NULL;
+
+  instance->err = svn_cmdline_setup_auth_baton(
+                     &instance->ctx->auth_baton,
+                     non_interactive, username,
+                     password, instance->config_dir,
+                     no_auth_cache, instance->cfg,
+                     instance->ctx->cancel_func,
+                     instance->ctx->cancel_baton,
+                     instance->pool);
+  if (instance->err)
+    instance->ctx->auth_baton = NULL;
+
+  return instance;
+}
+
+nsvn_t*
+nsvn_base_setup_cancel (nsvn_t *instance,
+                        //svn_cancel_func_t cancel_func,
+                        void *cancel_func,
+                        void *cancel_baton)
+{
+  if (!instance)
+    return NULL;
+  instance->ctx->cancel_func = cancel_func;
+  instance->ctx->cancel_baton = cancel_baton;
+
+  return instance;
+}
+
+nsvn_t*
+nsvn_base_setup_notify (nsvn_t *instance,
+                        //svn_wc_notify_func2_t notify_func,
+                        void *notify_func,
+                        void *notify_baton)
+{
+  if (!instance)
+    return NULL;
+  instance->ctx->notify_func2 = notify_func;
+  instance->ctx->notify_baton2 = notify_baton;
+
+  return instance;
+}
+
+nsvn_t*
+nsvn_base_setup_log (nsvn_t *instance,
+                     //svn_client_get_commit_log2_t log_func,
+                     void *log_func,
+                     void *log_baton)
+{
+  if (!instance)
+    return NULL;
+  instance->ctx->log_msg_func2 = log_func;
+  instance->ctx->log_msg_baton2 = log_baton;
+
+  return instance;
+}
+
+nsvn_t*
+nsvn_base_setup_progress (nsvn_t *instance,
+                          //svn_ra_progress_notify_func_t progress_func,
+                          void *progress_func,
+                          void *progress_baton)
+{
+  if (!instance)
+    return NULL;
+  instance->ctx->progress_func = progress_func;
+  instance->ctx->progress_baton = progress_baton;
+
+  return instance;
+}
+
+#if 0
+nsvn_t*
+nsvn_base_setup (nsvn_t *instance,
+                 const char *user_name,
+                 const char *password,
+                 int non_interactive,
+                 int no_auth_cache,
+                 svn_cancel_func_t cancel_func,
+                 void *cancel_baton,
+                 svn_wc_notify_func2_t notify_func,
+                 void *notify_baton,
+                 svn_client_get_commit_log2_t log_func,
+                 void *log_baton,
+                 svn_ra_progress_notify_func_t progress_func,
+                 void *progress_baton)
+{
+
+  return instance;
+}
+#endif
