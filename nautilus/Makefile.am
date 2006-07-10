@@ -1,10 +1,12 @@
 ## Process this file with automake to produce Makefile.in
-pixmapdir = $(datadir)/$(PACKAGE_NAME)/pixmaps
+glade_DATA = ../nsvn/naughtysvn.glade
+gladedir = $(datadir)/$(PACKAGE_NAME)/glade
 
 INCLUDES = \
 	-DPACKAGE_DATA_DIR=\""$(datadir)"\" \
 	-DPACKAGE_LOCALE_DIR=\""$(prefix)/$(DATADIRNAME)/locale"\" \
-        -DPIXDIR=\""$(pixmapdir)"\" \
+        -DGLADEDIR=\""$(gladedir)"\" \
+        -DPIXDIR=\""$(datadir)/$(PACKAGE_NAME)/pixmaps"\" \
         $(NAUTILUS_CFLAGS) \
         $(PACKAGE_CFLAGS) \
         -I$(top_srcdir) \
@@ -25,3 +27,5 @@ libnautilus_naughtysvn_la_LDFLAGS = -module -avoid-version
 libnautilus_naughtysvn_la_LIBADD  = $(NAUTILUS_LIBS) \
                                     -L$(top_builddir)/svn \
                                     -lnaughtysvn
+EXTRA_DIST =    \
+        $(glade_DATA)
