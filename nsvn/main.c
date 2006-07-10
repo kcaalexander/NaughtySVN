@@ -23,6 +23,8 @@ static const nsvn_command commands_list[] = {
   {"CMD=about_nsvn", nsvn_dlg_aboutnsvn},
   {"CMD=preferences", nsvn_dlg_preferences},
   {"CMD=checkout", nsvn_dlg_checkout},
+  {"CMD=add", nsvn_dlg_add},
+  {"CMD=commit", nsvn_dlg_commit},
   {NULL, NULL}
 };
 
@@ -61,7 +63,7 @@ and is not expected to be called from command line\n");
         }
       i = i + 1;
     }
-    
+
   if (found)
     gtk_main ();
 

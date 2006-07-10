@@ -18,6 +18,8 @@
 #include "dlg_aboutnsvn.h"
 #include "dlg_preferences.h"
 #include "dlg_checkout.h"
+#include "dlg_add.h"
+#include "dlg_commit.h"
 
 typedef gboolean
 (*nsvn_command_func_t) (GtkWidget *widget,
