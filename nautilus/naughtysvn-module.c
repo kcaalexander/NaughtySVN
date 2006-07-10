@@ -21,6 +21,8 @@
 #include "nautilus-naughtysvn.h"
 #include <stdlib.h>
 
+#include <glade/glade.h>
+
 
 /* Nautilus extension interface. */
 void
@@ -49,6 +51,7 @@ nautilus_module_list_types (const GType **types,
   static GType type_list[1];
 
   type_list[0] = NAUTILUS_TYPE_NSVN;
+//  type_list[1] = NAUTILUS_TYPE_PROP_NSVN;
   *types = type_list;
-  *num_types = 1;
+  *num_types = G_N_ELEMENTS (type_list);
 }

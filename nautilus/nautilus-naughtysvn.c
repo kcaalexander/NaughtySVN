@@ -30,8 +30,39 @@
 #include "nautilus-naughtysvn.h"
 #include "svn/naughtysvn.h"
 
+#if NSVN_NEW_FEATURE
+#include <gtk/gtk.h>
+#include <glade/glade.h>
+
+#define DLG_GLADE_FILE  "naughtysvn.glade"
+
+#endif
 
 static GObjectClass *parent_class;
+
+
+static void
+nsvn_commit (NautilusMenuItem *item,
+             gpointer user_data)
+{
+  GString *cmd;
+
+  cmd = g_string_new ("naughtysvn MID=NSVN CMD=commit");
+  g_spawn_command_line_async (cmd->str, NULL);
+  g_string_free (cmd, TRUE);
+}
+
+
+static void
+nsvn_add (NautilusMenuItem *item,
+          gpointer user_data)
+{
+  GString *cmd;
+
+  cmd = g_string_new ("naughtysvn MID=NSVN CMD=add");
+  g_spawn_command_line_async (cmd->str, NULL);
+  g_string_free (cmd, TRUE);
+}
 
 
 static void
@@ -99,6 +130,56 @@ nsvn_repos_create (NautilusMenuItem *item,
   g_string_free (cmd, TRUE);
   g_free (path);
   g_free (uri);
+}
+
+
+static GList*
+nsvn_create_menuitem_commit (NautilusMenuProvider *provider,
+                             GtkWidget *widget,
+                             GList *files,
+                             GList *items)
+{
+  NautilusMenuItem *item = NULL;
+
+  if (!files)// && files->next != NULL)
+    return NULL;
+
+  item = nautilus_menu_item_new ("NautilusNSVN::FT_Commit",
+           _("NaughtySVN Commit"),
+           _("Make permanent changes in Subversion repository"),
+           PIXDIR "/commit.png");
+//  g_object_set_data (G_OBJECT (item), "files", file);
+  g_signal_connect (item, "activate", G_CALLBACK (nsvn_commit),
+                    provider);
+
+  items = g_list_append (items, item);
+
+  return items;
+}
+
+
+static GList*
+nsvn_create_menuitem_add (NautilusMenuProvider *provider,
+                          GtkWidget *widget,
+                          GList *files,
+                          GList *items)
+{
+  NautilusMenuItem *item = NULL;
+
+  if (!files)// && files->next != NULL)
+    return NULL;
+
+  item = nautilus_menu_item_new ("NautilusNSVN::FT_Add",
+                                 _("NaughtySVN Add"),
+                                 _("Add a unversioned item to Subversion"),
+                                 PIXDIR "/add.png");
+//  g_object_set_data (G_OBJECT (item), "files", file);
+  g_signal_connect (item, "activate", G_CALLBACK (nsvn_add),
+                    provider);
+
+  items = g_list_append (items, item);
+
+  return items;
 }
 
 
@@ -281,6 +362,10 @@ nautilus_nsvn_get_file_items (NautilusMenuProvider *provider,
                                             files, items);
   items = nsvn_create_menuitem_checkout (provider, widget,
                                          files, items);
+  items = nsvn_create_menuitem_add (provider, widget,
+                                    files, items);
+  items = nsvn_create_menuitem_commit (provider, widget,
+                                       files, items);
   return items;
 }
 
@@ -350,12 +435,32 @@ nautilus_nsvn_register_type (GTypeModule *module)
 
 #if NSVN_NEW_FEATURE
 static GType nsvn_prop_type = 0;
-df
+
+GType
+nautilus_nsvn_get_prop_type (void)
+{
+  return nsvn_prop_type;
+}
+
+
 GtkWidget *
 nsvn_properties_view_page (const char *location)
 {
+  GtkWidget *vbox;
+  GladeXML *dlg_gui;
+
+  dlg_gui = glade_xml_new (GLADEDIR "/" DLG_GLADE_FILE, "Testing_vbox", NULL);
+  if (!dlg_gui)
+    {
+      g_warning ("Could not find " GLADEDIR "/" DLG_GLADE_FILE "\n");
+      return NULL;
+    }
+
+  /* Getting Widgets in repository creation dialog. */
+  vbox = glade_xml_get_widget (dlg_gui, "Testing_vbox");
+
   printf ("Property page location [%s]\n", location);
-  return (gtk_label_new ("This a test"));
+  return (vbox);
 }
 
 
@@ -366,7 +471,7 @@ nsvn_properties_get_pages (NautilusPropertyPageProvider *provider,
   GList *pages = NULL;
   NautilusFileInfo *file;
   char *uri = NULL;
-  GtkWidget *page, *label;
+  GtkWidget *page = NULL, *label;
   NautilusPropertyPage *property_page;
   guint i;
   gboolean found = FALSE;
@@ -376,11 +481,13 @@ nsvn_properties_get_pages (NautilusPropertyPageProvider *provider,
   uri = nautilus_file_info_get_uri (file);
   label = gtk_label_new (_("NaughtySVN"));
   page = nsvn_properties_view_page (uri);
+  if (page == NULL)
+    goto go;
   property_page = nautilus_property_page_new ("NaughtySVNProperties",
                                               label, page);
 
   pages = g_list_prepend (pages, property_page);
-
+go:
   g_free (uri);
   return pages;
 }

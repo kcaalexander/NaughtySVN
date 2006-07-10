@@ -21,6 +21,8 @@ G_BEGIN_DECLS
 #define NAUTILUS_NSVN(o)    (G_TYPE_CHECK_INSTANCE_CAST ((o), NAUTILUS_TYPE_NSVN, NautilusNSVN))
 #define NAUTILUS_IS_NSVN(o) (G_TYPE_CHECK_INSTANCE_TYPE ((o), NAUTILUS_TYPE_NSVN))
 
+#define NAUTILUS_TYPE_PROP_NSVN  (nautilus_nsvn_get_prop_type ())
+
 typedef struct _NautilusNSVN      NautilusNSVN;
 typedef struct _NautilusNSVNClass NautilusNSVNClass;
 
@@ -36,6 +38,11 @@ struct _NautilusNSVNClass
 
 GType nautilus_nsvn_get_type      (void);
 void  nautilus_nsvn_register_type (GTypeModule *module);
+
+#if NSVN_NEW_FEATURE
+GType nautilus_nsvn_get_prop_type (void);
+void nautilus_nsvn_prop_register_type (GTypeModule *module);
+#endif
 
 G_END_DECLS
 
