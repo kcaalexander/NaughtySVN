@@ -1,0 +1,9 @@
+
+
+ Emblems Specification
+ ---------------------
+
+ * Keyword should be in UTF8 and can contain alpha numeric and space.
+ * Keyword should not be symbolic-link, noread, nowrite, trash, note, desktop,
+   these list are all reserved names.
+   
