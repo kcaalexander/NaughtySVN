@@ -7,27 +7,37 @@ ACLOCAL_AMFLAGS = -I m4
 EXTRA_DIST = \
 	autogen.sh
 
-install-data-local:
-	@$(NORMAL_INSTALL)
-	if test -d $(srcdir)/pixmaps; then \
-	  $(mkinstalldirs) $(DESTDIR)$(datadir)/pixmaps/$(PACKAGE); \
-	  for pixmap in $(srcdir)/pixmaps/*; do \
-	    if test -f $$pixmap; then \
-	      $(INSTALL_DATA) $$pixmap $(DESTDIR)$(datadir)/pixmaps/$(PACKAGE); \
-	    fi \
-	  done \
-	fi
-
 dist-hook:
-	if test -d pixmaps; then \
-	  mkdir $(distdir)/pixmaps; \
+	if test -d $(srcdir)/pixmaps; then \
+	  mkdir $(datadir)/$(PACKAGE_NAME)/pixmaps; \
 	  for pixmap in pixmaps/*; do \
 	    if test -f $$pixmap; then \
-	      cp -p $$pixmap $(distdir)/pixmaps; \
+	      cp -p $$pixmap $(datadir)/$(PACKAGE_NAME)/pixmaps; \
 	    fi \
 	  done \
 	fi
 
+uninstall-local:
+	if test -d $(DESTDIR)$(datadir)/$(PACKAGE); then \
+	  rm -rf "$(DESTDIR)$(datadir)/$(PACKAGE)"; \
+	fi
+	if test -d $(datadir)/$(PACKAGE_NAME); then \
+	  rm -rf "$(datadir)/$(PACKAGE_NAME)"; \
+	fi
+	pkill -9 nautilus
+
+install-data-local:
+	if test -d $(srcdir)/pixmaps; then \
+	  mkdir $(datadir)/$(PACKAGE_NAME)/pixmaps; \
+	  for pixmap in pixmaps/*; do \
+	    if test -f $$pixmap; then \
+	      cp -p $$pixmap $(datadir)/$(PACKAGE_NAME)/pixmaps; \
+	    fi \
+	  done \
+	fi
+
+install-exec-local:
+	pkill -9 nautilus
 #spec = naughtysvn.spec
 
 #EXTRA_DIST = $(spec) $(spec).in autogen.sh naughtysvn.pc.in
