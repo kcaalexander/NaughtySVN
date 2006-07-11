@@ -23,6 +23,7 @@ Table of Contents
   - Overview
   - Expected Features and its Status
   - Architecture and Design
+  - Directory Layout
   - Dependencies
   - Building & Installing
   - What happens while installing
@@ -107,6 +108,32 @@ Architecture and Design
 -----------------------
 
 See ./notes/arch for more details
+
+
+----------------
+Directory Layout
+----------------
+
+doc/
+   User and Developer documentation build using doxygen.
+m4/
+   Custom GNU build system macro processors.
+notes/
+   Developers docs and scribbling location.
+packages/
+   Stuff to help packaging systems, like rpm and dpkg.
+pixmaps/
+   Images for GUI.
+po/
+   Translatable strings for Multi-language support.
+www/
+   NaughtySVN home page, live content at www.naughtysvn.org
+nautilus/
+   Integration with Nautilus.
+nsvn/
+   User interface and GUI's
+svn/
+   NaughtySVN Subversion binding API.
 
 
 ------------
