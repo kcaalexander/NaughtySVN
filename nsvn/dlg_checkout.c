@@ -168,7 +168,10 @@ nsvn__choose_dir_item (GtkWidget *widget,
   GtkWidget *parent;
   GtkWidget *cancel;
   GtkWidget *select;
+  GtkWidget *urlwid;
   char *extra_data;
+  char *url;
+  char widname[25];
 
   window = glade_xml_get_widget (user_data, "filechooser_dialog");
   parent = glade_xml_get_widget (user_data, "checkout_dialog");
@@ -177,6 +180,15 @@ nsvn__choose_dir_item (GtkWidget *widget,
 
   extra_data = g_object_get_data (G_OBJECT(widget), URLADD_EXTRA_DATA); 
   g_object_set_data (G_OBJECT(window), URLADD_EXTRA_DATA, extra_data);
+
+  /* Reading given URL and making it the default top-level directory. */
+  sprintf (widname, CO_URLENT_NAME, atoi(extra_data));
+  urlwid = g_object_get_data (G_OBJECT (parent), widname);
+  url = (char*) gtk_entry_get_text (GTK_ENTRY (urlwid));
+  url = g_strstrip (url);
+  if (url[0] !='\0')
+    gtk_file_chooser_set_uri (GTK_FILE_CHOOSER(window),
+                              url);
 
   gtk_window_set_modal (GTK_WINDOW (window), TRUE);
   gtk_window_set_transient_for (GTK_WINDOW (window),
