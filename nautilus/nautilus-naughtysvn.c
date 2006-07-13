@@ -30,13 +30,11 @@
 #include "nautilus-naughtysvn.h"
 #include "svn/naughtysvn.h"
 
-#if NSVN_NEW_FEATURE
 #include <gtk/gtk.h>
 #include <glade/glade.h>
 
 #define DLG_GLADE_FILE  "naughtysvn.glade"
 
-#endif
 
 static GObjectClass *parent_class;
 
@@ -433,7 +431,6 @@ nautilus_nsvn_register_type (GTypeModule *module)
                                &menu_provider_iface_info);
 }
 
-#if NSVN_NEW_FEATURE
 static GType nsvn_prop_type = 0;
 
 GType
@@ -446,10 +443,10 @@ nautilus_nsvn_get_prop_type (void)
 GtkWidget *
 nsvn_properties_view_page (const char *location)
 {
-  GtkWidget *vbox;
+  GtkWidget *page;
   GladeXML *dlg_gui;
 
-  dlg_gui = glade_xml_new (GLADEDIR "/" DLG_GLADE_FILE, "Testing_vbox", NULL);
+  dlg_gui = glade_xml_new (GLADEDIR "/" DLG_GLADE_FILE, "property_page", NULL);
   if (!dlg_gui)
     {
       g_warning ("Could not find " GLADEDIR "/" DLG_GLADE_FILE "\n");
@@ -457,10 +454,10 @@ nsvn_properties_view_page (const char *location)
     }
 
   /* Getting Widgets in repository creation dialog. */
-  vbox = glade_xml_get_widget (dlg_gui, "Testing_vbox");
+  page = glade_xml_get_widget (dlg_gui, "property_page");
 
   printf ("Property page location [%s]\n", location);
-  return (vbox);
+  return (page);
 }
 
 
@@ -473,8 +470,6 @@ nsvn_properties_get_pages (NautilusPropertyPageProvider *provider,
   char *uri = NULL;
   GtkWidget *page = NULL, *label;
   NautilusPropertyPage *property_page;
-  guint i;
-  gboolean found = FALSE;
 
   /* okay, make the page */
   file = NAUTILUS_FILE_INFO (files->data);
@@ -529,4 +524,3 @@ nautilus_nsvn_prop_register_type (GTypeModule *module)
                                NAUTILUS_TYPE_PROPERTY_PAGE_PROVIDER,
                                &property_page_provider_iface_info);
 }
-#endif

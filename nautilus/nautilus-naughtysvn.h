@@ -39,10 +39,8 @@ struct _NautilusNSVNClass
 GType nautilus_nsvn_get_type      (void);
 void  nautilus_nsvn_register_type (GTypeModule *module);
 
-#if NSVN_NEW_FEATURE
 GType nautilus_nsvn_get_prop_type (void);
 void nautilus_nsvn_prop_register_type (GTypeModule *module);
-#endif
 
 G_END_DECLS
 

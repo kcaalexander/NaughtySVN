@@ -31,9 +31,9 @@ nsvn__verify_log_tab (GladeXML *dlg_gui,
                       GtkWidget *window,
                       GConfClient *client)
 {
-  GtkWidget *widget;
-  void *value;
-  const char *buttons[] = {"OK", NULL};
+  //GtkWidget *widget;
+  //void *value;
+  //const char *buttons[] = {"OK", NULL};
 
   return TRUE;
 }

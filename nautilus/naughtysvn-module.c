@@ -29,9 +29,7 @@ void
 nautilus_module_initialize (GTypeModule *module)
 {
   nautilus_nsvn_register_type (module);
-  #if NSVN_NEW_FEATURE
   nautilus_nsvn_prop_register_type (module);
-  #endif
   /* Set up translation. */
   bindtextdomain (GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR);
   bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
@@ -48,10 +46,11 @@ void
 nautilus_module_list_types (const GType **types,
                             int *num_types)
 {
-  static GType type_list[1];
+  static GType type_list[2];
 
   type_list[0] = NAUTILUS_TYPE_NSVN;
-//  type_list[1] = NAUTILUS_TYPE_PROP_NSVN;
+  type_list[1] = NAUTILUS_TYPE_PROP_NSVN;
+
   *types = type_list;
   *num_types = G_N_ELEMENTS (type_list);
 }
