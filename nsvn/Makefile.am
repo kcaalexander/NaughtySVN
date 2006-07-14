@@ -11,7 +11,9 @@ INCLUDES = \
         -DPIXDIR=\""$(datadir)/$(PACKAGE_NAME)/pixmaps"\" \
 	@PACKAGE_CFLAGS@ \
        -Wall -g \
-       -I$(top_builddir)
+       -I$(top_builddir) \
+        $(SVN_CFLAGS) \
+        $(APR_CFLAGS)
 #        -DGLADEDIR=\""."\"
 
 bin_PROGRAMS = naughtysvn
@@ -38,10 +40,10 @@ schema_DATA = naughtysvn.schemas
 
 install-data-local:
 	GCONF_CONFIG_SOURCE=$(GCONF_SCHEMA_CONFIG_SOURCE) $(GCONFTOOL) --makefile-install-rule $(srcdir)/$(schema_DATA)
-	pkill -9 gconfd
+	$(PKILLTOOL) -9 gconfd
 uninstall-local:
 	GCONF_CONFIG_SOURCE=$(GCONF_SCHEMA_CONFIG_SOURCE) $(GCONFTOOL) --makefile-uninstall-rule $(srcdir)/$(schema_DATA)
-	pkill -9 gconfd
+	$(PKILLTOOL) -9 gconfd
 
 EXTRA_DIST =    \
         $(glade_DATA) \
