@@ -5,8 +5,8 @@
 
 #SVN_CFLAGS=`../svn-config --cflags`
 #SVN_LIBS=`../svn-config --libs`
-APR_CFLAGS =`apr-config --includes --cflags`
-APR_LIBS =`apr-config --libs`
+APR_CFLAGS =`$(APRCONFIGTOOL) --includes --cflags`
+APR_LIBS =`$(APRCONFIGTOOL) --libs`
 INCLUDES = \
 	-DPACKAGE_DATA_DIR=\""$(datadir)"\" \
 	-DPACKAGE_LOCALE_DIR=\""$(prefix)/$(DATADIRNAME)/locale"\" \
@@ -36,7 +36,7 @@ libnaughtysvn_la_SOURCES = \
         svn-nsvn-common.c
 
 libnaughtysvn_la_LDFLAGS = -module -avoid-version  $(APR_LIBS)
-libnaughtysvn_la_LIBADD = -lgdbm -ldb-4.3 -lexpat \
+libnaughtysvn_la_LIBADD = -lexpat \
                           -lsvn_client-1 -lsvn_repos-1 \
                           -lsvn_subr-1 -lsvn_fs-1
 
