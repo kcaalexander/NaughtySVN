@@ -3,9 +3,9 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
 
-Name: libsvn-naughtysvn
+Name: libnaughtysvn
 Description: A library developed for NaughtySVN to interact with Subversion.
 Version: @VERSION@
-Requires: neon apr+-0.9 aprutil+-0.9 gdbm db+-4.3
-Libs: -L${libdir} -lsvn_naughtysvn
+Requires: subversion neon apr+-0.9 aprutil+-0.9 expat
+Libs: -L${libdir} -lnaughtysvn
 Cflags: -I${includedir}
