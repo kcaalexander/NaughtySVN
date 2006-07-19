@@ -19,7 +19,6 @@
 #include <libnautilus-extension/nautilus-property-page-provider.h>
 #include <glib/gi18n-lib.h>
 #include "nautilus-naughtysvn.h"
-#include <stdlib.h>
 
 #include <glade/glade.h>
 
@@ -48,8 +47,8 @@ nautilus_module_list_types (const GType **types,
 {
   static GType type_list[2];
 
-  type_list[0] = NAUTILUS_TYPE_NSVN;
-  type_list[1] = NAUTILUS_TYPE_PROP_NSVN;
+  type_list[0] = NAUTILUS_NSVN_TYPE;
+  type_list[1] = NAUTILUS_NSVN_PROP_TYPE;
 
   *types = type_list;
   *num_types = G_N_ELEMENTS (type_list);

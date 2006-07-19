@@ -38,6 +38,9 @@
 
 static GObjectClass *parent_class;
 
+GtkWidget *
+nsvn_properties_view_page (const char *location);
+
 
 static void
 nsvn_commit (NautilusMenuItem *item,
@@ -195,6 +198,7 @@ nsvn_create_menuitem_checkout (NautilusMenuProvider *provider,
 
   if (!files)// && files->next != NULL)
     return NULL;
+
 #if 1
   file = NAUTILUS_FILE_INFO (files->data);
   scheme = nautilus_file_info_get_uri_scheme (file);
@@ -209,6 +213,7 @@ nsvn_create_menuitem_checkout (NautilusMenuProvider *provider,
       return NULL;
     }
 #endif
+
   item = nautilus_menu_item_new ("NautilusNSVN::FT_Checkout",
                                  _("NaughtySVN Checkout"),
                                  _("Checkout out a Subversion repository"),
@@ -419,7 +424,7 @@ nautilus_nsvn_register_type (GTypeModule *module)
       NULL,
       NULL
   };
-  
+
   nsvn_type = g_type_module_register_type (module, 
                                            G_TYPE_OBJECT,
                                            "NautilusNaughtySVN",
@@ -456,7 +461,6 @@ nsvn_properties_view_page (const char *location)
   /* Getting Widgets in repository creation dialog. */
   page = glade_xml_get_widget (dlg_gui, "property_page");
 
-  printf ("Property page location [%s]\n", location);
   return (page);
 }
 

@@ -17,11 +17,15 @@
 
 G_BEGIN_DECLS
 
-#define NAUTILUS_TYPE_NSVN  (nautilus_nsvn_get_type ())
-#define NAUTILUS_NSVN(o)    (G_TYPE_CHECK_INSTANCE_CAST ((o), NAUTILUS_TYPE_NSVN, NautilusNSVN))
-#define NAUTILUS_IS_NSVN(o) (G_TYPE_CHECK_INSTANCE_TYPE ((o), NAUTILUS_TYPE_NSVN))
+#define NAUTILUS_NSVN_TYPE  (nautilus_nsvn_get_type ())
+#define NAUTILUS_NSVN(o)    (G_TYPE_CHECK_INSTANCE_CAST ((o), NAUTILUS_NSVN_TYPE, NautilusNSVN))
+#define NAUTILUS_IS_NSVN(o) (G_TYPE_CHECK_INSTANCE_TYPE ((o), NAUTILUS_NSVN_TYPE))
 
-#define NAUTILUS_TYPE_PROP_NSVN  (nautilus_nsvn_get_prop_type ())
+#define NAUTILUS_NSVN_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), NAUTILUS_NSVN_TYPE, NautilusActionsClass))
+#define NAUTILUS_IS_NSVN_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), NAUTILUS_NSVN_TYPE))
+#define NAUTILUS_NSVN_GET_CLASS(o)     (G_TYPE_INSTANCE_GET_CLASS ((obj), NAUTILUS_NSVN_TYPE, NautilusActionsClass))
+
+#define NAUTILUS_NSVN_PROP_TYPE  (nautilus_nsvn_get_prop_type ())
 
 typedef struct _NautilusNSVN      NautilusNSVN;
 typedef struct _NautilusNSVNClass NautilusNSVNClass;
