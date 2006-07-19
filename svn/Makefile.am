@@ -39,6 +39,9 @@ libnaughtysvn_la_LIBADD = -lexpat \
                           -lsvn_client-1 -lsvn_repos-1 \
                           -lsvn_subr-1 -lsvn_fs-1
 
+DISTCLEANFILES = \
+        libnaughtysvn.pc
+
 EXTRA_DIST = \
         libnaughtysvn.pc.in
 
