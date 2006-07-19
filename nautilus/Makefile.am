@@ -23,7 +23,7 @@ libnautilus_naughtysvn_la_SOURCES =     \
         nautilus-naughtysvn.h   \
         naughtysvn-module.c
 
-libnautilus_naughtysvn_la_LDFLAGS = -module -avoid-version
+libnautilus_naughtysvn_la_LDFLAGS = -module -avoid-version -no-undefined
 libnautilus_naughtysvn_la_LIBADD  = $(NAUTILUS_LIBS) \
                                     -L$(top_builddir)/svn \
                                     -lnaughtysvn
