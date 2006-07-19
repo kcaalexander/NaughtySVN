@@ -173,6 +173,7 @@ AC_OUTPUT([
 Makefile
 nautilus/Makefile
 svn/Makefile
+svn/libnaughtysvn.pc
 nsvn/Makefile
 po/Makefile.in
 packages/naughtysvn.spec
