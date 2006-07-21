@@ -6,4 +6,55 @@
  * Keyword should be in UTF8 and can contain alpha numeric and space.
  * Keyword should not be symbolic-link, noread, nowrite, trash, note, desktop,
    these list are all reserved names.
-   
+
+
+
+ How to set emblems
+ ------------------
+ include <nautilus-file-info.h>
+
+ make a call to
+ nautilus_file_info_add_emblem (NautilusFileInfo *file, 
+                                const char       *emblem_name);
+
+ How to update emblems
+ --------------------
+ ??????????
+
+ How to Remove emblems
+ ---------------------
+ ??????????
+
+ How to install custom emblems that is globally accesible
+ --------------------------------------------------------
+ * insert 48X48 pixel .PNG in to /usr/share/icons/gnome/48x48/emblems/ dir
+ * .PNG file should start with 'emblem-'
+ * create a file with same filename but with extension .icon and store the
+   following
+
+[[[
+   [Icon Data]
+
+   DisplayName=Shared
+   DisplayName[bg]=
+   DisplayName[bn]=
+   DisplayName[ca]=
+]]]
+
+  Still don't work !!!
+
+ How to install custom ebmblems that is user specific
+ ----------------------------------------------------
+ * insert 48X48 pixel .PNG in to [HOME]/.icons/gnome/48x48/emblems/ dir
+ * .PNG file should start with 'emblem-'
+ * create a file with same filename but with extension .icon and store the
+   following
+
+[[[
+   [Icon Data]
+
+   DisplayName=Shared
+   DisplayName[bg]=
+   DisplayName[bn]=
+   DisplayName[ca]=
+]]]
