@@ -20,10 +20,26 @@
 #include <glade/glade.h>
 
 #include "svn/naughtysvn.h"
+#include "dlg_preferences.h"
 #include "global.h"
 #include "gconf.h"
 
 #define DLG_GLADE_FILE  "naughtysvn.glade"
+
+
+gboolean
+nsvn__verify_log_tab (GladeXML *dlg_gui,
+                      GtkWidget *window,
+                      GConfClient *client);
+
+gboolean
+nsvn__verify_general_tab (GladeXML *dlg_gui,
+                          GtkWidget *window,
+                          GConfClient *client);
+
+gboolean
+nsvn__verify_save_preferences (GtkWidget *window,
+                               gpointer user_data);
 
 
 gboolean
@@ -81,9 +97,9 @@ nsvn__verify_general_tab (GladeXML *dlg_gui,
   /* Cache Authentication token. */
   widget = glade_xml_get_widget (dlg_gui, "preferences_cacheauth_chk");
   if (gtk_toggle_button_get_active ((GTK_TOGGLE_BUTTON(widget))))
-    value = "0";
+    value = (void*)"0";
   else
-    value = "1";
+    value = (void*)"1";
   if (nsvn_gconf_write_entry (NSVN_CACHE_AUTH_TOKEN_KEY, value,
                               client))
     return FALSE;
@@ -91,9 +107,9 @@ nsvn__verify_general_tab (GladeXML *dlg_gui,
   /* Prompt for user name and password. */
   widget = glade_xml_get_widget (dlg_gui, "preferences_promptuser_chk");
   if (gtk_toggle_button_get_active ((GTK_TOGGLE_BUTTON(widget))))
-    value = "0";
+    value = (void*)"0";
   else
-    value = "1";
+    value = (void*)"1";
   if (nsvn_gconf_write_entry (NSVN_PROMPT_USER_KEY, value, client))
     return FALSE;
 

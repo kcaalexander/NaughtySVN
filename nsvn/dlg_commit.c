@@ -21,6 +21,7 @@
 #include <libgnomevfs/gnome-vfs-utils.h>
 
 #include "svn/naughtysvn.h"
+#include "dlg_commit.h"
 #include "global.h"
 
 #define DLG_GLADE_FILE  "naughtysvn.glade"

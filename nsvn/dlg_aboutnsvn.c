@@ -20,6 +20,7 @@
 #include <glade/glade.h>
 
 #include "svn/naughtysvn.h"
+#include "dlg_aboutnsvn.h"
 #include "global.h"
 
 #define DLG_GLADE_FILE  "naughtysvn.glade"

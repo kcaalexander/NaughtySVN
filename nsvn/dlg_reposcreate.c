@@ -21,6 +21,7 @@
 #include <libgnomevfs/gnome-vfs-utils.h>
 
 #include "svn/naughtysvn.h"
+#include "dlg_reposcreate.h"
 #include "global.h"
 
 #define DLG_GLADE_FILE  "naughtysvn.glade"
@@ -69,7 +70,7 @@ nsvn__create_repository  (GtkWidget *widget,
   GtkWidget *window;
   GtkWidget *fsfs;
   GtkWidget *bdb;
-  GtkWidget *sync;
+  GtkWidget *commit_sync;
   GtkWidget *logrm;
   const char *txt;
   char *path, *newpath;
@@ -82,7 +83,7 @@ nsvn__create_repository  (GtkWidget *widget,
   window = glade_xml_get_widget (user_data, "repo_create_dialog");
   fsfs = glade_xml_get_widget (user_data, "repocreate_fsfs_rad");
   bdb = glade_xml_get_widget (user_data, "repocreate_bdb_rad");
-  sync = glade_xml_get_widget (user_data, "repocreate_tcommit_chk");
+  commit_sync = glade_xml_get_widget (user_data, "repocreate_tcommit_chk");
   logrm = glade_xml_get_widget (user_data, "repocreate_logrm_chk");
 
   path = g_object_get_data (G_OBJECT(window), "path");
@@ -112,7 +113,7 @@ nsvn__create_repository  (GtkWidget *widget,
   if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(bdb)))
     { 
       fs_type = g_strdup ("bdb");
-      is_sync = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(sync));
+      is_sync = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(commit_sync));
       is_logrm = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(logrm));
     }
     

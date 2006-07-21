@@ -21,6 +21,7 @@
 #include <libgnomevfs/gnome-vfs-utils.h>
 
 #include "svn/naughtysvn.h"
+#include "dlg_checkout.h"
 #include "global.h"
 
 #define DLG_GLADE_FILE  "naughtysvn.glade"
@@ -41,6 +42,8 @@ static int
 nsvn__remove_url_item (GtkWidget *widget,
                        gpointer user_data);
 
+char*
+nsvn__get_revstr (GladeXML *window);
 
 static int
 nsvn__destory_window (GtkWidget *widget,
@@ -167,7 +170,7 @@ nsvn__choose_dir_item (GtkWidget *widget,
   GtkWidget *window;
   GtkWidget *parent;
   GtkWidget *cancel;
-  GtkWidget *select;
+  GtkWidget *choose;
   GtkWidget *urlwid;
   char *extra_data;
   char *url;
@@ -176,7 +179,7 @@ nsvn__choose_dir_item (GtkWidget *widget,
   window = glade_xml_get_widget (user_data, "filechooser_dialog");
   parent = glade_xml_get_widget (user_data, "checkout_dialog");
   cancel = glade_xml_get_widget (user_data, "filechooser_cancel_btn");
-  select = glade_xml_get_widget (user_data, "filechooser_select_btn");
+  choose = glade_xml_get_widget (user_data, "filechooser_select_btn");
 
   extra_data = g_object_get_data (G_OBJECT(widget), URLADD_EXTRA_DATA); 
   g_object_set_data (G_OBJECT(window), URLADD_EXTRA_DATA, extra_data);
@@ -200,7 +203,7 @@ nsvn__choose_dir_item (GtkWidget *widget,
   g_signal_connect (G_OBJECT (cancel), "clicked",
                     G_CALLBACK (nsvn__destory_filechooser_window),
                     window);
-  g_signal_connect (G_OBJECT (select), "clicked",
+  g_signal_connect (G_OBJECT (choose), "clicked",
                     G_CALLBACK (nsvn__select_filechooser_window),
                     user_data);
 
@@ -360,7 +363,7 @@ nsvn__checkout_url (GtkWidget *widget,
                                   g_path_get_basename (url));
       else
         wcpath = g_strdup (wcpath_name);
-                                  
+
       if (nsvn_repos_checkout (nsvn, url, wcpath,
                                revstr, nrecurse,
                                ignextn) == EXIT_FAILURE)

@@ -21,6 +21,7 @@
 #include <libgnomevfs/gnome-vfs-utils.h>
 
 #include "svn/naughtysvn.h"
+#include "dlg_add.h"
 #include "global.h"
 
 #define DLG_GLADE_FILE  "naughtysvn.glade"
@@ -38,17 +39,6 @@ nsvn__destory_window (GtkWidget *widget,
   g_object_unref (G_OBJECT(user_data));
   gtk_main_quit ();
   return 0;
-}
-
-
-static void
-test (void *baton,
-      const char *path, void *status)
-      //svn_wc_status2_t *status)
-{
-  //printf ("\nStatus on file [%s]\n", path);
-  //printf ("\nText status [%d]\n", status->text_status);
-
 }
 
 
@@ -92,18 +82,6 @@ nsvn_dlg_add (GtkWidget *widget,
                     G_CALLBACK (nsvn__add_url_item),
                     dlg_gui);
 */
-
-  /* TODO: To be removed. */
-  #if 0
-  {
-    nsvn_t *nsvn;
-    
-      nsvn = nsvn_base_init (NULL);
-      if (nsvn)
-        nsvn_wc_status (nsvn, "/tmp/wc", test, NULL,
-            TRUE, TRUE, TRUE, TRUE, TRUE);
-  }
-  #endif
 
   /* Activating dialog box. */
   gtk_widget_show (window);
