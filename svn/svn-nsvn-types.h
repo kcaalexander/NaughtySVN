@@ -16,6 +16,7 @@
 #include "svn_error.h"
 #include "svn_client.h"
 #include "svn_config.h"
+#include "svn_version.h"
 
 typedef struct naughtysvn_t {
   svn_error_t *err;
@@ -30,6 +31,15 @@ typedef struct naughtysvn_t {
 } naughtysvn_t;
 
 #define NSVN_ERR (err) SVN_ERR (err)
+
+#define NSVN_SVN_VER_REQUIRED(name) \
+  static const svn_version_t name = \
+    { \
+      1, /* Required SVN MAJOR Version */ \
+      4, /* Required SVN MINOR Version */ \
+      0, /* Required SVN PATCH Version */ \
+      "-dev", /* Required SVN NUM-TAG Version */ \
+    } \
 
 
 #endif /* SVN_NSVN_PRIVATE_H */

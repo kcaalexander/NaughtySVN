@@ -35,6 +35,26 @@
 #include "naughtysvn.h"
 #include "svn-nsvn-types.h"
 
+
+static svn_error_t*
+nsvn_base__check_svnlib_ver (void)
+{
+  static const svn_version_checklist_t checklist[] =
+    {
+      { "svn_subr",   svn_subr_version },
+      { "svn_client", svn_client_version },
+      { "svn_repos",  svn_repos_version },
+      { "svn_fs",     svn_fs_version },
+      { "svn_wc",     svn_wc_version },
+      { "svn_ra",     svn_ra_version },
+      { NULL, NULL }
+    };
+
+    NSVN_SVN_VER_REQUIRED(req_ver);
+    return svn_ver_check_list(&req_ver, checklist);
+}
+
+
 static int
 nsvn_base__init_apr (void)
 {
@@ -76,7 +96,12 @@ nsvn_base_init (const char *config_dir)
                                    nsvn->allocator);
   apr_allocator_owner_set (nsvn->allocator, nsvn->pool);
 
-  /* TODO: Check svn library version, which are used here */
+  /* Check svn library version, which are used here */
+  #ifdef NSVN_DEBUG
+  nsvn->err = nsvn_base__check_svnlib_ver();
+  if (nsvn->err)
+    return nsvn_base_uninit (nsvn);
+  #endif
 
   /* Initializing the SVN FS library. */
   nsvn->err = svn_fs_initialize (nsvn->pool);
