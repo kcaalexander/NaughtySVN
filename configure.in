@@ -143,7 +143,7 @@ AC_HELP_STRING([--enable-debug],
 if test "$enable_maintainer" = "yes" ; then
   enable_debugging="yes"
 
-  CFLAGS="$CFLAGS -DSVN_DEBUG -DAP_DEBUG -DNEON_SSL -DNEON_ZLIB"
+  CFLAGS="$CFLAGS -DSVN_DEBUG -DAP_DEBUG -DNEON_SSL -DNEON_ZLIB -DNSVN_DEBUG"
 
   if test "$GCC" = "yes"; then
     CFLAGS="$CFLAGS -Wpointer-arith -Wwrite-strings -Wshadow -Wall -Wmissing-prototypes -Wmissing-declarations"
