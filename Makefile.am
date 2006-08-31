@@ -5,7 +5,7 @@ SUBDIRS = svn nautilus nsvn po
 ACLOCAL_AMFLAGS = -I m4
 
 EXTRA_DIST = \
-	autogen.sh
+		autogen.sh
         
 DISTCLEANFILES = \
 		intltool-extract \
