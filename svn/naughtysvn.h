@@ -38,6 +38,7 @@ nsvn_base_reinit (nsvn_t *instance,
 nsvn_t*
 nsvn_base_clear (nsvn_t *instance);
 
+#if 0
 nsvn_t*
 nsvn_base_setup_auth (nsvn_t *instance,
                       const char *username,
@@ -64,6 +65,8 @@ nsvn_t*
 nsvn_base_setup_progress (nsvn_t *instance,
                           void *progress_func,
                           void *progress_baton);
+#endif
+
 #if 0
 nsvn_t*
 nsvn_base_setup (nsvn_t *instance,
