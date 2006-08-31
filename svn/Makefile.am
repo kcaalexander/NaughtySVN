@@ -11,13 +11,13 @@ lib_LTLIBRARIES = libnaughtysvn.la
 APR_CFLAGS =`$(APRCONFIGTOOL) --includes --cflags`
 APR_LIBS =`$(APRCONFIGTOOL) --libs`
 INCLUDES = \
-	-DPACKAGE_DATA_DIR=\""$(datadir)"\" \
-	-DPACKAGE_LOCALE_DIR=\""$(prefix)/$(DATADIRNAME)/locale"\" \
-        $(PACKAGE_CFLAGS) \
-        -I$(top_srcdir) \
-        -I$(top_builddir) \
-        $(SVN_CFLAGS) \
-        $(APR_CFLAGS)
+		-DPACKAGE_DATA_DIR=\""$(datadir)"\" \
+		-DPACKAGE_LOCALE_DIR=\""$(prefix)/$(DATADIRNAME)/locale"\" \
+		$(PACKAGE_CFLAGS) \
+		-I$(top_srcdir) \
+		-I$(top_builddir) \
+		$(SVN_CFLAGS) \
+		$(APR_CFLAGS)
 
 libnaughtysvn_includedir=$(includedir)
 
@@ -27,23 +27,23 @@ libnaughtysvn_libdir = $(libdir)
 
 
 libnaughtysvn_la_SOURCES = \
-        svn-nsvn-types.h \
-        svn-nsvn-admin.c \
-        svn-nsvn-init.c \
-        svn-nsvn-wc.c \
-        svn-nsvn-repos.c \
-        svn-nsvn-common.c
+		svn-nsvn-types.h \
+		svn-nsvn-admin.c \
+		svn-nsvn-init.c \
+		svn-nsvn-wc.c \
+		svn-nsvn-repos.c \
+		svn-nsvn-common.c
 
 libnaughtysvn_la_LDFLAGS = -no-undefined -avoid-version $(APR_LIBS)
 libnaughtysvn_la_LIBADD = -lexpat \
-                          -lsvn_client-1 -lsvn_repos-1 \
-                          -lsvn_subr-1 -lsvn_fs-1
+		-lsvn_client-1 -lsvn_repos-1 \
+		-lsvn_subr-1 -lsvn_fs-1
 
 DISTCLEANFILES = \
-        libnaughtysvn.pc
+		libnaughtysvn.pc
 
 EXTRA_DIST = \
-        libnaughtysvn.pc.in
+		libnaughtysvn.pc.in
 
 pkgconfigdir=$(libdir)/pkgconfig
 pkgconfig_DATA=libnaughtysvn.pc
