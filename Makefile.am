@@ -8,9 +8,9 @@ EXTRA_DIST = \
 	autogen.sh
         
 DISTCLEANFILES = \
-        intltool-extract \
-        intltool-merge \
-        intltool-update
+		intltool-extract \
+		intltool-merge \
+		intltool-update
 
 dist-hook:
 	if test -d $(srcdir)/pixmaps; then \
