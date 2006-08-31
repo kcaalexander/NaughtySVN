@@ -34,7 +34,7 @@ libnaughtysvn_la_SOURCES = \
 		svn-nsvn-repos.c \
 		svn-nsvn-common.c
 
-libnaughtysvn_la_LDFLAGS = -no-undefined -avoid-version $(APR_LIBS)
+libnaughtysvn_la_LDFLAGS = -no-undefined -avoid-version $(APR_LIBS) $(SVN_LIBS)
 libnaughtysvn_la_LIBADD = -lexpat \
 		-lsvn_client-1 -lsvn_repos-1 \
 		-lsvn_subr-1 -lsvn_fs-1
