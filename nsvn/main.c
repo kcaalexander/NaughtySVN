@@ -54,7 +54,7 @@ and is not expected to be called from command line\n");
 
   while (commands_list[i].cmd != NULL)
     {
-      if (argv[i] != NULL &&
+      if (argv[2] != NULL &&
           strcasecmp(commands_list[i].cmd, argv[2]) == 0 &&
           commands_list[i].cmd_func != NULL)
         {
