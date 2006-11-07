@@ -24,3 +24,7 @@ Show_Msgbox (
              const char *msg,
              const char *icon,
              const char **buttons);
+
+
+GList*
+Split_Arg (const char *arg, GList **args_list);

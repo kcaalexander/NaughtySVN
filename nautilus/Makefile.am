@@ -1,5 +1,5 @@
 ## Process this file with automake to produce Makefile.in
-glade_DATA = ../nsvn/naughtysvn.glade
+#glade_DATA = ../nsvn/naughtysvn.glade
 gladedir = $(datadir)/$(PACKAGE_NAME)/glade
 
 INCLUDES = \
@@ -28,5 +28,5 @@ libnautilus_naughtysvn_la_LIBADD  = $(NAUTILUS_LIBS) \
 		-L$(top_builddir)/svn \
 		-lnaughtysvn
 
-EXTRA_DIST = \
-		$(glade_DATA)
+#EXTRA_DIST = \
+#		$(glade_DATA)

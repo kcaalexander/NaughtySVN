@@ -3,6 +3,8 @@
 glade_DATA = naughtysvn.glade
 gladedir = $(datadir)/$(PACKAGE_NAME)/glade
 
+APR_CFLAGS =`$(APRCONFIGTOOL) --includes --cflags`
+APR_LIBS =`$(APRCONFIGTOOL) --libs`
 
 INCLUDES = \
 		-DPACKAGE_DATA_DIR=\""$(datadir)"\" \
@@ -33,6 +35,7 @@ naughtysvn_SOURCES = \
 naughtysvn_LDADD = @PACKAGE_LIBS@ \
 		$(INTLLIBS) \
 		-L$(top_builddir)/svn \
+                -lsvn_wc-1 \
 		-lnaughtysvn
 
 schemadir = @GCONF_SCHEMA_FILE_DIR@

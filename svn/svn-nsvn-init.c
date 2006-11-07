@@ -98,9 +98,9 @@ nsvn_base_init (const char *config_dir)
 
   /* Check svn library version, which are used here */
   #ifdef NSVN_DEBUG
-  nsvn->err = nsvn_base__check_svnlib_ver();
-  if (nsvn->err)
-    return nsvn_base_uninit (nsvn);
+  //nsvn->err = nsvn_base__check_svnlib_ver();
+  //if (nsvn->err)
+  //  return nsvn_base_uninit (nsvn);
   #endif
 
   /* Initializing the SVN FS library. */

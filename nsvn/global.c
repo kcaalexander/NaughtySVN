@@ -90,3 +90,26 @@ Show_Msgbox (GtkWidget *parent,
 
   return msg_box;
 }
+
+
+GList*
+Split_Arg (const char *arg, GList **args_list)
+{
+  char **list;
+  char delimiter[2];
+  unsigned int i = 0;
+
+  if (!arg) return NULL;
+
+  sprintf (delimiter, "%c", ARG_RECORD_SEPARATOR);
+  list = g_strsplit_set (arg, delimiter, -1);
+
+  while (list[i])
+    {
+      *args_list = g_list_append (*args_list, g_strdup(list[i]));
+      i ++;
+    }
+
+  g_strfreev (list);
+  return *args_list;
+}

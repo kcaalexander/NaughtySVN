@@ -58,11 +58,36 @@ static void
 nsvn_add (NautilusMenuItem *item,
           gpointer user_data)
 {
+  GList *files=NULL;
+  GList *file_ptr=NULL;
   GString *cmd;
 
-  cmd = g_string_new ("naughtysvn MID=NSVN CMD=add");
+  cmd = g_string_new ("naughtysvn MID=NSVN CMD=add \"");
+  files =  g_object_get_data (G_OBJECT(item), "files");
+  file_ptr = files;
+
+  while (file_ptr != NULL)
+    {
+      NautilusFileInfo *file;
+      char *uri, *path;
+
+      file = NAUTILUS_FILE_INFO (file_ptr->data);
+      uri = nautilus_file_info_get_uri (file);
+      path = gnome_vfs_get_local_path_from_uri (uri);
+      g_string_append_printf (cmd, "%s", path);
+
+      file_ptr = g_list_next (file_ptr);
+      //Appending the unique delimiter to the argument if more args follows.
+      if (file_ptr)
+        g_string_append_printf (cmd, "%c", ARG_RECORD_SEPARATOR);
+    }
+    
+  g_string_append (cmd, "\"");
+  
   g_spawn_command_line_async (cmd->str, NULL);
   g_string_free (cmd, TRUE);
+  file_ptr = NULL;
+  g_list_free (files);
 }
 
 
@@ -166,20 +191,51 @@ nsvn_create_menuitem_add (NautilusMenuProvider *provider,
                           GList *items)
 {
   NautilusMenuItem *item = NULL;
+  GList *file_ptr = files;
+  int wc_for;
+  nsvn_t *nsvn;
+  nsvn = nsvn_base_init (NULL);
 
-  if (!files)// && files->next != NULL)
-    return NULL;
+  if (files)
+    {
+      // Walking through the selected list to find any
+      // on the selected items is a part of the wc.
+      while (file_ptr)
+        {
+          NautilusFileInfo *file;
+          char *uri;
+          char *path;
+          char *wc_path;
 
-  item = nautilus_menu_item_new ("NautilusNSVN::FT_Add",
-                                 _("NaughtySVN Add"),
-                                 _("Add a unversioned item to Subversion"),
-                                 PIXDIR "/add.png");
-//  g_object_set_data (G_OBJECT (item), "files", file);
-  g_signal_connect (item, "activate", G_CALLBACK (nsvn_add),
-                    provider);
+          file = NAUTILUS_FILE_INFO (file_ptr->data);
+          uri = nautilus_file_info_get_uri (file);
+          path = gnome_vfs_get_local_path_from_uri (uri);
 
-  items = g_list_append (items, item);
+          // In its a file, Getting parent directory to
+          // find a entity is a working copy path or not.
+          if (nautilus_file_info_is_directory (file))
+            wc_path = path;
+          else
+            wc_path = g_path_get_dirname (path);
 
+          if (nsvn_wc_check_is_wcpath (NULL, wc_path, &wc_for) == EXIT_SUCCESS)
+            {
+              item = nautilus_menu_item_new ("NautilusNSVN::FT_Add",
+                                   _("NaughtySVN Add"),
+                                   _("Add a unversioned item to Subversion"),
+                                   PIXDIR "/add.png");
+              g_object_set_data (G_OBJECT (item), "files",
+                                 (void*)g_list_copy (files));
+              g_signal_connect (item, "activate", G_CALLBACK (nsvn_add),
+                                provider);
+
+              items = g_list_append (items, item);
+              break;
+            }
+
+          file_ptr = g_list_next(file_ptr);
+        }
+    }
   return items;
 }
 

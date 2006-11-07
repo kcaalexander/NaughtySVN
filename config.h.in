@@ -1,5 +1,8 @@
 /* config.h.in.  Generated from configure.in by autoheader.  */
 
+/* Defining record seprarator */
+#undef ARG_RECORD_SEPARATOR
+
 /* always defined to indicate that i18n is enabled */
 #undef ENABLE_NLS
 

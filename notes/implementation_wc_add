@@ -1,0 +1,26 @@
+Adding unrev files and dir implementation
+-----------------------------------------
+
+A. Right click on background
+   -------------------------
+   Either a file or a directory of a working copy need to be selected for
+   for showing the add menu in the context menu. Therefor context menu
+   activated from background won't be shown.
+
+2. Right click on a file/directory
+   --------------------------------------    
+   Right button click on one or more files/directory, any files/directory
+   selected should be part of any SVN working copy to show the "Add" menu
+   item in context menu.
+
+   Click add menu option will take to a NaughtySVN add dialog box. List will
+   populated with all unver files/directories selected. NaughtySVN will used
+   svn status for finding the unrev files/directories from the selected items.
+   User will allowed to check or uncheck the items from the list and only the
+   checked files will be finally added (converted to revisioned files).
+
+3. Click on Toolbar option 'Create Repository'
+   ------------------------------------------
+
+   *** Not supported ****
+
