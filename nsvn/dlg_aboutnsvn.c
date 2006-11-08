@@ -53,7 +53,7 @@ nsvn_dlg_aboutnsvn (GtkWidget *widget,
                            "about_dialog", NULL);
   if (!dlg_gui)
     {
-      g_warning ("Could not find " GLADEDIR "/" DLG_GLADE_FILE "\n");
+      g_warning (_("Could not find ") GLADEDIR "/" DLG_GLADE_FILE "\n");
       return EXIT_FAILURE;
     }
 

@@ -70,7 +70,7 @@ nsvn__verify_general_tab (GladeXML *dlg_gui,
   if (g_path_is_absolute ((const char*) value) == FALSE)
     {
       Show_Msgbox (window, FALSE, "Error",
-                   "Needs an absolute path ...",
+                   _("Needs an absolute path ..."),
                    GNOME_MESSAGE_BOX_ERROR,
                    buttons);
       gtk_widget_grab_focus (widget);
@@ -183,7 +183,7 @@ nsvn_dlg_preferences (GtkWidget *widget,
                            "preferences_dialog", NULL);
   if (!dlg_gui)
     {
-      g_warning ("Could not find " GLADEDIR "/" DLG_GLADE_FILE "\n");
+      g_warning (_("Could not find ") GLADEDIR "/" DLG_GLADE_FILE "\n");
       return EXIT_FAILURE;
     }
 

@@ -47,8 +47,8 @@ main (int argc, char *argv[])
   if (argc <= 1 || argv[1] == NULL ||
       strcasecmp (argv[1], "MID=NSVN") != 0)
     {
-      fprintf (stderr, "\nError: This program is an integral part of NaughtySVN \
-and is not expected to be called from command line\n");
+      fprintf (stderr, _("\nError: This program is an integral part of NaughtySVN \
+and is not expected to be called from command line\n"));
       return 1;
     }
 

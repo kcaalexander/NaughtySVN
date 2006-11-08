@@ -92,7 +92,7 @@ nsvn__create_repository  (GtkWidget *widget,
     {
       const char *buttons[] = {"OK", NULL};
       Show_Msgbox (window, FALSE, "Error",
-                   "Repository name invalid ...",
+                   _("Repository name invalid ..."),
                    GNOME_MESSAGE_BOX_ERROR,
                    buttons);
       gtk_entry_set_text (GTK_ENTRY(entry),
@@ -108,11 +108,11 @@ nsvn__create_repository  (GtkWidget *widget,
                             path, NULL);
 
   if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(fsfs)))
-    fs_type = g_strdup ("fsfs");
+    fs_type = g_strdup (_("fsfs"));
 
   if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(bdb)))
     { 
-      fs_type = g_strdup ("bdb");
+      fs_type = g_strdup (_("bdb"));
       is_sync = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(commit_sync));
       is_logrm = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(logrm));
     }
@@ -124,9 +124,9 @@ nsvn__create_repository  (GtkWidget *widget,
   if (nsvn_admin_create_repos (nsvn, is_sync, is_logrm,
                                fs_type, NULL, newpath) == EXIT_FAILURE)
     {
-      const char *buttons[] = {"OK", NULL};
-      Show_Msgbox (window, FALSE, "Error",
-                   "Repository creation failed ...",
+      const char *buttons[] = {_("OK"), NULL};
+      Show_Msgbox (window, FALSE, _("Error"),
+                   _("Repository creation failed ..."),
                    GNOME_MESSAGE_BOX_ERROR,
                    buttons);
     }
@@ -177,10 +177,10 @@ nsvn_dlg_reposcreate    (GtkWidget *widget,
                            "repo_create_dialog", NULL);
   if (!dlg_gui)
     {
-      g_warning ("Could not find " GLADEDIR "/" DLG_GLADE_FILE "\n");
+      g_warning (_("Could not find ") GLADEDIR "/" DLG_GLADE_FILE "\n");
       return EXIT_FAILURE;
     }
-  g_warning ("Found Glade file at [%s]\n", GLADEDIR "/" DLG_GLADE_FILE);
+  g_warning (_("Found Glade file at [%s]\n"), GLADEDIR "/" DLG_GLADE_FILE);
 
   /* Get Widgets in repository creation dialog */
   window = glade_xml_get_widget (dlg_gui, "repo_create_dialog");

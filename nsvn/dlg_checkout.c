@@ -244,7 +244,7 @@ nsvn__add_url_item (GtkWidget *widget,
   gtk_table_resize (GTK_TABLE(url_tbl), nrows+1, 5);
 
   /* URL label. */
-  sprintf (url_lbl, "URL %u", nrows+1);
+  sprintf (url_lbl, _("URL %u"), nrows+1);
   wid = gtk_label_new (url_lbl);
   sprintf (wid_name, CO_URLLBL_NAME, nrows+1);
   g_object_set_data (G_OBJECT (window), wid_name, wid);
@@ -370,7 +370,7 @@ nsvn__checkout_url (GtkWidget *widget,
         {
           const char *buttons[] = {"OK", NULL};
           Show_Msgbox (window, FALSE, "Error",
-                       "Repository creation failed ...",
+                       _("Repository creation failed ..."),
                        GNOME_MESSAGE_BOX_ERROR,
                        buttons);
         }
@@ -460,7 +460,7 @@ nsvn_dlg_checkout (GtkWidget *widget,
   dlg_gui = glade_xml_new (GLADEDIR "/" DLG_GLADE_FILE, NULL, NULL);
   if (!dlg_gui)
     {
-      g_warning ("Could not find " GLADEDIR "/" DLG_GLADE_FILE "\n");
+      g_warning (_("Could not find ") GLADEDIR "/" DLG_GLADE_FILE "\n");
       return EXIT_FAILURE;
     }
 

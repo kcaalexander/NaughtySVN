@@ -269,7 +269,7 @@ nsvn_dlg_add (GtkWidget *widget,
   dlg_gui = glade_xml_new (GLADEDIR "/" DLG_GLADE_FILE, NULL, NULL);
   if (!dlg_gui)
     {
-      g_warning ("Could not find " GLADEDIR "/" DLG_GLADE_FILE "\n");
+      g_warning (_("Could not find ") GLADEDIR "/" DLG_GLADE_FILE "\n");
       return EXIT_FAILURE;
     }
 
@@ -333,7 +333,7 @@ nsvn_dlg_add (GtkWidget *widget,
     
     /* Adding text boxes for second col. */
     renderer = gtk_cell_renderer_text_new ();
-    column = gtk_tree_view_column_new_with_attributes ("Item to add", renderer,
+    column = gtk_tree_view_column_new_with_attributes (_("Items to add"), renderer,
                                                        "text",
                                                        COLUMN_BASENAME,
                                                        NULL);
@@ -342,7 +342,7 @@ nsvn_dlg_add (GtkWidget *widget,
 
     /* Adding text boxes for third col. */
     renderer = gtk_cell_renderer_text_new ();
-    column = gtk_tree_view_column_new_with_attributes ("Working copy path", renderer,
+    column = gtk_tree_view_column_new_with_attributes (_("Working copy path"), renderer,
                                                        "text",
                                                        COLUMN_PATH,
                                                        NULL);
