@@ -31,6 +31,7 @@
 enum
 {
   COLUMN_CHECK,
+  COLUMN_STOCK,
   COLUMN_BASENAME,
   COLUMN_PATH,
   NUM_COLUMNS
@@ -180,14 +181,39 @@ nsvn__populate_unrevfiles (void *data,
   if (status->entry == NULL ||
       ! SVN_IS_VALID_REVNUM(status->entry->revision))
     {
+      struct stat buf;
+
       /* Allocating a new row in store. */
       gtk_list_store_append (store, &iter);
+
       /* Setting the unrev in the newely created store row. */
-      gtk_list_store_set (store, &iter,
-                          COLUMN_CHECK, TRUE,
-                          COLUMN_BASENAME, g_path_get_basename (path),
-                          COLUMN_PATH, g_path_get_dirname (path),
-                          -1);
+      if (stat (path, &buf) == 0)
+      
+        {
+          GdkPixbuf *icon;
+          //TODO: Move out icon rendering code out of this function.
+          //      multiple rendering need more resources, Just need to
+          //      create only one copy of two versions (DIR, FILE) of
+          //      icons and we can utilise the same copy for all the
+          //      store elements.
+          if (S_ISDIR (buf.st_mode))
+            icon = gtk_widget_render_icon (GTK_WIDGET (data),
+                                           GTK_STOCK_DIRECTORY,
+                                           GTK_ICON_SIZE_MENU,
+                                           NULL);
+          else
+            icon = gtk_widget_render_icon (GTK_WIDGET (data),
+                                           GTK_STOCK_FILE,
+                                           GTK_ICON_SIZE_MENU,
+                                           NULL);
+
+          gtk_list_store_set (store, &iter,
+                              COLUMN_CHECK, TRUE,
+                              COLUMN_STOCK, icon,
+                              COLUMN_BASENAME, g_path_get_basename (path),
+                              COLUMN_PATH, g_path_get_dirname (path),
+                              -1);
+        }
     }
 
   return EXIT_SUCCESS;
@@ -272,6 +298,7 @@ nsvn_dlg_add (GtkWidget *widget,
   /* Creating store for storing the unrev files. */
   store = gtk_list_store_new (NUM_COLUMNS,
                               G_TYPE_BOOLEAN,
+                              GDK_TYPE_PIXBUF,
                               G_TYPE_STRING,
                               G_TYPE_STRING);
   /* Populate the unver item to list. */
@@ -286,19 +313,24 @@ nsvn_dlg_add (GtkWidget *widget,
     GtkCellRenderer *renderer;
     GtkTreeViewColumn *column;
 
+    column = gtk_tree_view_column_new ();
+
     /* Adding toggle button as first col. */
     renderer = gtk_cell_renderer_toggle_new ();
+    gtk_tree_view_column_pack_start (column, renderer, FALSE);
     g_signal_connect (renderer, "toggled",
                       G_CALLBACK (nsvn__toggle_check), model);
-    column = gtk_tree_view_column_new_with_attributes ("", renderer,
-                                                       "active",
-                                                       COLUMN_CHECK,
-                                                       NULL);
-    gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (column),
-                                     GTK_TREE_VIEW_COLUMN_FIXED);
-    gtk_tree_view_column_set_fixed_width (GTK_TREE_VIEW_COLUMN (column), 30);
-    gtk_tree_view_append_column (GTK_TREE_VIEW(file_lst), column);
+    gtk_tree_view_column_set_attributes (column, renderer,
+                                         "active", COLUMN_CHECK,
+                                         NULL);
 
+    /* Adding pixbuf to the first col. */
+    renderer = gtk_cell_renderer_pixbuf_new ();
+    gtk_tree_view_column_pack_start (column, renderer, TRUE);
+    gtk_tree_view_column_add_attribute (column, renderer,
+                                        "pixbuf", COLUMN_STOCK);
+    gtk_tree_view_append_column (GTK_TREE_VIEW (file_lst), column);
+    
     /* Adding text boxes for second col. */
     renderer = gtk_cell_renderer_text_new ();
     column = gtk_tree_view_column_new_with_attributes ("Item to add", renderer,
