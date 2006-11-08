@@ -269,7 +269,7 @@ nsvn_dlg_add (GtkWidget *widget,
   dlg_gui = glade_xml_new (GLADEDIR "/" DLG_GLADE_FILE, NULL, NULL);
   if (!dlg_gui)
     {
-      g_warning (_("Could not find ") GLADEDIR "/" DLG_GLADE_FILE "\n");
+      g_warning (_("Could not find " GLADEDIR "/" DLG_GLADE_FILE "\n"));
       return EXIT_FAILURE;
     }
 

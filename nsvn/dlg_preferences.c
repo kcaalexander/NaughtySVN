@@ -183,7 +183,7 @@ nsvn_dlg_preferences (GtkWidget *widget,
                            "preferences_dialog", NULL);
   if (!dlg_gui)
     {
-      g_warning (_("Could not find ") GLADEDIR "/" DLG_GLADE_FILE "\n");
+      g_warning (_("Could not find " GLADEDIR "/" DLG_GLADE_FILE "\n"));
       return EXIT_FAILURE;
     }
 

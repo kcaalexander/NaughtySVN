@@ -177,7 +177,7 @@ nsvn_dlg_reposcreate    (GtkWidget *widget,
                            "repo_create_dialog", NULL);
   if (!dlg_gui)
     {
-      g_warning (_("Could not find ") GLADEDIR "/" DLG_GLADE_FILE "\n");
+      g_warning (_("Could not find " GLADEDIR "/" DLG_GLADE_FILE "\n"));
       return EXIT_FAILURE;
     }
   g_warning (_("Found Glade file at [%s]\n"), GLADEDIR "/" DLG_GLADE_FILE);
