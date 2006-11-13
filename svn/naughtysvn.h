@@ -45,6 +45,7 @@ nsvn_base_setup_auth (nsvn_t *instance,
                       const char *password,
                       int non_interactive,
                       int no_auth_cache);
+#endif
 
 nsvn_t*
 nsvn_base_setup_cancel (nsvn_t *instance,
@@ -57,17 +58,16 @@ nsvn_base_setup_notify (nsvn_t *instance,
                         void *notify_baton);
 
 nsvn_t*
+nsvn_base_setup_progress (nsvn_t *instance,
+                          void *progress_func,
+                          void *progress_baton);
+
+#if 0
+nsvn_t*
 nsvn_base_setup_log (nsvn_t *instance,
                      void *log_func,
                      void *log_baton);
 
-nsvn_t*
-nsvn_base_setup_progress (nsvn_t *instance,
-                          void *progress_func,
-                          void *progress_baton);
-#endif
-
-#if 0
 nsvn_t*
 nsvn_base_setup (nsvn_t *instance,
                  const char *user_name,

@@ -162,6 +162,7 @@ nsvn_base_uninit (nsvn_t *nsvn)
   return NULL;
 }
 
+
 nsvn_t*
 nsvn_base_reinit (nsvn_t *nsvn, const char *config_dir)
 {
@@ -169,6 +170,7 @@ nsvn_base_reinit (nsvn_t *nsvn, const char *config_dir)
    
   return (nsvn_base_init (config_dir));
 }
+
 
 nsvn_t*
 nsvn_base_clear (nsvn_t *nsvn)
@@ -181,6 +183,7 @@ nsvn_base_clear (nsvn_t *nsvn)
 
   return nsvn;
 }
+
 
 #if 0
 nsvn_t*
@@ -206,35 +209,53 @@ nsvn_base_setup_auth (nsvn_t *instance,
 
   return instance;
 }
+#endif
+
 
 nsvn_t*
 nsvn_base_setup_cancel (nsvn_t *instance,
-                        //svn_cancel_func_t cancel_func,
                         void *cancel_func,
                         void *cancel_baton)
 {
   if (!instance)
     return NULL;
-  instance->ctx->cancel_func = cancel_func;
+  instance->ctx->cancel_func = *(svn_cancel_func_t) cancel_func;
   instance->ctx->cancel_baton = cancel_baton;
 
   return instance;
 }
 
+
 nsvn_t*
 nsvn_base_setup_notify (nsvn_t *instance,
-                        //svn_wc_notify_func2_t notify_func,
                         void *notify_func,
                         void *notify_baton)
 {
   if (!instance)
     return NULL;
-  instance->ctx->notify_func2 = notify_func;
+  instance->ctx->notify_func2 = *(svn_wc_notify_func2_t) notify_func;
   instance->ctx->notify_baton2 = notify_baton;
 
   return instance;
 }
 
+
+nsvn_t*
+nsvn_base_setup_progress (nsvn_t *instance,
+                          void *progress_func,
+                          void *progress_baton)
+{
+  if (!instance)
+    return NULL;
+  instance->ctx->progress_func =
+           *(svn_ra_progress_notify_func_t) progress_func;
+  instance->ctx->progress_baton = progress_baton;
+
+  return instance;
+}
+
+
+#if 0
 nsvn_t*
 nsvn_base_setup_log (nsvn_t *instance,
                      //svn_client_get_commit_log2_t log_func,
@@ -249,23 +270,7 @@ nsvn_base_setup_log (nsvn_t *instance,
   return instance;
 }
 
-nsvn_t*
-nsvn_base_setup_progress (nsvn_t *instance,
-                          //svn_ra_progress_notify_func_t progress_func,
-                          void *progress_func,
-                          void *progress_baton)
-{
-  if (!instance)
-    return NULL;
-  instance->ctx->progress_func = progress_func;
-  instance->ctx->progress_baton = progress_baton;
 
-  return instance;
-}
-
-#endif
-
-#if 0
 nsvn_t*
 nsvn_base_setup (nsvn_t *instance,
                  const char *user_name,
