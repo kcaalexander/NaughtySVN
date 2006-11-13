@@ -222,7 +222,7 @@ nsvn__add_url_item (GtkWidget *widget,
   char url_lbl[10];
   char wid_name[25];
   GtkWidget *wid;
-  const char *val = NULL;
+  char *val = NULL;
   unsigned int nrows;
   char *extra_data;
 
@@ -233,7 +233,10 @@ nsvn__add_url_item (GtkWidget *widget,
   sprintf (wid_name, CO_URLENT_NAME, nrows);
   wid = g_object_get_data (G_OBJECT(window), wid_name);
   if (wid != NULL)
-    val = gtk_entry_get_text (GTK_ENTRY (wid));
+    {
+      val = (char*) gtk_entry_get_text (GTK_ENTRY (wid));
+      val = g_strstrip (val);
+    }
   else
     return 0;
 
