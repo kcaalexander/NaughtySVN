@@ -12,6 +12,12 @@ DISTCLEANFILES = \
 		intltool-merge \
 		intltool-update
 
+installdev: install
+	pkill -9 nautilus
+
+uninstalldev: uninstall
+	pkill -9 nautilus
+
 dist-hook:
 	if test -d $(srcdir)/pixmaps; then \
 	  mkdir $(datadir)/$(PACKAGE_NAME)/pixmaps; \
@@ -29,7 +35,6 @@ uninstall-local:
 	if test -d $(datadir)/$(PACKAGE_NAME); then \
 	  rm -rf "$(datadir)/$(PACKAGE_NAME)"; \
 	fi
-	pkill -9 nautilus
 
 install-data-local:
 	if test -d $(srcdir)/pixmaps; then \
@@ -41,8 +46,6 @@ install-data-local:
 	  done \
 	fi
 
-install-exec-local:
-	pkill -9 nautilus
 #spec = naughtysvn.spec
 
 #EXTRA_DIST = $(spec) $(spec).in autogen.sh naughtysvn.pc.in
