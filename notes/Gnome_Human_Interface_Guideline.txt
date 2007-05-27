@@ -1,2 +1,2 @@
-A complete GNOMe Human Interface Guideline doc availiable online at
+A complete GNOME Human Interface Guideline doc availiable online at
 http://developer.gnome.org/projects/gup/hig/2.0/
