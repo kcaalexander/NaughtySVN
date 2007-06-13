@@ -1,0 +1,23 @@
+Updating a working copy (or selectively, certain files or directories)
+-----------------------------------------
+
+1. Right click on a file/directory
+   -------------------------------
+   The directory/file must be a part of a SVN working copy which was
+   previously checked out.
+
+   Not yet implemented.
+
+2. Right click on multiple items
+   -----------------------------
+   All the slected items need to be part of a working copy.
+   In the update dialog is possible to deselect a few of them.
+
+   Not yet implemented.
+
+3. Right click on background
+   -------------------------
+   The current directory needs to be part of a working copy.
+   An update operation will be ran on the current directory.
+
+   Not yet implemented.
