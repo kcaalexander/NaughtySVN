@@ -22,7 +22,6 @@
 
 #include "svn/naughtysvn.h"
 #include "dlg_update.h"
-#include "src/support.h"
 #include "global.h"
 
 #define DLG_GLADE_FILE  "naughtysvn.glade"
