@@ -25,6 +25,7 @@ static const nsvn_command commands_list[] = {
   {"CMD=checkout", nsvn_dlg_checkout},
   {"CMD=add", nsvn_dlg_add},
   {"CMD=commit", nsvn_dlg_commit},
+  {"CMD=update", nsvn_dlg_update},
   {NULL, NULL}
 };
 

@@ -157,6 +157,8 @@ AC_HELP_STRING([--enable-debug],
      fi
 ])
 
+# make autoconnection work
+CFLAGS="$CFLAGS -export-dynamic"
 
 if test "$enable_maintainer" = "yes" ; then
   enable_debugging="yes"

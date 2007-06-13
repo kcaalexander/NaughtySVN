@@ -23,6 +23,18 @@ typedef struct naughtysvn_t nsvn_t;
 #define NSVN_FS_TYPE_BDB   SVN_FS_TYPE_BDB
 #define NSVN_FS_TYPE_FSFS  SVN_FS_TYPE_FSFS
 
+#ifndef NSVN_DEBUG
+#define MSG_DEBUG(ARGS...) {;}
+#define INFO(FORMAT, ARGS...) MSG_DEBUG("I:"FORMAT, ##ARGS)
+#define WARN(FORMAT, ARGS...) MSG_DEBUG("W:"FORMAT, ##ARGS)
+#define ERR(FORMAT, ARGS...) MSG_DEBUG("E:"FORMAT, ##ARGS)
+#else
+#define MSG_DEBUG(ARGS...) {fprintf(stderr, ##ARGS);}
+#define INFO(FORMAT, ARGS...) MSG_DEBUG("I:"FORMAT, ##ARGS)
+#define WARN(FORMAT, ARGS...) MSG_DEBUG("W:"FORMAT, ##ARGS)
+#define ERR(FORMAT, ARGS...) MSG_DEBUG("E:"FORMAT, ##ARGS)
+#endif /* NSVN_DEBUG */
+
 
 /* Initilization and uninitization functions. */
 nsvn_t*

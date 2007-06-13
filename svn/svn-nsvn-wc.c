@@ -46,7 +46,7 @@ nsvn_wc_check_is_wcpath (nsvn_t *n,
 
   if (wc_path == NULL)
     return EXIT_SUCCESS;
- 
+
   if (n == NULL)
     nsvn = nsvn_base_init (NULL);
   else
@@ -207,7 +207,6 @@ nsvn_wc_commit (nsvn_t *instance,
   return EXIT_SUCCESS;
 }
 
-
 int
 nsvn_wc_info (nsvn_t *instance,
               const char *path,
@@ -293,3 +292,66 @@ nsvn_wc_status (nsvn_t *instance,
 
   return EXIT_SUCCESS;
 }
+
+/* Makes the update operation */
+/* FIXME: currently doesn't update to version
+ * and uses some assumptions, see below */
+int
+nsvn_wc_update (nsvn_t *instance,
+                const char **paths,
+                const char *rev,
+                void *callback,
+                void *callback_data,
+                int recurse,
+                int ignore_externals,
+                const char *mergetool,
+                char *username,
+                char *password)
+{
+  nsvn_t *nsvn;
+  apr_array_header_t **result_revs;
+  svn_opt_revision_t svn_opt_head_rev; /* FIXME: drop this */
+
+  if (instance == NULL)
+    nsvn = nsvn_base_init (NULL);
+  else
+    nsvn = instance;
+
+  if (nsvn->err)
+    {
+      if (instance == NULL)
+        nsvn = nsvn_base_uninit (nsvn);
+      return EXIT_FAILURE;
+    }
+
+  if (instance == NULL)
+    nsvn = nsvn_base_uninit (nsvn);
+
+  /* FIXME: paths needs to be converted to apr_array_header_t type */
+
+  /* FIXME: the revision information must be passed to the client
+   * for now we always update to head revision */
+  /* for now we don't care about the revisions we updated to */
+  result_revs = NULL;
+  svn_opt_head_rev.kind = svn_opt_revision_head ;
+  nsvn->err = svn_client_update2 (result_revs,
+      paths,
+      &svn_opt_head_rev,
+      (svn_boolean_t) recurse,
+      (svn_boolean_t) ignore_externals,
+      nsvn->ctx,
+      nsvn->pool);
+
+  if (nsvn->err != SVN_NO_ERROR )
+    {
+      MSG_DEBUG("update: %d", nsvn->err);
+      return EXIT_FAILURE;
+    };
+
+  return EXIT_SUCCESS;
+
+}
+
+/*
+ * vim: ts=2 : sw=2
+ */
