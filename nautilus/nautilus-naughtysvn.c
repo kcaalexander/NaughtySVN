@@ -43,6 +43,43 @@ nsvn_properties_view_page (const char *location);
 
 
 static void
+nsvn_update (NautilusMenuItem *item,
+             gpointer user_data)
+{
+  GList *files=NULL;
+  GList *file_ptr=NULL;
+  GString *cmd;
+
+  cmd = g_string_new ("naughtysvn MID=NSVN CMD=update \"");
+  files =  g_object_get_data (G_OBJECT(item), "files");
+  file_ptr = files;
+
+  while (file_ptr != NULL)
+    {
+      NautilusFileInfo *file;
+      char *uri, *path;
+
+      file = NAUTILUS_FILE_INFO (file_ptr->data);
+      uri = nautilus_file_info_get_uri (file);
+      path = gnome_vfs_get_local_path_from_uri (uri);
+      g_string_append_printf (cmd, "%s", path);
+
+      file_ptr = g_list_next (file_ptr);
+      //Appending the unique delimiter to the argument if more args follows.
+      if (file_ptr)
+        g_string_append_printf (cmd, "%c", ARG_RECORD_SEPARATOR);
+    }
+    
+  g_string_append (cmd, "\"");
+  
+  g_spawn_command_line_async (cmd->str, NULL);
+  g_string_free (cmd, TRUE);
+  file_ptr = NULL;
+  g_list_free (files);
+}
+
+
+static void
 nsvn_commit (NautilusMenuItem *item,
              gpointer user_data)
 {
@@ -156,6 +193,31 @@ nsvn_repos_create (NautilusMenuItem *item,
   g_string_free (cmd, TRUE);
   g_free (path);
   g_free (uri);
+}
+
+
+static GList*
+nsvn_create_menuitem_update (NautilusMenuProvider *provider,
+                             GtkWidget *widget,
+                             GList *files,
+                             GList *items)
+{
+  NautilusMenuItem *item = NULL;
+
+  if (!files)// && files->next != NULL)
+    return NULL;
+
+  item = nautilus_menu_item_new ("NautilusNSVN::FT_Update",
+           _("NaughtySVN Update"),
+           _("Bring changes from the repository into the working copy"),
+           PIXDIR "/update.png");
+//  g_object_set_data (G_OBJECT (item), "files", file);
+  g_signal_connect (item, "activate", G_CALLBACK (nsvn_update),
+                    provider);
+
+  items = g_list_append (items, item);
+
+  return items;
 }
 
 
@@ -424,6 +486,8 @@ nautilus_nsvn_get_file_items (NautilusMenuProvider *provider,
   items = nsvn_create_menuitem_add (provider, widget,
                                     files, items);
   items = nsvn_create_menuitem_commit (provider, widget,
+                                       files, items);
+  items = nsvn_create_menuitem_update (provider, widget,
                                        files, items);
   return items;
 }
