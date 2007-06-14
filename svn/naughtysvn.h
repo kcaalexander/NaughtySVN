@@ -158,6 +158,17 @@ nsvn_wc_status (nsvn_t *instance,
                 int ignore_externals);
 
 
+int
+nsvn_wc_update (nsvn_t *instance,
+                const char **paths,
+                const char *rev,
+                void *callback,
+                void *callback_data,
+                int recurse,
+                int ignore_externals,
+                const char *mergetool,
+                char *username,
+                char *password);
 /* Repository functions. */
 
 int
