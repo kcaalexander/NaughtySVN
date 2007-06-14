@@ -192,12 +192,13 @@ The following packages and libraries are required by NaughtySVN:
 
 For development purposes you will also need libglade-gnome.
 Note: On Debian Etch systems it is impossible to install out of the box
-both libgnome-dev and libsvn-dev due to a conflict between dependend
+both libglade-gnome0-dev and libsvn-dev due to a conflict between dependend
 upon libraries. In order to install them side by side you will have to
-modify an existing libdb4.4-dev package to add "libdb3-dev" to the
-Provides field of the package. You can do this by editing DEBIAN/control
-after running "deb-reversion -k /bin/sh". When done, exit and install the
-newly created libdb4.4-dev package.
+modify an existing libdb4.4-dev deb package to add "libdb3-dev" to the
+Provides: field of the package. You can do this by editing DEBIAN/control
+after running "deb-reversion -k /bin/sh libdb4.4-dev_*.deb". When done, exit
+and install with "dpkg -i libdb4.4-dev*LOCAL*.deb" the newly created
+libdb4.4-dev package.
 
 ---------------------
 Building & Installing
