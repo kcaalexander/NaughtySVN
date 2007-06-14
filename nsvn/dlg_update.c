@@ -98,8 +98,10 @@ nsvn_dlg_update (GtkWidget *widget,
   externals_chk = glade_xml_get_widget (dlg_gui, "update_externals_chk");
   revision_entr = glade_xml_get_widget (dlg_gui, "update_revision_entry");
 
-  update_ignore_externals = !gtk_toggle_button_get_active(externals_chk);
-  update_recursive = gtk_toggle_button_get_active(recursive_chk);
+  update_ignore_externals = !gtk_toggle_button_get_active(
+                                         GTK_TOGGLE_BUTTON(externals_chk));
+  update_recursive = gtk_toggle_button_get_active(
+                                         GTK_TOGGLE_BUTTON(recursive_chk));
 
   /* Connecting callbacks to widget. */
   g_signal_connect (G_OBJECT (window), "destroy",
