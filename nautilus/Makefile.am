@@ -23,10 +23,11 @@ libnautilus_naughtysvn_la_SOURCES = \
 		nautilus-naughtysvn.h \
 		naughtysvn-module.c
 
-libnautilus_naughtysvn_la_LDFLAGS = -module -avoid-version -no-undefined
-libnautilus_naughtysvn_la_LIBADD  = $(NAUTILUS_LIBS) \
-		-L$(top_builddir)/svn \
-		-lnaughtysvn
+libnautilus_naughtysvn_la_LDFLAGS = -module -avoid-version -no-undefined \
+			--rpath '$(libdir)' \
+			$(NAUTILUS_LIBS) \
+			-L$(top_builddir)/svn \
+			-lnaughtysvn
 
 #EXTRA_DIST = \
 #		$(glade_DATA)
