@@ -2086,6 +2086,8 @@ PREV</property>
 
 <widget class="GtkWindow" id="commit_dialog">
   <property name="border_width">5</property>
+  <property name="width_request">400</property>
+  <property name="height_request">400</property>
   <property name="title" translatable="yes">NaughtySVN Commit</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
   <property name="window_position">GTK_WIN_POS_CENTER</property>
@@ -2095,7 +2097,7 @@ PREV</property>
   <property name="decorated">True</property>
   <property name="skip_taskbar_hint">False</property>
   <property name="skip_pager_hint">False</property>
-  <property name="type_hint">GDK_WINDOW_TYPE_HINT_NORMAL</property>
+  <property name="type_hint">GDK_WINDOW_TYPE_HINT_DIALOG</property>
   <property name="gravity">GDK_GRAVITY_NORTH_WEST</property>
   <property name="focus_on_map">True</property>
   <property name="urgency_hint">False</property>
@@ -2115,14 +2117,14 @@ PREV</property>
 	  <child>
 	    <widget class="GtkLabel" id="label33">
 	      <property name="visible">True</property>
-	      <property name="label" translatable="yes">Commit to :</property>
+	      <property name="label" translatable="yes">Log Message</property>
 	      <property name="use_underline">False</property>
 	      <property name="use_markup">False</property>
 	      <property name="justify">GTK_JUSTIFY_LEFT</property>
 	      <property name="wrap">False</property>
 	      <property name="selectable">False</property>
 	      <property name="xalign">0.5</property>
-	      <property name="yalign">0.5</property>
+	      <property name="yalign">0.0500000007451</property>
 	      <property name="xpad">0</property>
 	      <property name="ypad">0</property>
 	      <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
@@ -2139,7 +2141,6 @@ PREV</property>
 
 	  <child>
 	    <widget class="GtkLabel" id="commit_repospath_lbl">
-	      <property name="visible">True</property>
 	      <property name="label" translatable="yes">Repository Path</property>
 	      <property name="use_underline">False</property>
 	      <property name="use_markup">False</property>
@@ -2197,7 +2198,7 @@ PREV</property>
 
 		  <child>
 		    <widget class="GtkHBox" id="hbox27">
-		      <property name="visible">True</property>
+		      <property name="sensitive">False</property>
 		      <property name="homogeneous">False</property>
 		      <property name="spacing">10</property>
 
@@ -2257,7 +2258,7 @@ PREV</property>
 		      <property name="window_placement">GTK_CORNER_TOP_LEFT</property>
 
 		      <child>
-			<widget class="GtkTextView" id="textview1">
+			<widget class="GtkTextView" id="commit_logmsg_txt">
 			  <property name="visible">True</property>
 			  <property name="can_focus">True</property>
 			  <property name="editable">True</property>
@@ -2296,7 +2297,7 @@ PREV</property>
 
       <child>
 	<widget class="GtkScrolledWindow" id="scrolledwindow4">
-	  <property name="visible">True</property>
+	  <property name="sensitive">False</property>
 	  <property name="can_focus">True</property>
 	  <property name="hscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
 	  <property name="vscrollbar_policy">GTK_POLICY_AUTOMATIC</property>
@@ -2326,7 +2327,7 @@ PREV</property>
 
       <child>
 	<widget class="GtkFrame" id="frame9">
-	  <property name="visible">True</property>
+	  <property name="sensitive">False</property>
 	  <property name="label_xalign">0</property>
 	  <property name="label_yalign">0.5</property>
 	  <property name="shadow_type">GTK_SHADOW_IN</property>
@@ -2346,7 +2347,6 @@ PREV</property>
 	      <child>
 		<widget class="GtkTable" id="table8">
 		  <property name="border_width">5</property>
-		  <property name="visible">True</property>
 		  <property name="n_rows">2</property>
 		  <property name="n_columns">2</property>
 		  <property name="homogeneous">False</property>

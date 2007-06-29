@@ -170,10 +170,10 @@ nsvn_wc_commit (nsvn_t *instance,
                 int keep_locks)
 {
   nsvn_t *nsvn;
-//  const char *target_utf8;
-  unsigned int i = 0;
-  apr_array_header_t *target = NULL;
+  unsigned int idx = 0;
+  apr_array_header_t *targets = NULL;
   svn_commit_info_t *commit_info = NULL;
+  const char *path;
 
   if (instance == NULL)
     nsvn = nsvn_base_init (NULL);
@@ -183,16 +183,17 @@ nsvn_wc_commit (nsvn_t *instance,
   if (nsvn == NULL)
     return EXIT_FAILURE;
 
-  while (target_list[i] != NULL)
+  targets = apr_array_make(nsvn->pool, 0, sizeof(const char*));
+  path = target_list[idx];
+
+  while (path != NULL)
     {
-      //TODO: Target should be in UTF-8
-      svn_cstring_split_append (target, target_list[i],
-                                "", TRUE, nsvn->pool);
-      i++;
+      *(const char**)apr_array_push(targets) = apr_pstrdup(nsvn->pool, path);
+      path = target_list[++idx];
     }
 
   nsvn->err = svn_client_commit3 (&commit_info,
-                                  target, recurse,
+                                  targets, recurse,
                                   keep_locks,
                                   nsvn->ctx,
                                   nsvn->pool);
@@ -335,12 +336,11 @@ nsvn_wc_update (nsvn_t *instance,
   result_revs = NULL;
   svn_opt_head_rev.kind = svn_opt_revision_head ;
   nsvn->err = svn_client_update2 (result_revs,
-      paths,
+      apr_paths,
       &svn_opt_head_rev,
       (svn_boolean_t) recurse,
       (svn_boolean_t) ignore_externals,
-      nsvn->ctx,
-      nsvn->pool);
+      nsvn->ctx, nsvn->pool);
 
   if (nsvn->err != SVN_NO_ERROR )
     {

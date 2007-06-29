@@ -74,12 +74,11 @@ nsvn_base_setup_progress (nsvn_t *instance,
                           void *progress_func,
                           void *progress_baton);
 
-#if 0
 nsvn_t*
 nsvn_base_setup_log (nsvn_t *instance,
                      void *log_func,
                      void *log_baton);
-
+#if 0
 nsvn_t*
 nsvn_base_setup (nsvn_t *instance,
                  const char *user_name,

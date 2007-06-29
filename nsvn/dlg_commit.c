@@ -27,6 +27,13 @@
 #define DLG_GLADE_FILE  "naughtysvn.glade"
 
 
+void*
+nsvn__get_logmessage (const char **log_msg,
+                      const char **tmp_file,
+                      const void *commit_items,
+                      void *baton, void *pool);
+
+
 static int
 nsvn__destory_window (GtkWidget *widget,
                       GladeXML *user_data)
@@ -42,20 +49,80 @@ nsvn__destory_window (GtkWidget *widget,
 }
 
 
+void*
+nsvn__get_logmessage (const char **log_msg,
+                      const char **tmp_file,
+                      const void *commit_items,
+                      void *baton, void *pool)
+{
+  GtkWidget *window;
+  GtkWidget *textview;
+  GtkTextBuffer *textbuf;
+  GladeXML *data = (GladeXML*) baton;
+  GtkTextIter start;
+  GtkTextIter end;
+
+  window = glade_xml_get_widget (data, "commit_dialog");
+  textview = glade_xml_get_widget (data, "commit_logmsg_txt");
+  textbuf = gtk_text_view_get_buffer (GTK_TEXT_VIEW(textview));
+  gtk_text_buffer_get_start_iter (textbuf, &start);
+  gtk_text_buffer_get_end_iter (textbuf, &end);
+
+  *log_msg = gtk_text_buffer_get_text(textbuf, &start, &end, FALSE);
+
+  return 0;
+}
+
+
+static void
+nsvn__commit (GtkWidget *widget,
+              GladeXML *user_data)
+{
+  GtkWidget *window;
+  nsvn_t *nsvn;
+  GList *files = NULL;
+  const char **target_list;
+  unsigned int nitems, i;
+
+  window = glade_xml_get_widget (user_data, "commit_dialog");
+
+  files = g_object_get_data (G_OBJECT(window), "files");
+  nitems = g_list_length (files);
+
+  target_list = malloc(nitems*(sizeof(char*)));
+  if (!target_list)
+    return;
+
+  for (i=0; i<nitems; i++)
+      target_list[i] = g_list_nth_data (files, i);
+  target_list[nitems] = NULL;
+
+  nsvn = nsvn_base_init (NULL);
+
+  nsvn_base_setup_log (nsvn, nsvn__get_logmessage, (void*)user_data);
+
+  nsvn_wc_commit (nsvn, target_list, 1, 1);
+
+  g_free(target_list);
+
+  nsvn = nsvn_base_uninit (nsvn);
+  gtk_widget_destroy (window);
+
+  return;
+}
+
+
 gboolean
 nsvn_dlg_commit (GtkWidget *widget,
-                 gpointer user_data)
+                 gpointer args)
 {
   GladeXML *dlg_gui;
   GtkWidget *window;
   GtkWidget *cancel_btn;
   GtkWidget *ok_btn;
-  GtkWidget *select_chk;
-  GtkWidget *showunver_chk;
-  GtkWidget *file_lst;
-  GtkWidget *loghist_cmb;
   GtkWidget *logmsg_txt;
   GtkWidget *repospath_lbl;
+  GList *files = NULL;
 
   /* Error-out if supporting glade file missing in default path. */
   dlg_gui = glade_xml_new (GLADEDIR "/" DLG_GLADE_FILE, NULL, NULL);
@@ -69,10 +136,6 @@ nsvn_dlg_commit (GtkWidget *widget,
   window = glade_xml_get_widget (dlg_gui, "commit_dialog");
   cancel_btn = glade_xml_get_widget (dlg_gui, "commit_cancel_btn");
   ok_btn = glade_xml_get_widget (dlg_gui, "commit_ok_btn");
-  select_chk = glade_xml_get_widget (dlg_gui, "commit_selectfiles_chk");
-  showunver_chk = glade_xml_get_widget (dlg_gui, "commit_showunver_chk");
-  file_lst = glade_xml_get_widget (dlg_gui, "commit_file_lst");
-  loghist_cmb = glade_xml_get_widget (dlg_gui, "commit_loghist_cmb");
   logmsg_txt = glade_xml_get_widget (dlg_gui, "commit_logmsg_txt");
   repospath_lbl = glade_xml_get_widget (dlg_gui, "commit_repospath_lbl");
 
@@ -83,13 +146,16 @@ nsvn_dlg_commit (GtkWidget *widget,
   g_signal_connect (G_OBJECT (cancel_btn), "clicked",
                     G_CALLBACK (nsvn__destory_window),
                     dlg_gui);
-/*  g_signal_connect (G_OBJECT (ok_btn), "clicked",
-                    G_CALLBACK (nsvn__commit_files),
+  g_signal_connect (G_OBJECT (ok_btn), "clicked",
+                    G_CALLBACK (nsvn__commit),
                     dlg_gui);
-  g_signal_connect (G_OBJECT (select_chk), "clicked",
-                    G_CALLBACK (nsvn__add_url_item),
-                    dlg_gui);
-*/
+  Split_Arg ((char*) args, &files);
+  //TODO: Only one working copy commit should support.
+  //      if commit entities from more than one wc choosen,
+  //      then either commit should not happen or else
+  //      remove all entity that don't match from the list.
+  g_object_set_data (G_OBJECT(window), "files", files);
+
   /* Activating dialog box. */
   gtk_widget_show (window);
 

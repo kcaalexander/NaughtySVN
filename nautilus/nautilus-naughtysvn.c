@@ -83,11 +83,36 @@ static void
 nsvn_commit (NautilusMenuItem *item,
              gpointer user_data)
 {
+  GList *files=NULL;
+  GList *file_ptr=NULL;
   GString *cmd;
 
-  cmd = g_string_new ("naughtysvn MID=NSVN CMD=commit");
+  cmd = g_string_new ("naughtysvn MID=NSVN CMD=commit \"");
+  files =  g_object_get_data (G_OBJECT(item), "files");
+  file_ptr = files;
+
+  while (file_ptr != NULL)
+    {
+      NautilusFileInfo *file;
+      char *uri, *path;
+
+      file = NAUTILUS_FILE_INFO (file_ptr->data);
+      uri = nautilus_file_info_get_uri (file);
+      path = gnome_vfs_get_local_path_from_uri (uri);
+      g_string_append_printf (cmd, "%s", path);
+
+      file_ptr = g_list_next (file_ptr);
+      //Appending the unique delimiter to the argument if more args follows.
+      if (file_ptr)
+        g_string_append_printf (cmd, "%c", ARG_RECORD_SEPARATOR);
+    }
+    
+  g_string_append (cmd, "\"");
+  
   g_spawn_command_line_async (cmd->str, NULL);
   g_string_free (cmd, TRUE);
+  file_ptr = NULL;
+  g_list_free (files);
 }
 
 
@@ -229,14 +254,12 @@ nsvn_create_menuitem_commit (NautilusMenuProvider *provider,
 {
   NautilusMenuItem *item = NULL;
 
-  if (!files)// && files->next != NULL)
-    return NULL;
-
   item = nautilus_menu_item_new ("NautilusNSVN::FT_Commit",
            _("NaughtySVN Commit"),
            _("Make permanent changes in Subversion repository"),
            PIXDIR "/commit.png");
-//  g_object_set_data (G_OBJECT (item), "files", file);
+  g_object_set_data (G_OBJECT (item), "files",
+                     (void*)g_list_copy (files));
   g_signal_connect (item, "activate", G_CALLBACK (nsvn_commit),
                     provider);
 

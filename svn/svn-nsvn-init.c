@@ -255,10 +255,8 @@ nsvn_base_setup_progress (nsvn_t *instance,
 }
 
 
-#if 0
 nsvn_t*
 nsvn_base_setup_log (nsvn_t *instance,
-                     //svn_client_get_commit_log2_t log_func,
                      void *log_func,
                      void *log_baton)
 {
@@ -271,6 +269,7 @@ nsvn_base_setup_log (nsvn_t *instance,
 }
 
 
+#if 0
 nsvn_t*
 nsvn_base_setup (nsvn_t *instance,
                  const char *user_name,
