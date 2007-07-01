@@ -42,7 +42,7 @@ static int
 nsvn__remove_url_item (GtkWidget *widget,
                        gpointer user_data);
 
-char*
+static char*
 nsvn__get_revstr (GladeXML *window);
 
 static int
@@ -60,7 +60,7 @@ nsvn__destory_window (GtkWidget *widget,
 }
 
 
-char*
+static char*
 nsvn__get_revstr (GladeXML *window)
 {
   GtkWidget *widget;
@@ -324,6 +324,7 @@ nsvn__checkout_url (GtkWidget *widget,
   void *nsvn;
   char *revstr;
 
+  /* Checkout widgets. */
   window = glade_xml_get_widget (user_data, "checkout_dialog");
   wcpath_wid = glade_xml_get_widget (user_data, "checkout_wcpath_ent");
   url_tbl = glade_xml_get_widget (user_data, "checkout_url_tbl");
@@ -342,6 +343,10 @@ nsvn__checkout_url (GtkWidget *widget,
   /* Check Ignore externals. */
   wid = glade_xml_get_widget (user_data, "checkout_ignextn_chk");
   ignextn = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (wid));
+
+  /* Hiding checkout window and loads result window. */
+  gtk_widget_hide (window);
+  nsvn_dlg_result_show (window, user_data);
 
   nrows = GTK_TABLE (url_tbl)->nrows;
   for (i=1; i<=nrows; i++)
