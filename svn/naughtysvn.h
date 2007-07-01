@@ -162,9 +162,9 @@ nsvn_wc_update (nsvn_t *instance,
                 const char **paths,
                 const char *rev,
                 int recurse,
-                int ignore_externals/*,
-                const char *mergetool*/
-                );
+                int ignore_externals);
+
+
 /* Repository functions. */
 
 int

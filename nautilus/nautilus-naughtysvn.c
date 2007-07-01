@@ -236,7 +236,8 @@ nsvn_create_menuitem_update (NautilusMenuProvider *provider,
            _("NaughtySVN Update"),
            _("Bring changes from the repository into the working copy"),
            PIXDIR "/update.png");
-//  g_object_set_data (G_OBJECT (item), "files", file);
+  g_object_set_data (G_OBJECT (item), "files",
+                     (void*)g_list_copy (files));
   g_signal_connect (item, "activate", G_CALLBACK (nsvn_update),
                     provider);
 

@@ -300,45 +300,44 @@ nsvn_wc_status (nsvn_t *instance,
 int
 nsvn_wc_update (nsvn_t *instance,
                 const char **paths,
+                const char *rev_str,
                 const char *rev,
                 int recurse,
-                int ignore_externals
-                /*const char *mergetool*/
-                )
+                int ignore_externals)
 {
   nsvn_t *nsvn;
-  apr_array_header_t **result_revs;
-  svn_opt_revision_t svn_opt_head_rev; /* FIXME: drop this */
+  svn_revnum_t result_rev;
+  apr_array_header_t *apr_paths = NULL;
+  svn_opt_revision_t revision;
+  const char *path;
+  unsigned int idx=0;
   apr_array_header_t apr_paths;
 
   if (instance == NULL)
     nsvn = nsvn_base_init (NULL);
   else
-    nsvn = instance;
-
-  if (nsvn->err)
-    {
-      if (instance == NULL)
-        nsvn = nsvn_base_uninit (nsvn);
-      return EXIT_FAILURE;
-    }
+    nsvn = (nsvn_t*) instance;
 
   if (instance == NULL)
-    nsvn = nsvn_base_uninit (nsvn);
+    return EXIT_FAILURE;
 
-  /* FIXME: paths needs to be converted to apr_array_header_t type */
+  nsvn_common_parse_revision (instance, &revision, NULL,
+                              rev_str ? rev_str : "HEAD");
 
-  /* FIXME: the revision information must be passed to the client
-   * for now we always update to head revision */
-  /* for now we don't care about the revisions we updated to */
-  result_revs = NULL;
-  svn_opt_head_rev.kind = svn_opt_revision_head ;
-  nsvn->err = svn_client_update2 (result_revs,
-      &apr_paths,
-      &svn_opt_head_rev,
-      (svn_boolean_t) recurse,
-      (svn_boolean_t) ignore_externals,
-      nsvn->ctx, nsvn->pool);
+  /* Converting PATHS to apr_array_header_t type. */ 
+  apr_paths = apr_array_make(nsvn->pool, 0, sizeof(const char*));
+  path = paths[idx];
+
+  while (path != NULL)
+    {
+      *(const char**)apr_array_push(apr_paths) = apr_pstrdup(nsvn->pool, path);
+      path = paths[++idx];
+    }
+
+  nsvn->err = svn_client_update2 (&result_rev, apr_paths, &revision,
+                                  (svn_boolean_t) recurse,
+                                  (svn_boolean_t) ignore_externals,
+                                  nsvn->ctx, nsvn->pool);
 
   if (nsvn->err != SVN_NO_ERROR )
     {
@@ -347,7 +346,6 @@ nsvn_wc_update (nsvn_t *instance,
     };
 
   return EXIT_SUCCESS;
-
 }
 
 /*
