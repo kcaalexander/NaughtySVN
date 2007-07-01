@@ -30,8 +30,9 @@ naughtysvn_SOURCES = \
 		dlg_preferences.c dlg_preferences.h \
 		dlg_checkout.c dlg_checkout.h \
 		dlg_commit.c dlg_commit.h \
+		dlg_add.c dlg_add.h \
 		dlg_update.c dlg_update.h \
-		dlg_add.c dlg_add.h
+		dlg_result.c dlg_result.h
 
 naughtysvn_LDADD = @PACKAGE_LIBS@ \
 		$(INTLLIBS) \
