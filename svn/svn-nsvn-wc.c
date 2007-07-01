@@ -301,17 +301,15 @@ int
 nsvn_wc_update (nsvn_t *instance,
                 const char **paths,
                 const char *rev,
-                void *callback,
-                void *callback_data,
                 int recurse,
-                int ignore_externals,
-                const char *mergetool,
-                char *username,
-                char *password)
+                int ignore_externals
+                /*const char *mergetool*/
+                )
 {
   nsvn_t *nsvn;
   apr_array_header_t **result_revs;
   svn_opt_revision_t svn_opt_head_rev; /* FIXME: drop this */
+  apr_array_header_t apr_paths;
 
   if (instance == NULL)
     nsvn = nsvn_base_init (NULL);
@@ -336,7 +334,7 @@ nsvn_wc_update (nsvn_t *instance,
   result_revs = NULL;
   svn_opt_head_rev.kind = svn_opt_revision_head ;
   nsvn->err = svn_client_update2 (result_revs,
-      apr_paths,
+      &apr_paths,
       &svn_opt_head_rev,
       (svn_boolean_t) recurse,
       (svn_boolean_t) ignore_externals,

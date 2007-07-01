@@ -64,9 +64,40 @@ void
 on_updateok_clicked (GtkWidget *widget,
                       gpointer user_data)
 {
+
+  nsvn_t *nsvn;
+  GList *files = NULL;
+
+  Split_Arg ((char*) user_data, &files);
+  MSG_DEBUG("%s", user_data);
+
+  g_object_set_data (G_OBJECT(widget), "files", files);
+  if ( (!files) || (!files->data) )
+    {
+      MSG_DEBUG("no files\n");
+      return;
+    };
+  
+
+  nsvn = nsvn_base_init (NULL);
+
+
   MSG_DEBUG("update ok clicked\n");
   MSG_DEBUG("  ignore externals = %d\n", update_ignore_externals);
   MSG_DEBUG("  recursive        = %d\n", update_recursive);
+  if ( ( /*ret = */nsvn_wc_update(nsvn,
+                              files->data,
+                              "HEAD",
+                              update_recursive,
+                              update_ignore_externals)) == EXIT_SUCCESS )
+    {
+      MSG_DEBUG("success\n");
+      /* do stuff to display the output of the command */
+    }
+  else
+    {
+      MSG_DEBUG("failed\n");
+    };
 }
 
 gboolean
