@@ -142,7 +142,7 @@ nsvn__update_wc (GtkWidget *widget,
 
   target_list = malloc(nitems*(sizeof(char*)));
   if (!target_list)
-    return;
+    return 0;
 
   for (i=0; i<nitems; i++)
       target_list[i] = g_list_nth_data (files, i);
@@ -166,7 +166,7 @@ nsvn__update_wc (GtkWidget *widget,
   nsvn = nsvn_base_uninit (nsvn);
   gtk_widget_destroy (window);
 
-  return 0;
+  return EXIT_SUCCESS;
 }
 
 
