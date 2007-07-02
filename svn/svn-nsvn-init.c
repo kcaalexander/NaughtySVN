@@ -35,7 +35,7 @@
 #include "naughtysvn.h"
 #include "svn-nsvn-types.h"
 
-
+#if 0
 static svn_error_t*
 nsvn_base__check_svnlib_ver (void)
 {
@@ -53,7 +53,7 @@ nsvn_base__check_svnlib_ver (void)
     NSVN_SVN_VER_REQUIRED(req_ver);
     return svn_ver_check_list(&req_ver, checklist);
 }
-
+#endif
 
 static int
 nsvn_base__init_apr (void)
