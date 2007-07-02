@@ -339,7 +339,6 @@
 	  <child>
 	    <widget class="GtkVBox" id="vbox15">
 	      <property name="border_width">5</property>
-	      <property name="visible">True</property>
 	      <property name="homogeneous">False</property>
 	      <property name="spacing">5</property>
 
@@ -534,7 +533,6 @@
 
 	  <child>
 	    <widget class="GtkLabel" id="label39">
-	      <property name="visible">True</property>
 	      <property name="label" translatable="yes">Log Templates</property>
 	      <property name="use_underline">False</property>
 	      <property name="use_markup">False</property>
