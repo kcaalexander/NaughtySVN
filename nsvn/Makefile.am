@@ -37,7 +37,7 @@ naughtysvn_SOURCES = \
 naughtysvn_LDADD = @PACKAGE_LIBS@ \
 		$(INTLLIBS) \
 		-L$(top_builddir)/svn \
-                -lsvn_wc-1 \
+    -lsvn_wc-1 \
 		-lnaughtysvn
 
 schemadir = @GCONF_SCHEMA_FILE_DIR@
