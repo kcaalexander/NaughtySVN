@@ -22,6 +22,7 @@
 
 #include "svn/naughtysvn.h"
 #include "dlg_checkout.h"
+#include "dlg_result.h"
 #include "global.h"
 
 #define DLG_GLADE_FILE  "naughtysvn.glade"
