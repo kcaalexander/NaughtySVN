@@ -1,0 +1,9 @@
+Version 0.0.1 (Jul-02-2007)
+
+  * Integrating with Nautilus.
+  * Show and Hide context menu items.
+  * Subversion repository creation.
+  * Checkout Subversion repository to working copy.
+  * Add files/directory to working copy.
+  * Commit working copy to Subversion repository.
+  * Update working copy from a Subversion repository.
