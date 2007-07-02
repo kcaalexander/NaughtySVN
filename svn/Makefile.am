@@ -8,7 +8,7 @@
 
 lib_LTLIBRARIES = libnaughtysvn.la
 
-APR_CFLAGS =`$(APRCONFIGTOOL) --includes --cflags`
+APR_CFLAGS =`$(APRCONFIGTOOL) --includes --cppflags --cflags`
 APR_LIBS =`$(APRCONFIGTOOL) --libs`
 
 INCLUDES = \
