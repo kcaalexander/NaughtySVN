@@ -1,17 +1,5 @@
 ################################################################
-#                 NaughtySVN 0.0.1 README file.                #
-#           (C) Copyright 2005, Alexander Thomas (AT)          #
-#                      All rights reserved                     #
-#                                                              #
-# NOTE: THIS IS A EVALUATION/REVIEW RELEASE !!!                #
-#       THIS VERSION HAS NOT BEEN TESTED PROPERLY AND MAY      #
-#       DO ABSOLUTELY NOTHING! USE AT YOUR OWN RISK.           #
-#                                                              #
-# STATUTORY WARNING: Smoking is injurious to health.           #
-#                                                              #
-#                                                              #
-# ADVICE: If you want a stable version of NaughtySVN,          #
-#   please download 0.0.0 release (stable dream release) :-).  #
+#                 NaughtySVN README file.                      #
 ################################################################
 
 
@@ -21,7 +9,6 @@ Table of Contents
 #################
 
   - Overview
-  - Expected Features and its Status
   - Architecture and Design
   - Directory Layout
   - Dependencies
@@ -29,7 +16,8 @@ Table of Contents
   - What happens while installing
   - Invocation/Running
   - Known Issues/Fixme's/Todo's
-  - What to Evaluate/Review
+  - Further Information
+
 
 --------
 Overview
@@ -37,7 +25,7 @@ Overview
 
 NaughtySVN (NSVN) is an easy-to-use GUI based Subversion client which
 works as an extension to Nautilus File Manager (Graphical shell for
-the GNOME desktop enviornment). Inspired by TortoiseSVN, Its an effort
+the GNOME desktop environment). Inspired by TortoiseSVN, Its an effort
 primarily for non-technical people to use subversion.
 
 NSVN has a graphical interface which can be activated from Nautilus
@@ -46,62 +34,6 @@ easy to use, which  will allow users to create and administer subversion
 repository, checkout and commit working copies, handling working copies,
 browsing repositories and working copies, handling remote repositories and
 working copies etc.
-
-
---------------------------------
-Expected Features and its Status
---------------------------------
-
-I choose this feature list to develop a reasonably good framework
-and to test capabilities of Nautilus before I make source code available
-to other developers. Also I want other developers to get a feel of
-what I am expecting with this tool. Status of each expected feature is
-given in brackets next to each feature.
-
-  - An easy-to-use GUI interface (partially done): This GUI interface
-    windows will help users to type-in required informations while using
-    each NSVN commands. New windows will be added as and when new commands
-    are added to NSVN or whenever it is required.
-
-     * Repository creation window (Done)
-     * Checkout window (New)
-     * Commit window (New)
-     * Info property page (New)
-     * Preference window (Started)
-     * About window (Started)
-
-  - Integrating with nautilus (Started): By making use of
-    libnautilus-extension add menu items to item and background context
-    menus, add items to toolbar, add custom notebook page in file
-    properties dialog in nautilus file browser.
-
-     * 'Create Repository' context menu item in item and background context
-       menu and toolbar (Done)
-     * 'Checkout' context menu item in item and background context menu (New)
-     * 'Commit' context menu item in item and background context menu (New)
-     * 'Property page for info' a page need to be added in properties dialog
-     for showing info details.
-     * 'Preference' context menu item in item and background context menu (Started)
-     * 'About' context menu item in item and background context menu (Started)
-
-  - Show and Hide context menu items (Started): 'Preference' and 'About' menu
-    items will be shown all the time. 'Property page for info' will be show in
-    only if the selected item is a entity in repository or in working copy or
-    repository or working copy itself. 'Commit' will be shown only if selected
-    item is a working copy path. 'Checkout' will be shown if selected item is
-    an empty directory or if selected item is part of working copy.
-    'Create Repository' shown if the selected item is an empty directory.
-
-  - Create Repository (done)
-
-  - Commit working copy (New)
-
-  - Checkout repository to working copy (Started)
-
-  - Information on repository and working copy (New)
-
-  - Integrate gconf for NSVN configuration parameters and user preference(New)
-
 
 -----------------------
 Architecture and Design
@@ -192,7 +124,7 @@ The following packages and libraries are required by NaughtySVN:
 
 For development purposes you will also need libglade-gnome.
 Note: On Debian Etch systems it is impossible to install out of the box
-both libglade-gnome0-dev and libsvn-dev due to a conflict between dependend
+both libglade-gnome0-dev and libsvn-dev due to a conflict between dependent
 upon libraries. In order to install them side by side you will have to
 modify an existing libdb4.4-dev deb package to add "libdb3-dev" to the
 Provides: field of the package. You can do this by editing DEBIAN/control
@@ -216,6 +148,8 @@ changes in ./svn/Makefile.am.
    3. 'make install' to install NSVN.
 
    4. 'pkill -9 nautilus' kill all nautilus instances
+
+   Note:- Developers can use 'make installdev' for installing and restarting nautilus.
    
 ----------------------------
 What happens on installation
@@ -264,16 +198,16 @@ Invocation/Running
 ------------------
 
 NaughtySVN is tightly coupled with subversion and nautilus and is not
-designed to invoke it sepratly from command line. But in the interest
+designed to invoke it separately from command line. But in the interest
 of developers and to test svn and nsvn modules faster, they can call
-the 'naughtysvn' excutable from command line use following format
+the 'naughtysvn' executable from command line use following format
 
    naughtysvn MID=NSVN CMD=command list_of_arguments ...
 
    where 'MID=NSVN' is a magic id used to transfer NSVN related data
-from nautlius to NSVN, 'command' is the command to be executed by nsvn
-and 'list_of_arguments' are list of arugments need to execute the command
-seprated by space. for example:
+from Nautilus to NSVN, 'command' is the command to be executed by nsvn
+and 'list_of_arguments' are list of arguments need to execute the command
+separated by space. for example:
 
    naughtysvn MID=NSVN CMD=create_repos /tmp/repos
 
@@ -282,9 +216,19 @@ seprated by space. for example:
 Known Issues/Fixme's/Todo's
 ---------------------------
  
- Search for FIXME/TODO in source code for more details...
+Search for FIXME/TODO in source code for more details...
  
 
-Thank you. 
+-------------------
+Further Information
+-------------------
+
+The official NaughtySVN homepage is located at
+
+     http://naughtysvn.tigris.org
+
+There you can always find the latest releases and instructions.
+
+
 -Alexander Thomas (AT)
-Saturday, September 17 2005
+Monday, July 02 2007
