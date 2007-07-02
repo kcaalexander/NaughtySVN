@@ -141,7 +141,7 @@ do
 	autoheader
       fi
       echo "Running automake --gnu $am_opt ..."
-      automake --copy --add-missing --foreign $am_opt
+      automake --copy --add-missing --warnings=all --gnu $am_opt
       echo "Running autoconf ..."
       autoconf
     )
