@@ -208,6 +208,7 @@ nsvn_wc_commit (nsvn_t *instance,
   return EXIT_SUCCESS;
 }
 
+
 int
 nsvn_wc_info (nsvn_t *instance,
               const char *path,
@@ -301,17 +302,15 @@ int
 nsvn_wc_update (nsvn_t *instance,
                 const char **paths,
                 const char *rev_str,
-                const char *rev,
                 int recurse,
                 int ignore_externals)
 {
   nsvn_t *nsvn;
-  svn_revnum_t result_rev;
+  apr_array_header_t *result_rev;
   apr_array_header_t *apr_paths = NULL;
   svn_opt_revision_t revision;
   const char *path;
   unsigned int idx=0;
-  apr_array_header_t apr_paths;
 
   if (instance == NULL)
     nsvn = nsvn_base_init (NULL);
@@ -341,7 +340,7 @@ nsvn_wc_update (nsvn_t *instance,
 
   if (nsvn->err != SVN_NO_ERROR )
     {
-      MSG_DEBUG("update: %d", nsvn->err);
+      MSG_DEBUG("Updated operation failed ...");
       return EXIT_FAILURE;
     };
 

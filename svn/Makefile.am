@@ -10,6 +10,7 @@ lib_LTLIBRARIES = libnaughtysvn.la
 
 APR_CFLAGS =`$(APRCONFIGTOOL) --includes --cflags`
 APR_LIBS =`$(APRCONFIGTOOL) --libs`
+
 INCLUDES = \
 		-DPACKAGE_DATA_DIR=\""$(datadir)"\" \
 		-DPACKAGE_LOCALE_DIR=\""$(prefix)/$(DATADIRNAME)/locale"\" \

@@ -160,7 +160,7 @@ nsvn_wc_status (nsvn_t *instance,
 int
 nsvn_wc_update (nsvn_t *instance,
                 const char **paths,
-                const char *rev,
+                const char *rev_str,
                 int recurse,
                 int ignore_externals);
 
