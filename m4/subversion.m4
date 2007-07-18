@@ -4,7 +4,7 @@ dnl Tweaked by: Alexander Thomas <alexander@collab.net>
 
 AC_DEFUN([AM_CHECK_SVN_HEADER],
 [
-  SVN_INCLUDES="/usr/local/include /usr/include"
+  SVN_INCLUDES="/usr/local/include/subversion-1 /usr/include/subversion-1"
 
   dnl Checking for user supplied subversion include path.
   AC_ARG_WITH(svn-include,
@@ -19,20 +19,20 @@ AC_DEFUN([AM_CHECK_SVN_HEADER],
   AC_MSG_CHECKING([for Subversion headers])
   SVN_INCLUDE=""
   for VALUE in $SVN_INCLUDES ; do
-    if test -f $VALUE/subversion-1/svn_types.h ; then
+    if test -f $VALUE/svn_types.h ; then
       SVN_INCLUDE=$VALUE
       break
     fi
   done
   if test $SVN_INCLUDE ; then
-    AC_MSG_RESULT([found])
+    AC_MSG_RESULT([$SVN_INCLUDE])
   else
     AC_MSG_RESULT([not found])
     AC_MSG_ERROR([Subversion headers are required. Try --with-svn-include.])
   fi
 
   dnl Exportingites of AC_LIB_LINKFLAGS_BODY.
-  SVN_CFLAGS="-I $SVN_INCLUDE/subversion-1"
+  SVN_CFLAGS="-I $SVN_INCLUDE"
   AC_SUBST(SVN_CFLAGS)
 ])
 
@@ -60,13 +60,13 @@ AC_DEFUN([AM_CHECK_SVN_LIB],
     fi
   done
   if test $SVN_LIB ; then
-    AC_MSG_RESULT([found])
+    AC_MSG_RESULT([$SVN_LIB])
   else
     AC_MSG_RESULT([not found])
     AC_MSG_ERROR([Subversion libraries are required. Try --with-svn-lib.])
   fi
 
   dnl Exporting Subversion library path and libraries.
-  SVN_LIBS="-L$SVN_LIB -lsvn_client-1 -lsvn_wc-1 -lsvn_ra-1 -lsvn_delta-1 -lsvn_subr-1"
+  SVN_LIBS="-L$SVN_LIB -lsvn_client-1 -lsvn_wc-1 -lsvn_ra-1 -lsvn_delta-1 -lsvn_subr-1 -lsvn_repos-1 -lsvn_fs-1"
   AC_SUBST(SVN_LIBS)
 ])
