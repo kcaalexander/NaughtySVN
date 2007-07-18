@@ -1,7 +1,10 @@
 ## Process this file with automake to produce Makefile.in
 
-glade_DATA = naughtysvn.glade
 gladedir = $(datadir)/$(PACKAGE_NAME)/glade
+glade_DATA = naughtysvn.glade
+
+schemadir = @GCONF_SCHEMA_FILE_DIR@
+schema_DATA = naughtysvn.schemas
 
 APR_CFLAGS =`$(APRCONFIGTOOL) --includes --cppflags --cflags`
 APR_LIBS =`$(APRCONFIGTOOL) --libs`
@@ -37,11 +40,9 @@ naughtysvn_SOURCES = \
 naughtysvn_LDADD = @PACKAGE_LIBS@ \
 		$(INTLLIBS) \
 		-L$(top_builddir)/svn \
-    -lsvn_wc-1 \
+    $(SVN_LIBS) \
 		-lnaughtysvn
 
-schemadir = @GCONF_SCHEMA_FILE_DIR@
-schema_DATA = naughtysvn.schemas
 
 install-data-local:
 	GCONF_CONFIG_SOURCE=$(GCONF_SCHEMA_CONFIG_SOURCE) $(GCONFTOOL) --makefile-install-rule $(srcdir)/$(schema_DATA)
@@ -49,6 +50,7 @@ install-data-local:
 uninstall-local:
 	GCONF_CONFIG_SOURCE=$(GCONF_SCHEMA_CONFIG_SOURCE) $(GCONFTOOL) --makefile-uninstall-rule $(srcdir)/$(schema_DATA)
 #	$(PKILLTOOL) -9 gconfd
+	rm -rf $(gladedir)
 
 EXTRA_DIST = \
 		$(glade_DATA) \

@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-SUBDIRS = svn nautilus nsvn po
+SUBDIRS = svn nautilus pixmaps nsvn po
 
 ACLOCAL_AMFLAGS = -I m4
 
@@ -18,33 +18,10 @@ installdev: install
 uninstalldev: uninstall
 	pkill -9 nautilus
 
-dist-hook:
-	if test -d $(srcdir)/pixmaps; then \
-	  mkdir $(datadir)/$(PACKAGE_NAME)/pixmaps; \
-	  for pixmap in pixmaps/*; do \
-	    if test -f $$pixmap; then \
-	      cp -p $$pixmap $(datadir)/$(PACKAGE_NAME)/pixmaps; \
-	    fi \
-	  done \
-	fi
+nsvndatadir = $(datadir)/$(PACKAGE_NAME)
 
 uninstall-local:
-	if test -d $(DESTDIR)$(datadir)/$(PACKAGE); then \
-	  rm -rf "$(DESTDIR)$(datadir)/$(PACKAGE)"; \
-	fi
-	if test -d $(datadir)/$(PACKAGE_NAME); then \
-	  rm -rf "$(datadir)/$(PACKAGE_NAME)"; \
-	fi
-
-install-data-local:
-	if test -d $(srcdir)/pixmaps; then \
-	  mkdir $(datadir)/$(PACKAGE_NAME)/pixmaps; \
-	  for pixmap in pixmaps/*; do \
-	    if test -f $$pixmap; then \
-	      cp -p $$pixmap $(datadir)/$(PACKAGE_NAME)/pixmaps; \
-	    fi \
-	  done \
-	fi
+	rm -rf $(nsvndatadir)
 
 #spec = naughtysvn.spec
 

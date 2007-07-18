@@ -197,6 +197,7 @@ Makefile
 nautilus/Makefile
 svn/Makefile
 svn/libnaughtysvn.pc
+pixmaps/Makefile
 nsvn/Makefile
 po/Makefile.in
 packages/naughtysvn.spec
