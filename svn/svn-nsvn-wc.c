@@ -210,6 +210,66 @@ nsvn_wc_commit (nsvn_t *instance,
 
 
 int
+nsvn_wc_log (nsvn_t *instance,
+             const char **target_list,
+             const char *start_rev,
+             const char *end_rev,
+             int limit,
+             int discover_changed_paths,
+             int strict_node_history,
+             void *callback,
+             void *callback_data)
+{
+  nsvn_t *nsvn;
+  svn_opt_revision_t start_revision;
+  svn_opt_revision_t end_revision;
+  apr_array_header_t *targets = NULL;
+  const char *path;
+  unsigned int idx = 0;
+
+  if (instance == NULL)
+    nsvn = nsvn_base_init (NULL);
+  else
+    nsvn = instance;
+
+  targets = apr_array_make(nsvn->pool, 0, sizeof(const char*));
+  path = target_list[idx];
+
+  while (path != NULL)
+    {
+      *(const char**)apr_array_push(targets) = apr_pstrdup(nsvn->pool, path);
+      path = target_list[++idx];
+    }
+
+  nsvn_common_parse_revision (nsvn, &start_revision, NULL,
+                              start_rev ? start_rev : "HEAD");
+  nsvn_common_parse_revision (nsvn, &end_revision, NULL,
+                              end_rev ? end_rev : "HEAD");
+
+  if (!nsvn->err)
+    {
+      nsvn->err = svn_client_log2 (targets, &start_revision, &end_revision,
+                                   limit, discover_changed_paths,
+                                   strict_node_history,
+                                   callback, callback_data,
+                                   nsvn->ctx, nsvn->pool);
+    }
+
+  if (nsvn->err)
+    {
+      if (instance == NULL)
+        nsvn = nsvn_base_uninit (nsvn);
+      return EXIT_FAILURE;
+    }
+
+  if (instance == NULL)
+    nsvn = nsvn_base_uninit (nsvn);
+
+  return EXIT_SUCCESS;
+}
+
+
+int
 nsvn_wc_info (nsvn_t *instance,
               const char *path,
               const char *rev,

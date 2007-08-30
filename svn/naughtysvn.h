@@ -138,6 +138,17 @@ nsvn_wc_commit (nsvn_t *instance,
                 int keep_locks);
 
 int
+nsvn_wc_log (nsvn_t *instance,
+             const char **target_list,
+             const char *start_rev,
+             const char *end_rev,
+             int limit,
+             int discover_changed_paths,
+             int strict_node_history,
+             void *callback,
+             void *callback_data);
+
+int
 nsvn_wc_info (nsvn_t *instance,
               const char *path,
               const char *rev,
