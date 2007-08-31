@@ -19,11 +19,69 @@
 //#include <apr_signal.h>
 
 #include "svn_path.h"
+#include "svn_repos.h"
 
 #include "naughtysvn.h"
 #include "svn-nsvn-types.h"
 
 //#include <stdlib.h>
+
+int
+nsvn_repos_check_is_repospath (nsvn_t *n,
+                               const char *repos_path)
+{
+  nsvn_t *nsvn;
+  const char *root;
+
+  if (repos_path == NULL)
+    return EXIT_SUCCESS;
+
+  if (n == NULL)
+    nsvn = nsvn_base_init (NULL);
+  else
+    nsvn = (nsvn_t*) n;
+
+  if (nsvn == NULL)
+    return EXIT_FAILURE;
+
+  root = svn_repos_find_root_path (repos_path, nsvn->pool);
+
+  if (n == NULL)
+    nsvn = nsvn_base_uninit (nsvn);
+
+  if (root)
+    return EXIT_SUCCESS;
+  else
+    return EXIT_FAILURE;
+}
+
+
+const char*
+nsvn_repos_get_repospath (nsvn_t *n,
+                          const char *repos_path)
+{
+  nsvn_t *nsvn;
+  const char *root;
+
+  if (repos_path == NULL)
+    return EXIT_SUCCESS;
+
+  if (n == NULL)
+    nsvn = nsvn_base_init (NULL);
+  else
+    nsvn = (nsvn_t*) n;
+
+  if (nsvn == NULL)
+    return EXIT_FAILURE;
+
+  root = svn_repos_find_root_path (repos_path, nsvn->pool);
+
+  if (n == NULL)
+    nsvn = nsvn_base_uninit (nsvn);
+
+  return root;
+}
+
 
 int
 nsvn_repos_checkout (nsvn_t *n, const char *repos,

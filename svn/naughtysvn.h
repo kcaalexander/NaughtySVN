@@ -179,6 +179,16 @@ nsvn_wc_update (nsvn_t *instance,
 /* Repository functions. */
 
 int
+nsvn_repos_check_is_repospath (nsvn_t *n,
+                               const char *repos_path);
+
+
+const char*
+nsvn_repos_get_repospath (nsvn_t *n,
+                          const char *repos_path);
+
+
+int
 nsvn_repos_checkout (nsvn_t *instance, const char *repos,
                      const char *path,
                      const char *rev,
