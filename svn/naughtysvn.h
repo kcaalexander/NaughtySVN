@@ -152,9 +152,9 @@ int
 nsvn_wc_info (nsvn_t *instance,
               const char *path,
               const char *rev,
+              int recurse,
               void *callback,
-              void *callback_data,
-              int recurse);
+              void *callback_data);
 
 int
 nsvn_wc_status (nsvn_t *instance,
