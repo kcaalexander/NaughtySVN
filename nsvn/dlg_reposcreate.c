@@ -149,8 +149,8 @@ nsvn__destroy_window  (GtkWidget *widget,
   GtkWidget *window;
 
   window = glade_xml_get_widget (user_data, "repo_create_dialog");
-
-  gtk_widget_destroy (window);
+  if (window)
+    gtk_widget_destroy (window);
   g_object_unref (G_OBJECT(user_data));
   gtk_main_quit ();
   return 0;
