@@ -89,7 +89,7 @@ nsvn__commit (GtkWidget *widget,
   files = g_object_get_data (G_OBJECT(window), "files");
   nitems = g_list_length (files);
 
-  target_list = malloc(nitems*(sizeof(char*)));
+  target_list = g_malloc((nitems+1)*(sizeof(char*)));
   if (!target_list)
     return;
 
