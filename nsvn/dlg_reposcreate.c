@@ -143,7 +143,7 @@ nsvn__create_repository  (GtkWidget *widget,
 
 
 static int
-nsvn__destory_window  (GtkWidget *widget,
+nsvn__destroy_window  (GtkWidget *widget,
                        GladeXML *user_data)
 {
   GtkWidget *window;
@@ -206,10 +206,10 @@ nsvn_dlg_reposcreate    (GtkWidget *widget,
                     G_CALLBACK (nsvn__create_repository),
                     dlg_gui);
   g_signal_connect (G_OBJECT (cancel_btn), "clicked",
-                    G_CALLBACK (nsvn__destory_window),
+                    G_CALLBACK (nsvn__destroy_window),
                     dlg_gui);
   g_signal_connect (G_OBJECT (window), "destroy",
-                    G_CALLBACK (nsvn__destory_window),
+                    G_CALLBACK (nsvn__destroy_window),
                     dlg_gui);
   
   /* Activating dialog box */

@@ -27,7 +27,7 @@
 
 
 static int
-nsvn__destory_window  (GtkWidget *widget,
+nsvn__destroy_window  (GtkWidget *widget,
                        GladeXML *user_data)
 {
   GtkWidget *window;
@@ -61,7 +61,7 @@ nsvn_dlg_aboutnsvn (GtkWidget *widget,
   window = glade_xml_get_widget (dlg_gui, "about_dialog");
 
   g_signal_connect (G_OBJECT (window), "destroy",
-                    G_CALLBACK (nsvn__destory_window),
+                    G_CALLBACK (nsvn__destroy_window),
                     dlg_gui);
   
   /* Activating dialog box */

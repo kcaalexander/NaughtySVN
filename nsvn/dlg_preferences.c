@@ -137,7 +137,7 @@ nsvn__verify_save_preferences (GtkWidget *window,
 
 
 static int
-nsvn__destory_window  (GtkWidget *widget,
+nsvn__destroy_window  (GtkWidget *widget,
                        GladeXML *user_data)
 {
   GtkWidget *window;
@@ -195,10 +195,10 @@ nsvn_dlg_preferences (GtkWidget *widget,
 
   /* Connecting widgets to callbacks. */
   g_signal_connect (G_OBJECT (window), "destroy",
-                    G_CALLBACK (nsvn__destory_window),
+                    G_CALLBACK (nsvn__destroy_window),
                     dlg_gui);
   g_signal_connect (G_OBJECT (cancel_btn), "clicked",
-                    G_CALLBACK (nsvn__destory_window),
+                    G_CALLBACK (nsvn__destroy_window),
                     dlg_gui);
 
   g_signal_connect (G_OBJECT (ok_btn), "clicked",

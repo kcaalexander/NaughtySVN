@@ -39,7 +39,7 @@ enum
 
 
 static int
-nsvn__destory_window (GtkWidget *widget,
+nsvn__destroy_window (GtkWidget *widget,
                       GladeXML *user_data)
 {
   GtkWidget *window;
@@ -283,10 +283,10 @@ nsvn_dlg_add (GtkWidget *widget,
 
   /* Connecting callbacks to widget. */
   g_signal_connect (G_OBJECT (window), "destroy",
-                    G_CALLBACK (nsvn__destory_window),
+                    G_CALLBACK (nsvn__destroy_window),
                     dlg_gui);
   g_signal_connect (G_OBJECT (cancel_btn), "clicked",
-                    G_CALLBACK (nsvn__destory_window),
+                    G_CALLBACK (nsvn__destroy_window),
                     dlg_gui);
   g_signal_connect (G_OBJECT (select_chk), "toggled",
                     G_CALLBACK (nsvn__select_toggle),

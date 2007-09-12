@@ -47,7 +47,7 @@ static char*
 nsvn__get_revstr (GladeXML *window);
 
 static int
-nsvn__destory_window (GtkWidget *widget,
+nsvn__destroy_window (GtkWidget *widget,
                       GladeXML *user_data)
 {
   GtkWidget *window;
@@ -110,7 +110,7 @@ nsvn__get_revstr (GladeXML *window)
 
 
 static int
-nsvn__destory_filechooser_window (GtkWidget *widget,
+nsvn__destroy_filechooser_window (GtkWidget *widget,
                                   gpointer user_data)
 {
   gtk_widget_hide (GTK_WIDGET(user_data));
@@ -202,7 +202,7 @@ nsvn__choose_dir_item (GtkWidget *widget,
                     G_CALLBACK (gtk_true),
                     window);
   g_signal_connect (G_OBJECT (cancel), "clicked",
-                    G_CALLBACK (nsvn__destory_filechooser_window),
+                    G_CALLBACK (nsvn__destroy_filechooser_window),
                     window);
   g_signal_connect (G_OBJECT (choose), "clicked",
                     G_CALLBACK (nsvn__select_filechooser_window),
@@ -493,10 +493,10 @@ nsvn_dlg_checkout (GtkWidget *widget,
 
   /* Connecting callbacks to widget. */
   g_signal_connect (G_OBJECT (window), "destroy",
-                    G_CALLBACK (nsvn__destory_window),
+                    G_CALLBACK (nsvn__destroy_window),
                     dlg_gui);
   g_signal_connect (G_OBJECT (cancel_btn), "clicked",
-                    G_CALLBACK (nsvn__destory_window),
+                    G_CALLBACK (nsvn__destroy_window),
                     dlg_gui);
   g_signal_connect (G_OBJECT (cout_btn), "clicked",
                     G_CALLBACK (nsvn__checkout_url),

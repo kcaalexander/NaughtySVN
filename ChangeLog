@@ -2,6 +2,7 @@ Version 0.0.2 (???-??-????)
   * fixed bugs (thanks to Stian Skjelstad)
     - should no longer crash on update
     - should now load the correct window on commit and update
+    - nsvn__destroy_window was misspelled as nsvn__destory_window
 
 Version 0.0.1 (Jul-02-2007)
 
