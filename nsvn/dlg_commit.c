@@ -40,7 +40,7 @@ nsvn__destory_window (GtkWidget *widget,
 {
   GtkWidget *window;
 
-  window = glade_xml_get_widget (user_data, "add_dialog");
+  window = glade_xml_get_widget (user_data, "commit_dialog");
 
   gtk_widget_destroy (window);
   g_object_unref (G_OBJECT(user_data));
