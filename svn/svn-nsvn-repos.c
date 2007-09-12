@@ -64,7 +64,7 @@ nsvn_repos_get_repospath (nsvn_t *n,
   const char *root;
 
   if (repos_path == NULL)
-    return EXIT_SUCCESS;
+    return NULL;
 
   if (n == NULL)
     nsvn = nsvn_base_init (NULL);
@@ -72,7 +72,7 @@ nsvn_repos_get_repospath (nsvn_t *n,
     nsvn = (nsvn_t*) n;
 
   if (nsvn == NULL)
-    return EXIT_FAILURE;
+    return NULL;
 
   root = svn_repos_find_root_path (repos_path, nsvn->pool);
 
