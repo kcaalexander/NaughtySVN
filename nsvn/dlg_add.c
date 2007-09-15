@@ -191,6 +191,9 @@ nsvn__populate_unrevfiles (void *data,
       
         {
           GdkPixbuf *icon;
+          gchar *basename;
+          gchar *dirname;
+
           //TODO: Move out icon rendering code out of this function.
           //      multiple rendering need more resources, Just need to
           //      create only one copy of two versions (DIR, FILE) of
@@ -206,13 +209,17 @@ nsvn__populate_unrevfiles (void *data,
                                            GTK_STOCK_FILE,
                                            GTK_ICON_SIZE_MENU,
                                            NULL);
+          basename = g_path_get_basename (path);
+          dirname = g_path_get_dirname (path);
 
           gtk_list_store_set (store, &iter,
                               COLUMN_CHECK, TRUE,
                               COLUMN_STOCK, icon,
-                              COLUMN_BASENAME, g_path_get_basename (path),
-                              COLUMN_PATH, g_path_get_dirname (path),
-                              -1);
+                              COLUMN_BASENAME, basename,
+                              COLUMN_PATH, dirname, -1);
+
+          g_free(basename);
+          g_free(dirname);
         }
     }
 

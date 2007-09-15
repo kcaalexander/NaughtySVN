@@ -356,6 +356,8 @@ nsvn__checkout_url (GtkWidget *widget,
       char widname [25];
       char *url;
       char *wcpath;
+      char *basename;
+
       //TODO: Not a good idea to reinit and uninit nsvn library while in loop
       nsvn = nsvn_base_init (NULL);
 
@@ -367,9 +369,10 @@ nsvn__checkout_url (GtkWidget *widget,
       /* Do nothing if no urls are supplied. */
       if (!url[0] && i == 1)
         return 1;
+
+      basename = g_path_get_basename(url);
       if (nrows > 1)
-        wcpath = g_strdup_printf ("%s/%s", wcpath_name,
-                                  g_path_get_basename (url));
+        wcpath = g_strdup_printf ("%s/%s", wcpath_name, basename);
       else
         wcpath = g_strdup (wcpath_name);
 
@@ -385,6 +388,8 @@ nsvn__checkout_url (GtkWidget *widget,
         }
       
       g_free (wcpath);
+      g_free (basename);
+
       nsvn = nsvn_base_uninit (nsvn);
     }
 
