@@ -320,6 +320,11 @@ nsvn_create_menuitem_add (NautilusMenuProvider *provider,
             }
 
           file_ptr = g_list_next(file_ptr);
+
+          if (wc_path != path)
+            g_free(wc_path);
+
+          g_free(path);
         }
     }
   return items;
