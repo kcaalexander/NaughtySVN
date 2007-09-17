@@ -105,11 +105,19 @@ PKG_CHECK_MODULES(PACKAGE,
 AC_SUBST(PACKAGE_CFLAGS)
 AC_SUBST(PACKAGE_LIBS)
 
-dnl Checking for apr-config
-AC_PATH_PROG(APRCONFIGTOOL, apr-config, no)
-if test x"$APRCONFIGTOOL" = xno; then
-  AC_MSG_ERROR([apr-config executable not found - should be installed with Apache])
+dnl Checking for apr-1-config, if not present fallback and check for apr-config
+AC_PATH_PROG(APR_1_CONFIGTOOL, apr-1-config, no)
+if test x"$APR_1_CONFIGTOOL" = xno; then
+  AC_PATH_PROG(APR_CONFIGTOOL, apr-config, no)
+  if test x"$APR_CONFIGTOOL" = xno; then
+    AC_MSG_ERROR([apr-config/apr-1-config executable not found - should be installed with Apache])
+  else
+    AC_SUBST(APRCONFIGTOOL, "$APR_CONFIGTOOL")
+  fi
+else
+  AC_SUBST(APRCONFIGTOOL, "$APR_1_CONFIGTOOL")
 fi
+AC_SUBST(APRCONFIGTOOL)
 
 dnl Checking for pkill
 AC_PATH_PROG(PKILLTOOL, pkill, no)
