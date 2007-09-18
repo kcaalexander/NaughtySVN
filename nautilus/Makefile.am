@@ -2,7 +2,7 @@
 #glade_DATA = ../nsvn/naughtysvn.glade
 gladedir = $(datadir)/$(PACKAGE_NAME)/glade
 
-INCLUDES = \
+AM_CFLAGS = \
 		-DPACKAGE_DATA_DIR=\""$(datadir)"\" \
 		-DPACKAGE_LOCALE_DIR=\""$(prefix)/$(DATADIRNAME)/locale"\" \
 		-DGLADEDIR=\""$(gladedir)"\" \

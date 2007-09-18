@@ -11,7 +11,7 @@ lib_LTLIBRARIES = libnaughtysvn.la
 APR_CFLAGS =`$(APRCONFIGTOOL) --includes --cppflags --cflags`
 APR_LIBS =`$(APRCONFIGTOOL) --libs`
 
-INCLUDES = \
+AM_CFLAGS = \
 		-DPACKAGE_DATA_DIR=\""$(datadir)"\" \
 		-DPACKAGE_LOCALE_DIR=\""$(prefix)/$(DATADIRNAME)/locale"\" \
 		$(PACKAGE_CFLAGS) \

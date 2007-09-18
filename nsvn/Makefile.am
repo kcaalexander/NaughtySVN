@@ -9,7 +9,7 @@ schema_DATA = naughtysvn.schemas
 APR_CFLAGS =`$(APRCONFIGTOOL) --includes --cppflags --cflags`
 APR_LIBS =`$(APRCONFIGTOOL) --libs`
 
-INCLUDES = \
+AM_CFLAGS = \
 		-DPACKAGE_DATA_DIR=\""$(datadir)"\" \
 		-DPACKAGE_LOCALE_DIR=\""$(prefix)/$(DATADIRNAME)/locale"\" \
 		-DGLADEDIR=\""$(gladedir)"\" \
