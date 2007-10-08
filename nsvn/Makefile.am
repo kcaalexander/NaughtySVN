@@ -14,7 +14,11 @@ AM_CFLAGS = \
 		-DPACKAGE_LOCALE_DIR=\""$(prefix)/$(DATADIRNAME)/locale"\" \
 		-DGLADEDIR=\""$(gladedir)"\" \
 		-DPIXDIR=\""$(datadir)/$(PACKAGE_NAME)/pixmaps"\" \
-		@PACKAGE_CFLAGS@ \
+		$(glib_CFLAGS) \
+		$(gtk_CFLAGS) \
+		$(gnome_CFLAGS) \
+		$(libglade_CFLAGS) \
+		$(gtkspell_CFLAGS) \
 		-Wall -g \
 		-I$(top_builddir) \
 		$(SVN_CFLAGS) \
@@ -38,10 +42,15 @@ naughtysvn_SOURCES = \
 		dlg_log.c dlg_log.h \
 		dlg_result.c dlg_result.h
 
-naughtysvn_LDADD = @PACKAGE_LIBS@ \
+naughtysvn_LDADD = \
+		$(glib_LIBS) \
+		$(gtk_LIBS) \
+		$(gnome_LIBS) \
+		$(libglade_LIBS) \
+		$(gtkspell_LIBS) \
 		$(INTLLIBS) \
 		-L$(top_builddir)/svn \
-    $(SVN_LIBS) \
+		$(SVN_LIBS) \
 		-lnaughtysvn
 
 

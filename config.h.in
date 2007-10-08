@@ -3,6 +3,9 @@
 /* Defining record seprarator */
 #undef ARG_RECORD_SEPARATOR
 
+/* GTKSpell package. */
+#undef HAVE_GTKSPELL
+
 /* always defined to indicate that i18n is enabled */
 #undef ENABLE_NLS
 

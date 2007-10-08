@@ -8,7 +8,10 @@ AM_CFLAGS = \
 		-DGLADEDIR=\""$(gladedir)"\" \
 		-DPIXDIR=\""$(datadir)/$(PACKAGE_NAME)/pixmaps"\" \
 		$(NAUTILUS_CFLAGS) \
-		$(PACKAGE_CFLAGS) \
+		$(glib_CFLAGS) \
+		$(gtk_CFLAGS) \
+		$(gnome_CFLAGS) \
+		$(libglade_CFLAGS) \
 		-I$(top_srcdir) \
 		-I$(top_builddir) \
 		-Wall -g

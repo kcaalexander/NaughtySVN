@@ -14,7 +14,10 @@ APR_LIBS =`$(APRCONFIGTOOL) --libs`
 AM_CFLAGS = \
 		-DPACKAGE_DATA_DIR=\""$(datadir)"\" \
 		-DPACKAGE_LOCALE_DIR=\""$(prefix)/$(DATADIRNAME)/locale"\" \
-		$(PACKAGE_CFLAGS) \
+		$(glib_CFLAGS) \
+		$(gtk_CFLAGS) \
+		$(gnome_CFLAGS) \
+		$(libglade_CFLAGS) \
 		-I$(top_srcdir) \
 		-I$(top_builddir) \
 		$(SVN_CFLAGS) \
