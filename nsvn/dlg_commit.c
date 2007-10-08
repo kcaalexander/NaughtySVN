@@ -20,6 +20,10 @@
 #include <glade/glade.h>
 #include <libgnomevfs/gnome-vfs-utils.h>
 
+#if HAVE_GTKSPELL
+#include <gtkspell/gtkspell.h>
+#endif
+
 #include "svn/naughtysvn.h"
 #include "dlg_commit.h"
 #include "global.h"
@@ -39,10 +43,20 @@ nsvn__destroy_window (GtkWidget *widget,
                       GladeXML *user_data)
 {
   GtkWidget *window;
+  GtkWidget *logmsg_txt;
 
   window = glade_xml_get_widget (user_data, "commit_dialog");
+  logmsg_txt = glade_xml_get_widget (user_data, "commit_logmsg_txt");
   if (window)
-    gtk_widget_destroy (window);
+    {
+      #if HAVE_GTKSPELL
+      GtkSpell *spell;
+      spell = gtkspell_get_from_text_view (GTK_TEXT_VIEW(logmsg_txt));
+      if (spell)
+        gtkspell_detach (spell);
+      #endif
+      gtk_widget_destroy (window);
+    }
   g_object_unref (G_OBJECT(user_data));
   gtk_main_quit ();
   return 0;
@@ -138,6 +152,15 @@ nsvn_dlg_commit (GtkWidget *widget,
   ok_btn = glade_xml_get_widget (dlg_gui, "commit_ok_btn");
   logmsg_txt = glade_xml_get_widget (dlg_gui, "commit_logmsg_txt");
   repospath_lbl = glade_xml_get_widget (dlg_gui, "commit_repospath_lbl");
+
+  #if HAVE_GTKSPELL
+  {
+    GtkSpell *spell;
+    GError *error;
+    spell = gtkspell_new_attach (GTK_TEXT_VIEW(logmsg_txt), "en_US",
+                                 &error);
+  }      
+  #endif
 
   /* Connecting callbacks to widget. */
   g_signal_connect (G_OBJECT (window), "destroy",
