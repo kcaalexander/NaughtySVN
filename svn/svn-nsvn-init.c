@@ -255,6 +255,15 @@ nsvn_base_setup_progress (nsvn_t *instance,
 }
 
 
+void*
+nsvn_base_get_aprpool (nsvn_t *instance)
+{
+  if (!instance)
+    return NULL;
+  return ((void*)instance->pool);
+}
+
+
 nsvn_t*
 nsvn_base_setup_log (nsvn_t *instance,
                      void *log_func,

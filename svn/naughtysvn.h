@@ -95,6 +95,9 @@ nsvn_base_setup (nsvn_t *instance,
                  void *progress_baton);
 #endif
 
+void*
+nsvn_base_get_aprpool (nsvn_t *instance);
+
 /* Repository admin functions. */
 
 int
