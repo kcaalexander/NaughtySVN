@@ -7,6 +7,7 @@ pixmaps_DATA = \
 		create_repos.png \
 		preferences-general.png \
 		update.png \
+		log.png \
 		user_icon.png
 
 uninstall-local:

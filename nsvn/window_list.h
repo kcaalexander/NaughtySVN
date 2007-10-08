@@ -21,6 +21,7 @@
 #include "dlg_add.h"
 #include "dlg_commit.h"
 #include "dlg_update.h"
+#include "dlg_log.h"
 
 typedef gboolean
 (*nsvn_command_func_t) (GtkWidget *widget,

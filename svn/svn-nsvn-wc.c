@@ -215,8 +215,8 @@ nsvn_wc_log (nsvn_t *instance,
              const char *start_rev,
              const char *end_rev,
              int limit,
-             int discover_changed_paths,
-             int strict_node_history,
+             int discover_changed_paths, //--verbose
+             int strict_node_history, //--stop-on-copy
              void *callback,
              void *callback_data)
 {

@@ -35,6 +35,7 @@ naughtysvn_SOURCES = \
 		dlg_commit.c dlg_commit.h \
 		dlg_add.c dlg_add.h \
 		dlg_update.c dlg_update.h \
+		dlg_log.c dlg_log.h \
 		dlg_result.c dlg_result.h
 
 naughtysvn_LDADD = @PACKAGE_LIBS@ \

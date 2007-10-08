@@ -43,6 +43,28 @@ nsvn_properties_view_page (const char *location);
 
 
 static void
+nsvn_log (NautilusMenuItem *item,
+          gpointer user_data)
+{
+  NautilusFileInfo *file;
+  char *uri;
+  char *path;
+  GString *cmd;
+
+  file = g_object_get_data (G_OBJECT(item), "files");
+  uri = nautilus_file_info_get_uri (file);
+  path = gnome_vfs_get_local_path_from_uri (uri);
+
+  cmd = g_string_new ("naughtysvn");
+  g_string_append_printf (cmd, " MID=NSVN CMD=log \"%s\"", path);
+  g_spawn_command_line_async (cmd->str, NULL);
+  g_string_free (cmd, TRUE);
+  g_free (path);
+  g_free (uri);
+}
+
+
+static void
 nsvn_update (NautilusMenuItem *item,
              gpointer user_data)
 {
@@ -218,6 +240,49 @@ nsvn_repos_create (NautilusMenuItem *item,
   g_string_free (cmd, TRUE);
   g_free (path);
   g_free (uri);
+}
+
+
+static GList*
+nsvn_create_menuitem_log (NautilusMenuProvider *provider,
+                          GtkWidget *widget,
+                          GList *files,
+                          GList *items)
+{
+  NautilusMenuItem *item = NULL;
+  NautilusFileInfo *file;
+  char *uri;
+  char *path;
+  char *wc_path;
+
+  if ((!files) || (files && files->next != NULL))
+    return NULL;
+
+  file = NAUTILUS_FILE_INFO (files->data);
+  uri = nautilus_file_info_get_uri (file);
+  path = gnome_vfs_get_local_path_from_uri (uri);
+
+  // If its a file, Getting parent directory to
+  // find a entity is a working copy path or not.
+  if (nautilus_file_info_is_directory (file))
+    wc_path = path;
+  else
+    wc_path = g_path_get_dirname (path);
+
+  if (nsvn_wc_check_is_wcpath (NULL, wc_path, NULL) != EXIT_SUCCESS)
+    return NULL;
+
+  item = nautilus_menu_item_new ("NautilusNSVN::FT_Log",
+           _("NaughtySVN Show Log"),
+           _("Show the log messages"),
+           PIXDIR "/log.png");
+  g_object_set_data (G_OBJECT (item), "files", file);
+  g_signal_connect (item, "activate", G_CALLBACK (nsvn_log),
+                    provider);
+
+  items = g_list_append (items, item);
+
+  return items;
 }
 
 
@@ -518,6 +583,8 @@ nautilus_nsvn_get_file_items (NautilusMenuProvider *provider,
                                        files, items);
   items = nsvn_create_menuitem_update (provider, widget,
                                        files, items);
+  items = nsvn_create_menuitem_log (provider, widget,
+                                    files, items);
   return items;
 }
 
