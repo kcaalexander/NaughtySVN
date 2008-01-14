@@ -94,7 +94,6 @@ nsvn_update (NautilusMenuItem *item,
       {
         g_string_append_printf (cmd, "%s", path);
 
-        file_ptr = g_list_next (file_ptr);
         //Appending the unique delimiter to the argument if more args follows.
         if (file_ptr)
           g_string_append_printf (cmd, "%c", ARG_RECORD_SEPARATOR);
@@ -102,6 +101,7 @@ nsvn_update (NautilusMenuItem *item,
         g_free (path);
       }
       g_free (uri);
+      file_ptr = g_list_next (file_ptr);
     }
     
   g_string_append (cmd, "\"");
@@ -137,7 +137,6 @@ nsvn_commit (NautilusMenuItem *item,
       {
         g_string_append_printf (cmd, "%s", path);
 
-        file_ptr = g_list_next (file_ptr);
         //Appending the unique delimiter to the argument if more args follows.
         if (file_ptr)
           g_string_append_printf (cmd, "%c", ARG_RECORD_SEPARATOR);
@@ -145,6 +144,7 @@ nsvn_commit (NautilusMenuItem *item,
         g_free (path);
       }
       g_free (uri);
+      file_ptr = g_list_next (file_ptr);
     }
     
   g_string_append (cmd, "\"");
@@ -180,7 +180,6 @@ nsvn_add (NautilusMenuItem *item,
       {
         g_string_append_printf (cmd, "%s", path);
 
-        file_ptr = g_list_next (file_ptr);
         //Appending the unique delimiter to the argument if more args follows.
         if (file_ptr)
           g_string_append_printf (cmd, "%c", ARG_RECORD_SEPARATOR);
@@ -188,6 +187,7 @@ nsvn_add (NautilusMenuItem *item,
         g_free (path);
       }
       g_free (uri);
+      file_ptr = g_list_next (file_ptr);
     }
     
   g_string_append (cmd, "\"");
@@ -455,13 +455,12 @@ nsvn_create_menuitem_add (NautilusMenuProvider *provider,
                 break;
             }
 
-            file_ptr = g_list_next (file_ptr);
-
             if (wc_path != path)
               g_free (wc_path);
             g_free (path);
           }
           g_free (uri);
+          file_ptr = g_list_next (file_ptr);
         }
     }
   return items;
