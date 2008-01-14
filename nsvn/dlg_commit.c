@@ -155,10 +155,7 @@ nsvn_dlg_commit (GtkWidget *widget,
 
   #if HAVE_GTKSPELL
   {
-    GtkSpell *spell;
-    GError *error;
-    spell = gtkspell_new_attach (GTK_TEXT_VIEW(logmsg_txt), "en_US",
-                                 &error);
+    gtkspell_new_attach (GTK_TEXT_VIEW(logmsg_txt), "en_US", NULL);
   }      
   #endif
 
