@@ -1049,7 +1049,7 @@ emblem_async_thread_worker (gpointer userdata)
         break;
       case svn_wc_status_normal:
         {
-          enum svn_wc_status_kind result;
+          enum svn_wc_status_kind result = svn_wc_status_normal;
 
           nsvn->ctx->cancel_func = multi_entry_cancelled;
           nsvn->ctx->cancel_baton = work;
