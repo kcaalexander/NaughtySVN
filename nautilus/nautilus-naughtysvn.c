@@ -306,7 +306,7 @@ nsvn_create_menuitem_log (NautilusMenuProvider *provider,
   char *wc_path;
 
   if ((!files) || (files && files->next != NULL))
-    return NULL;
+    return items;
 
   file = NAUTILUS_FILE_INFO (files->data);
   uri = nautilus_file_info_get_uri (file);
@@ -327,7 +327,7 @@ nsvn_create_menuitem_log (NautilusMenuProvider *provider,
         g_free (wc_path);
       g_free (path);
       g_free (uri);
-      return NULL;
+      return items;
     }
 
     item = nautilus_menu_item_new ("NautilusNSVN::FT_Log",
@@ -359,7 +359,7 @@ nsvn_create_menuitem_update (NautilusMenuProvider *provider,
   NautilusMenuItem *item = NULL;
 
   if (!files)// && files->next != NULL)
-    return NULL;
+    return items;
 
   item = nautilus_menu_item_new ("NautilusNSVN::FT_Update",
            _("NaughtySVN Update"),
@@ -481,7 +481,7 @@ nsvn_create_menuitem_checkout (NautilusMenuProvider *provider,
   char *path;
 
   if (!files)// && files->next != NULL)
-    return NULL;
+    return items;
 
 #if 1
   file = NAUTILUS_FILE_INFO (files->data);
@@ -498,7 +498,7 @@ nsvn_create_menuitem_checkout (NautilusMenuProvider *provider,
         g_free (scheme);
         g_free (path);
         g_free (uri);
-        return NULL;
+        return items;
       }
     g_free (path);
   }
@@ -591,7 +591,7 @@ nsvn_create_menuitem_reposcreate (NautilusMenuProvider *provider,
             g_free (scheme);
             g_free (path);
             g_free (uri);
-            return NULL;
+            return items;
           }
         item = nautilus_menu_item_new ("NautilusNSVN::FT_Create_Repos",
                                        _("NaughtySVN Create Repository"),
@@ -622,7 +622,7 @@ nsvn_create_menuitem_refresh (NautilusMenuProvider *provider,
   NautilusMenuItem *item = NULL;
 
   if (!files)// && files->next != NULL)
-    return NULL;
+    return items;
 
   item = nautilus_menu_item_new ("NautilusNSVN::FT_Refresh",
            _("NaughtySVN Refresh"),
