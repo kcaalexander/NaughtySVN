@@ -471,7 +471,8 @@ nsvn_dlg_checkout (GtkWidget *widget,
   GtkWidget *rel_wid;
 
   /* Error-out if supporting glade file missing in default path. */
-  dlg_gui = glade_xml_new (GLADEDIR "/" DLG_GLADE_FILE, NULL, NULL);
+  dlg_gui = glade_xml_new (GLADEDIR "/" DLG_GLADE_FILE,
+                           "checkout_dialog", NULL);
   if (!dlg_gui)
     {
       g_warning (_("Could not find " GLADEDIR "/" DLG_GLADE_FILE "\n"));
