@@ -1,3 +1,17 @@
+ Nautilus default behaviour per today is to scan all directories and files
+ when opening a new view (unviewed directectory). It then keeps a cache of the
+ directory status (emblemes) for the rest of the session, even if the user
+ hits CTRL-R, only the files will refresh. I have sent an email to the
+ nautilus mailinglist about this behavour. If there is no possible way to
+ refresh directories aswell, some tricks has to be used
+ 
+ * If a user refreshes the view inside a directory, we can update the parent
+   directory
+ * We can add "Refresh status" to the menu that appears when the user
+   right-clicks on a directory.
+ * svn update, svn add etc from naughtysvn implementation can tell "this" code
+   that emblems should be updated.
+
 
 
  Emblems Specification

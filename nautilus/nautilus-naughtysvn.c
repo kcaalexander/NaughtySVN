@@ -26,9 +26,12 @@
 #include <libnautilus-extension/nautilus-extension-types.h>
 #include <libnautilus-extension/nautilus-file-info.h>
 #include <libnautilus-extension/nautilus-menu-provider.h>
+#include <libnautilus-extension/nautilus-info-provider.h>
 #include <libnautilus-extension/nautilus-property-page-provider.h>
 #include "nautilus-naughtysvn.h"
 #include "svn/naughtysvn.h"
+#include "svn/svn-nsvn-types.h"
+#include "svn_wc.h"
 
 #include <gtk/gtk.h>
 #include <glade/glade.h>
@@ -269,6 +272,26 @@ nsvn_repos_create (NautilusMenuItem *item,
   g_free (uri);
 }
 
+static void
+nsvn_refresh (NautilusMenuItem *item,
+              gpointer user_data)
+{
+  GList *files=NULL;
+  GList *file_ptr=NULL;
+
+  files =  g_object_get_data (G_OBJECT(item), "files");
+  file_ptr = files;
+
+  for (file_ptr = files; file_ptr != NULL; file_ptr = g_list_next (file_ptr))
+    {
+      NautilusFileInfo *file;
+
+      file = NAUTILUS_FILE_INFO (file_ptr->data);
+      nautilus_file_info_invalidate_extension_info (file);
+    }
+    
+  g_list_free (files);
+}
 
 static GList*
 nsvn_create_menuitem_log (NautilusMenuProvider *provider,
@@ -432,7 +455,7 @@ nsvn_create_menuitem_add (NautilusMenuProvider *provider,
                 break;
             }
 
-            file_ptr = g_list_next(file_ptr);
+            file_ptr = g_list_next (file_ptr);
 
             if (wc_path != path)
               g_free (wc_path);
@@ -590,6 +613,31 @@ nsvn_create_menuitem_reposcreate (NautilusMenuProvider *provider,
   return items;
 }
 
+static GList*
+nsvn_create_menuitem_refresh (NautilusMenuProvider *provider,
+                             GtkWidget *widget,
+                             GList *files,
+                             GList *items)
+{
+  NautilusMenuItem *item = NULL;
+
+  if (!files)// && files->next != NULL)
+    return NULL;
+
+  item = nautilus_menu_item_new ("NautilusNSVN::FT_Refresh",
+           _("NaughtySVN Refresh"),
+           _("Refreshes the emblems on the icons"),
+           PIXDIR "/refresh.png");
+  g_object_set_data (G_OBJECT (item), "files",
+                     (void*)g_list_copy (files));
+  g_signal_connect (item, "activate", G_CALLBACK (nsvn_refresh),
+                    provider);
+
+  items = g_list_append (items, item);
+
+  return items;
+}
+
 #if 0
 static GList*
 nautilus_nsvn_get_toolbar_items (NautilusMenuProvider *provider,
@@ -651,6 +699,8 @@ nautilus_nsvn_get_file_items (NautilusMenuProvider *provider,
                                        files, items);
   items = nsvn_create_menuitem_log (provider, widget,
                                     files, items);
+  items = nsvn_create_menuitem_refresh (provider, widget,
+                                        files, items);
   return items;
 }
 
@@ -809,4 +859,463 @@ nautilus_nsvn_prop_register_type (GTypeModule *module)
   g_type_module_add_interface (module, nsvn_prop_type,
                                NAUTILUS_TYPE_PROPERTY_PAGE_PROVIDER,
                                &property_page_provider_iface_info);
+}
+
+/* We will have one worker thread that is common for all instances. So when the
+ * first instance is created, we start the helper thread, and when the last
+ * instance exists, we destroy the thread again. This way, the plugin can be
+ * unloaded again in a safe maner.
+ *
+ * Per time of testing, only one instance of the interface is created, and  it
+ * is never destroyed. This might however change in the future. and there is
+ * nothing wrong with making it possible to exit cleanly.
+ *
+ * Currently, it isn't possible to cancel a call to nsvn_wc_status() when it
+ * already is in progress.
+ */
+
+
+/* We need a lock to keep the interface-counter (and the thread variable)
+ * threadsafe
+ */
+static GStaticMutex emblem_async_refcount_mutex = G_STATIC_MUTEX_INIT;
+static gint emblem_async_refcount = 0;
+static GThread *emblem_async_thread;
+
+/* And we need a communcation channel agains the thread, and protection.
+ * The only reason for not using GAsyncQueue, is that GAsyncQueue doesn't have
+ * a peek (just a bit handy) and find (used in order to see if a cancel signal
+ * from nautilus is safe to distribute) interface.
+ */
+static GQueue *emblem_async_queue = 0;
+static GMutex *emblem_async_queue_mutex = 0;
+static GCond  *emblem_async_queue_cond = 0;
+
+/* And we also need a way to tell the thread that it should shutdown. This is
+ * protected with a mutex, so that we force memory to flush.
+ * */
+static gint emblem_async_shutdown = 0;
+static GStaticMutex emblem_async_shutdown_mutex = G_STATIC_MUTEX_INIT;
+
+typedef struct async_work_t
+{
+  NautilusInfoProvider *provider;
+  NautilusFileInfo     *file;
+  GClosure             *update_complete;
+  gint                  cancelled;
+  gchar                *path;
+} async_work_t;
+
+typedef struct sync_work_t
+{
+  const char *path;
+  enum svn_wc_status_kind result;
+} sync_work_t;
+
+static GType nsvn_info_type = 0;
+
+GType
+nautilus_nsvn_get_info_type (void)
+{
+  return nsvn_info_type;
+}
+
+static int
+single_entry_info_callback (void *data,
+                            const char *path,
+                            svn_wc_status2_t *status)
+{
+  sync_work_t *work;
+
+  if (!data)
+    return EXIT_FAILURE;
+
+  work = data;
+
+  if (strcmp (work->path, path))
+    return EXIT_SUCCESS;
+ 
+  work->result = status->text_status;
+
+  return EXIT_SUCCESS;
+}
+
+static svn_error_t *
+multi_entry_cancelled (void *cancel_baton)
+{
+  struct async_work_t *work = cancel_baton;
+  gint cancelled;
+
+  /* sync memory before checking cancelled */
+  g_mutex_lock (emblem_async_queue_mutex);
+
+  cancelled = work->cancelled;
+
+  g_mutex_unlock (emblem_async_queue_mutex);
+
+  if (cancelled)
+    return svn_error_create (SVN_ERR_CANCELLED, 0, "nautilus aborted the call");
+  else
+    return SVN_NO_ERROR;
+}
+
+static int
+multi_entry_info_callback (void *data,
+                           const char *path,
+                           svn_wc_status2_t *status)
+{
+  enum svn_wc_status_kind *result;
+
+  if (!data)
+    return EXIT_FAILURE;
+
+  result = data;
+  switch (status->text_status)
+  {
+    case svn_wc_status_none:
+    case svn_wc_status_unversioned:
+    case svn_wc_status_missing:
+    case svn_wc_status_ignored:
+    case svn_wc_status_obstructed:
+    case svn_wc_status_external:
+    case svn_wc_status_incomplete:
+    case svn_wc_status_normal:
+      break;
+    case svn_wc_status_added:
+    case svn_wc_status_deleted:
+    case svn_wc_status_replaced:
+    case svn_wc_status_modified:
+    case svn_wc_status_merged:
+      if (*result == svn_wc_status_normal)
+        *result = svn_wc_status_modified;
+      break;
+    case svn_wc_status_conflicted:
+      *result = svn_wc_status_conflicted;
+      break;
+  }
+
+  return EXIT_SUCCESS;
+}
+
+static gpointer
+emblem_async_thread_worker (gpointer userdata)
+{
+  nsvn_t *nsvn;
+
+  nsvn = nsvn_base_init (NULL);
+
+  while (1)
+  {
+    async_work_t *work;
+    sync_work_t swork;
+
+    g_static_mutex_lock (&emblem_async_shutdown_mutex);
+
+    if (emblem_async_shutdown)
+      break;
+
+    g_mutex_lock (emblem_async_queue_mutex);
+
+    work = g_queue_peek_head (emblem_async_queue);
+
+    /* if we got no work here, we have no work, since we checked emblem_async_shutdown before peeking */
+    if (!work)
+    {
+      g_static_mutex_unlock (&emblem_async_shutdown_mutex);
+      /* sleep until we get a job */
+      g_cond_wait (emblem_async_queue_cond, emblem_async_queue_mutex);
+      g_mutex_unlock (emblem_async_queue_mutex);
+      continue;
+    }
+
+    g_mutex_unlock (emblem_async_queue_mutex);
+  
+    g_static_mutex_unlock (&emblem_async_shutdown_mutex);
+
+    swork.result = svn_wc_status_none;
+    swork.path = work->path;
+    nsvn_wc_status (nsvn, work->path,
+                    single_entry_info_callback,
+                    &swork, FALSE,
+                    TRUE, FALSE, TRUE, FALSE);
+    switch (swork.result)
+    {
+      case svn_wc_status_none:
+      case svn_wc_status_unversioned:
+      case svn_wc_status_missing:
+      case svn_wc_status_ignored:
+      case svn_wc_status_obstructed:
+      case svn_wc_status_external:
+      case svn_wc_status_incomplete:
+        break;
+      case svn_wc_status_normal:
+        {
+          enum svn_wc_status_kind result;
+
+          nsvn->ctx->cancel_func = multi_entry_cancelled;
+          nsvn->ctx->cancel_baton = work;
+
+          nsvn_wc_status (nsvn, work->path,
+                          multi_entry_info_callback,
+                          &result, TRUE,
+                          FALSE, FALSE, TRUE, FALSE);
+
+          nsvn->ctx->cancel_func = NULL;
+          nsvn->ctx->cancel_baton = NULL;
+
+          switch (result)
+          {
+            default:
+              nautilus_file_info_add_emblem (work->file, "svn-normal");
+              break;
+            case svn_wc_status_modified:
+              nautilus_file_info_add_emblem (work->file, "svn-modified");
+              break;
+            case svn_wc_status_conflicted:
+              nautilus_file_info_add_emblem (work->file, "svn-conflict");
+              break;
+          }
+          break;
+	}
+      case svn_wc_status_added:
+        nautilus_file_info_add_emblem (work->file, "svn-added");
+        break;
+      case svn_wc_status_deleted:
+        nautilus_file_info_add_emblem (work->file, "svn-deleted");
+        break;
+      case svn_wc_status_merged:
+      case svn_wc_status_replaced:
+      case svn_wc_status_modified:
+        nautilus_file_info_add_emblem (work->file, "svn-modified");
+        break;
+      case svn_wc_status_conflicted:
+        nautilus_file_info_add_emblem (work->file, "svn-conflict");
+        break;
+    }
+
+    g_mutex_lock (emblem_async_queue_mutex);
+    work = g_queue_pop_head (emblem_async_queue);
+    if (!work->cancelled)
+      nautilus_info_provider_update_complete_invoke (work->update_complete,
+                                                     work->provider,
+                                                     (NautilusOperationHandle*)work,
+                                                     NAUTILUS_OPERATION_COMPLETE);
+    g_mutex_unlock (emblem_async_queue_mutex);
+    g_free (work->path);
+    g_closure_unref (work->update_complete);
+    g_object_unref (work->file);
+    g_free (work);
+  }
+  emblem_async_shutdown = 0;
+  {
+    /* We flush the queue here. This should not be needed, since when we are
+     * destroyed, it should not be any pending jobs here, but we still check,
+     * just for the sanity.
+     */
+    async_work_t *work;
+
+    g_mutex_lock (emblem_async_queue_mutex);
+
+    while ((work = g_queue_pop_head (emblem_async_queue))!=NULL)
+    {
+      if (!work->cancelled)
+        nautilus_info_provider_update_complete_invoke (work->update_complete,
+                                                       work->provider,
+                                                       (NautilusOperationHandle*)work,
+                                                       NAUTILUS_OPERATION_COMPLETE);
+      g_free (work->path);
+      g_closure_unref (work->update_complete);
+      g_object_unref (work->file);
+      g_free (work);
+    }
+
+    g_mutex_unlock (emblem_async_queue_mutex);
+  }
+
+  g_static_mutex_unlock (&emblem_async_shutdown_mutex);
+
+  nsvn = nsvn_base_uninit (nsvn);
+
+  return NULL;
+}
+
+static void
+nsvn_info_cancel (NautilusInfoProvider *provider,
+                  NautilusOperationHandle *handle)
+{
+  async_work_t *whandle = (async_work_t *)handle;
+  g_mutex_lock (emblem_async_queue_mutex);
+
+  if (g_queue_find (emblem_async_queue, whandle))
+    whandle->cancelled = TRUE;
+
+  g_mutex_unlock (emblem_async_queue_mutex);
+}
+
+static NautilusOperationResult
+nsvn_info_update_file_info (NautilusInfoProvider     *provider,
+                            NautilusFileInfo         *file,
+                            GClosure                 *update_complete,
+                            NautilusOperationHandle **handle)
+{
+  int wc_for;
+  gchar *uri;
+  gchar *path;
+
+  uri = nautilus_file_info_get_uri (file);
+  path = gnome_vfs_get_local_path_from_uri (uri);
+
+  /* if the uri is not a local uri, path will be NULL, so then we don't care about it, just bail out. */
+  if (path == NULL)
+  {
+    g_free (uri);
+    return NAUTILUS_OPERATION_COMPLETE;
+  }
+
+  if (nautilus_file_info_is_directory (file))
+  {
+    if (nsvn_wc_check_is_wcpath (NULL, path, &wc_for) == EXIT_SUCCESS)
+    {
+      async_work_t *whandle = g_new0(async_work_t, 1);
+      whandle->provider = provider;
+      whandle->file = g_object_ref (file);
+      whandle->update_complete = g_closure_ref (update_complete);
+      whandle->path = g_strdup (path);
+      *handle = (NautilusOperationHandle *)whandle;
+      g_mutex_lock (emblem_async_queue_mutex);
+      g_queue_push_tail (emblem_async_queue, whandle);
+      g_cond_signal (emblem_async_queue_cond);
+      g_mutex_unlock (emblem_async_queue_mutex);
+      return NAUTILUS_OPERATION_IN_PROGRESS;
+    }
+  } else { /* !nautilus_file_info_is_directory (file) */
+    sync_work_t swork;
+    nsvn_t *nsvn;
+
+    nsvn = nsvn_base_init (NULL);
+
+    swork.result = svn_wc_status_none;
+    swork.path = path;
+    nsvn_wc_status (nsvn, path,
+                    single_entry_info_callback,
+                    &swork, FALSE,
+                    TRUE, FALSE, TRUE, FALSE);
+
+    nsvn = nsvn_base_uninit (nsvn);
+
+    switch (swork.result)
+    {
+      case svn_wc_status_none:
+      case svn_wc_status_unversioned:
+      case svn_wc_status_missing:
+      case svn_wc_status_ignored:
+      case svn_wc_status_obstructed:
+      case svn_wc_status_external:
+      case svn_wc_status_incomplete:
+        break;
+      case svn_wc_status_normal:
+        nautilus_file_info_add_emblem (file, "svn-normal");
+        break;
+      case svn_wc_status_added:
+        nautilus_file_info_add_emblem (file, "svn-added");
+        break;
+      case svn_wc_status_deleted:
+        nautilus_file_info_add_emblem (file, "svn-deleted");
+        break;
+      case svn_wc_status_merged:
+      case svn_wc_status_replaced:
+      case svn_wc_status_modified:
+        nautilus_file_info_add_emblem (file, "svn-modified");
+        break;
+      case svn_wc_status_conflicted:
+        nautilus_file_info_add_emblem (file, "svn-conflict");
+        break;
+    }
+  }
+
+  g_free (uri);
+  g_free (path);
+
+  return NAUTILUS_OPERATION_COMPLETE;
+}
+
+static void
+info_provider_iface_init (NautilusInfoProviderIface *iface, gpointer iface_data)
+{
+  iface->update_file_info = nsvn_info_update_file_info;
+  iface->cancel_update = nsvn_info_cancel;
+
+  g_static_mutex_lock (&emblem_async_refcount_mutex);
+
+  /* check the state of the queue and worker thread */
+  if (!emblem_async_refcount)
+  {
+    GError *err = 0;
+    emblem_async_queue = g_queue_new ();
+    emblem_async_queue_mutex = g_mutex_new ();
+    emblem_async_queue_cond = g_cond_new ();
+    emblem_async_thread = g_thread_create (emblem_async_thread_worker, NULL, TRUE, &err);
+    if (!emblem_async_thread)
+      g_error ("naughtysvn: unable to start helper thread: %s\n", err->message);
+  }
+  emblem_async_refcount++;
+
+  g_static_mutex_unlock (&emblem_async_refcount_mutex);
+}
+
+static void
+info_provider_iface_finalize (NautilusInfoProviderIface *iface, gpointer iface_data)
+{
+  g_static_mutex_lock (&emblem_async_refcount_mutex);
+
+  emblem_async_refcount--;
+  if (!emblem_async_refcount)
+  {
+    g_static_mutex_lock (&emblem_async_shutdown_mutex);
+    emblem_async_shutdown = 1;
+    g_mutex_lock (emblem_async_queue_mutex);
+    g_queue_push_head (emblem_async_queue, NULL); /* we insert an empty job, just to wake the thread up */
+    g_cond_signal (emblem_async_queue_cond);
+    g_mutex_unlock (emblem_async_queue_mutex);
+    g_static_mutex_unlock (&emblem_async_shutdown_mutex);
+    g_thread_join (emblem_async_thread); /* we don't want to destroy interface until memory is safe */
+    g_queue_free (emblem_async_queue);
+    g_cond_free (emblem_async_queue_cond);
+    g_mutex_free (emblem_async_queue_mutex);
+    emblem_async_queue_cond = NULL;
+    emblem_async_queue_mutex = NULL;
+    emblem_async_queue = NULL;
+  }
+
+  g_static_mutex_unlock (&emblem_async_refcount_mutex);
+}
+
+void
+nautilus_nsvn_info_register_type (GTypeModule *module)
+{
+  static const GTypeInfo info = {
+              sizeof (GObjectClass),
+              (GBaseInitFunc) NULL,
+              (GBaseFinalizeFunc) NULL,
+              (GClassInitFunc) NULL,
+              NULL,
+              NULL,
+              sizeof (GObject),
+              0,
+              (GInstanceInitFunc) NULL
+  };
+
+  static const GInterfaceInfo info_provider_iface_info = {
+              (GInterfaceInitFunc) info_provider_iface_init,
+              (GInterfaceFinalizeFunc) info_provider_iface_finalize,
+              NULL
+  };
+
+  nsvn_info_type = g_type_module_register_type (module,
+                                                G_TYPE_OBJECT,
+                                                "NaughtySVNInfo",
+                                                &info, 0);
+  g_type_module_add_interface (module, nsvn_info_type,
+                               NAUTILUS_TYPE_INFO_PROVIDER,
+                               &info_provider_iface_info);
 }

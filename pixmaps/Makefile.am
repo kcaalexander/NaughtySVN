@@ -6,6 +6,7 @@ pixmaps_DATA = \
 		commit.png \
 		create_repos.png \
 		preferences-general.png \
+		refresh.png \
 		update.png \
 		log.png \
 		user_icon.png

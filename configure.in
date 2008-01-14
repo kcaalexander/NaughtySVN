@@ -232,9 +232,14 @@ if test x"$GCONFTOOL" = xno; then
 fi
 AM_GCONF_SOURCE_2
 
+# Where does nautilus keeps its datafiles
+AC_SUBST(themedir, "\${datadir}/icons/gnome")
+
 AC_OUTPUT([
 Makefile
 nautilus/Makefile
+nautilus/48x48/Makefile
+nautilus/48x48/emblems/Makefile
 svn/Makefile
 svn/libnaughtysvn.pc
 pixmaps/Makefile

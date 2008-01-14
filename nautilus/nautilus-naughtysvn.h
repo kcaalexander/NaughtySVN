@@ -27,6 +27,8 @@ G_BEGIN_DECLS
 
 #define NAUTILUS_NSVN_PROP_TYPE  (nautilus_nsvn_get_prop_type ())
 
+#define NAUTILUS_NSVN_INFO_TYPE  (nautilus_nsvn_get_info_type ())
+
 typedef struct _NautilusNSVN      NautilusNSVN;
 typedef struct _NautilusNSVNClass NautilusNSVNClass;
 
@@ -45,6 +47,9 @@ void  nautilus_nsvn_register_type (GTypeModule *module);
 
 GType nautilus_nsvn_get_prop_type (void);
 void nautilus_nsvn_prop_register_type (GTypeModule *module);
+
+GType nautilus_nsvn_get_info_type (void);
+void nautilus_nsvn_info_register_type (GTypeModule *module);
 
 G_END_DECLS
 
