@@ -50,13 +50,16 @@ nsvn_base_reinit (nsvn_t *instance,
 nsvn_t*
 nsvn_base_clear (nsvn_t *instance);
 
-#if 0
-nsvn_t*
-nsvn_base_setup_auth (nsvn_t *instance,
-                      const char *username,
-                      const char *password,
-                      int non_interactive,
-                      int no_auth_cache);
+/* used internally by nsvn_base_init */
+#ifdef NEED_svn_gtk_setup_auth_baton
+svn_error_t *
+svn_gtk_setup_auth_baton (svn_auth_baton_t **ab,
+                          const char *auth_username,
+                          const char *auth_password,
+                          const char *config_dir,
+                          svn_boolean_t no_auth_cache,
+                          svn_config_t *cfg,
+                          apr_pool_t *pool);
 #endif
 
 nsvn_t*

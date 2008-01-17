@@ -32,6 +32,8 @@
 #include "svn_props.h"
 #include "svn_time.h"
 
+#define NEED_svn_gtk_setup_auth_baton
+
 #include "naughtysvn.h"
 #include "svn-nsvn-types.h"
 
@@ -134,6 +136,20 @@ nsvn_base_init (const char *config_dir)
 
   nsvn->cfg = apr_hash_get(nsvn->ctx->config, SVN_CONFIG_CATEGORY_CONFIG,
                            APR_HASH_KEY_STRING);
+
+  nsvn->err = svn_gtk_setup_auth_baton(&nsvn->ctx->auth_baton,
+                                       /*opt_state.non_interactive,*/
+                                       NULL,/*opt_state.auth_username,*/
+                                       NULL,/*opt_state.auth_password,*/
+                                       NULL,/*pt_state.config_dir,*/
+                                       FALSE, /*opt_state.no_auth_cache,*/
+                                       nsvn->cfg,
+                                       /*ctx->cancel_func,*/
+                                       /*ctx->cancel_baton,*/
+                                       nsvn->pool);
+
+  if (nsvn->err)
+    return nsvn_base_uninit (nsvn);
 
   return nsvn;
 }

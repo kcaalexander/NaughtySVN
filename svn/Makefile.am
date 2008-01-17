@@ -6,6 +6,8 @@
 #SVN_CFLAGS=`../svn-config --cflags`
 #SVN_LIBS=`../svn-config --libs`
 
+gladedir = $(datadir)/$(PACKAGE_NAME)/glade
+
 lib_LTLIBRARIES = libnaughtysvn.la
 
 APR_CFLAGS =`$(APRCONFIGTOOL) --includes --cppflags --cflags`
@@ -14,6 +16,7 @@ APR_LIBS =`$(APRCONFIGTOOL) --libs`
 AM_CFLAGS = \
 		-DPACKAGE_DATA_DIR=\""$(datadir)"\" \
 		-DPACKAGE_LOCALE_DIR=\""$(prefix)/$(DATADIRNAME)/locale"\" \
+		-DGLADEDIR=\""$(gladedir)"\" \
 		$(glib_CFLAGS) \
 		$(gtk_CFLAGS) \
 		$(gnome_CFLAGS) \
@@ -34,6 +37,8 @@ libnaughtysvn_la_SOURCES = \
 		svn-nsvn-types.h \
 		svn-nsvn-admin.c \
 		svn-nsvn-init.c \
+		svn-nsvn-auth.c \
+		dlg_auth.c dlg_auth.h \
 		svn-nsvn-wc.c \
 		svn-nsvn-repos.c \
 		svn-nsvn-common.c
