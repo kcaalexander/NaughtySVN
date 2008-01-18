@@ -145,18 +145,24 @@ nsvn__create_repository  (GtkWidget *widget,
 }
 
 
-static int
+static void
 nsvn__destroy_window  (GtkWidget *widget,
                        GladeXML *user_data)
+{
+  g_object_unref (G_OBJECT(user_data));
+  gtk_main_quit ();
+}
+
+
+static void
+nsvn__cancel  (GtkWidget *widget,
+               GladeXML *user_data)
 {
   GtkWidget *window;
 
   window = glade_xml_get_widget (user_data, "repo_create_dialog");
   if (window)
     gtk_widget_destroy (window);
-  g_object_unref (G_OBJECT(user_data));
-  gtk_main_quit ();
-  return 0;
 }
 
 
@@ -210,7 +216,7 @@ nsvn_dlg_reposcreate    (GtkWidget *widget,
                     G_CALLBACK (nsvn__create_repository),
                     dlg_gui);
   g_signal_connect (G_OBJECT (cancel_btn), "clicked",
-                    G_CALLBACK (nsvn__destroy_window),
+                    G_CALLBACK (nsvn__cancel),
                     dlg_gui);
   g_signal_connect (G_OBJECT (window), "destroy",
                     G_CALLBACK (nsvn__destroy_window),

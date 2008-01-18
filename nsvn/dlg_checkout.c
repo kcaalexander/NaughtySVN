@@ -46,20 +46,24 @@ nsvn__remove_url_item (GtkWidget *widget,
 static char*
 nsvn__get_revstr (GladeXML *window);
 
-static int
+static void
 nsvn__destroy_window (GtkWidget *widget,
                       GladeXML *user_data)
+{
+  g_object_unref (G_OBJECT(user_data));
+  gtk_main_quit ();
+}
+
+static void
+nsvn__cancel (GtkWidget *widget,
+              GladeXML *user_data)
 {
   GtkWidget *window;
 
   window = glade_xml_get_widget (user_data, "checkout_dialog");
   if (window)
     gtk_widget_destroy (window);
-  g_object_unref (G_OBJECT(user_data));
-  gtk_main_quit ();
-  return 0;
 }
-
 
 static char*
 nsvn__get_revstr (GladeXML *window)
@@ -471,7 +475,7 @@ nsvn_dlg_checkout (GtkWidget *widget,
   GtkWidget *rel_wid;
 
   /* Error-out if supporting glade file missing in default path. */
-  dlg_gui = glade_xml_new (GLADEDIR "/" DLG_GLADE_FILE, NULL, NULL);
+  dlg_gui = glade_xml_new (GLADEDIR "/" DLG_GLADE_FILE, "checkout_dialog", NULL);
   if (!dlg_gui)
     {
       g_warning (_("Could not find " GLADEDIR "/" DLG_GLADE_FILE "\n"));
@@ -501,7 +505,7 @@ nsvn_dlg_checkout (GtkWidget *widget,
                     G_CALLBACK (nsvn__destroy_window),
                     dlg_gui);
   g_signal_connect (G_OBJECT (cancel_btn), "clicked",
-                    G_CALLBACK (nsvn__destroy_window),
+                    G_CALLBACK (nsvn__cancel),
                     dlg_gui);
   g_signal_connect (G_OBJECT (cout_btn), "clicked",
                     G_CALLBACK (nsvn__checkout_url),
