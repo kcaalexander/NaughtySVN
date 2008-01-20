@@ -77,6 +77,7 @@ nsvn_update (NautilusMenuItem *item,
   GList *files=NULL;
   GList *file_ptr=NULL;
   GString *cmd;
+  gint file_count=0;
 
   cmd = g_string_new ("naughtysvn MID=NSVN CMD=update \"");
   files =  g_object_get_data (G_OBJECT(item), "files");
@@ -95,18 +96,20 @@ nsvn_update (NautilusMenuItem *item,
         g_string_append_printf (cmd, "%s", path);
 
         //Appending the unique delimiter to the argument if more args follows.
-        if (file_ptr)
+        if (file_count)
           g_string_append_printf (cmd, "%c", ARG_RECORD_SEPARATOR);
 
         g_free (path);
+        file_count++;
       }
       g_free (uri);
       file_ptr = g_list_next (file_ptr);
     }
     
   g_string_append (cmd, "\"");
-  
-  g_spawn_command_line_async (cmd->str, NULL);
+
+  if (file_count)
+    g_spawn_command_line_async (cmd->str, NULL);
   g_string_free (cmd, TRUE);
   file_ptr = NULL;
   g_list_free (files);
@@ -120,6 +123,7 @@ nsvn_commit (NautilusMenuItem *item,
   GList *files=NULL;
   GList *file_ptr=NULL;
   GString *cmd;
+  gint file_count=0;
 
   cmd = g_string_new ("naughtysvn MID=NSVN CMD=commit \"");
   files =  g_object_get_data (G_OBJECT(item), "files");
@@ -138,18 +142,20 @@ nsvn_commit (NautilusMenuItem *item,
         g_string_append_printf (cmd, "%s", path);
 
         //Appending the unique delimiter to the argument if more args follows.
-        if (file_ptr)
+        if (file_count)
           g_string_append_printf (cmd, "%c", ARG_RECORD_SEPARATOR);
 
         g_free (path);
+        file_count++;
       }
       g_free (uri);
       file_ptr = g_list_next (file_ptr);
     }
     
   g_string_append (cmd, "\"");
-  
-  g_spawn_command_line_async (cmd->str, NULL);
+
+  if (file_count)
+    g_spawn_command_line_async (cmd->str, NULL);
   g_string_free (cmd, TRUE);
   file_ptr = NULL;
   g_list_free (files);
@@ -163,6 +169,7 @@ nsvn_add (NautilusMenuItem *item,
   GList *files=NULL;
   GList *file_ptr=NULL;
   GString *cmd;
+  gint file_count=0;
 
   cmd = g_string_new ("naughtysvn MID=NSVN CMD=add \"");
   files =  g_object_get_data (G_OBJECT(item), "files");
@@ -181,18 +188,20 @@ nsvn_add (NautilusMenuItem *item,
         g_string_append_printf (cmd, "%s", path);
 
         //Appending the unique delimiter to the argument if more args follows.
-        if (file_ptr)
+        if (file_count)
           g_string_append_printf (cmd, "%c", ARG_RECORD_SEPARATOR);
 
         g_free (path);
+        file_count++;
       }
       g_free (uri);
       file_ptr = g_list_next (file_ptr);
     }
     
   g_string_append (cmd, "\"");
-  
-  g_spawn_command_line_async (cmd->str, NULL);
+
+  if (file_count)
+    g_spawn_command_line_async (cmd->str, NULL);
   g_string_free (cmd, TRUE);
   file_ptr = NULL;
   g_list_free (files);
