@@ -147,7 +147,7 @@ nsvn__commit (GtkWidget *widget,
  
   window = glade_xml_get_widget (user_data, "commit_dialog");
 
-  file_lst = glade_xml_get_widget (user_data, "add_file_lst");
+  file_lst = glade_xml_get_widget (user_data, "commit_file_lst");
   model = gtk_tree_view_get_model (GTK_TREE_VIEW (file_lst));
 
   /* Nothing to do is no model present. */
