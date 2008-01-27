@@ -472,6 +472,7 @@ nsvn_create_menuitem_add (NautilusMenuProvider *provider,
           file_ptr = g_list_next (file_ptr);
         }
     }
+  nsvn = nsvn_base_uninit (nsvn);
   return items;
 }
 
