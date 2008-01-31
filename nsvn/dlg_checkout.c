@@ -328,6 +328,7 @@ nsvn__checkout_url (GtkWidget *widget,
   gboolean ignextn = FALSE;
   void *nsvn;
   char *revstr;
+  gpointer result_window;
 
   /* Checkout widgets. */
   window = glade_xml_get_widget (user_data, "checkout_dialog");
@@ -351,7 +352,9 @@ nsvn__checkout_url (GtkWidget *widget,
 
   /* Hiding checkout window and loads result window. */
   gtk_widget_hide (window);
-  nsvn_dlg_result_show (window, user_data);
+  result_window = nsvn_dlg_result_show ();
+
+  while (g_main_context_iteration(NULL, FALSE));
 
   nrows = GTK_TABLE (url_tbl)->nrows;
   for (i=1; i<=nrows; i++)
@@ -364,6 +367,8 @@ nsvn__checkout_url (GtkWidget *widget,
 
       //TODO: Not a good idea to reinit and uninit nsvn library while in loop
       nsvn = nsvn_base_init (NULL);
+
+      nsvn_dlg_result_attach (result_window, nsvn);
 
       /* Getting URL. */
       sprintf (widname, CO_URLENT_NAME, i);
@@ -394,10 +399,15 @@ nsvn__checkout_url (GtkWidget *widget,
       g_free (wcpath);
       g_free (basename);
 
+      nsvn_dlg_result_deattach (result_window, nsvn);
+
       nsvn = nsvn_base_uninit (nsvn);
     }
 
   g_free (revstr);
+
+  nsvn_dlg_result_hide (result_window);
+
   gtk_widget_destroy (window);
   g_object_unref (G_OBJECT(user_data));
   gtk_main_quit ();

@@ -26,6 +26,7 @@
 
 #include "svn/naughtysvn.h"
 #include "dlg_commit.h"
+#include "dlg_result.h"
 #include "global.h"
 
 #include "svn_wc.h"
@@ -144,7 +145,8 @@ nsvn__commit (GtkWidget *widget,
   GtkTreeIter iter;
   gboolean found = FALSE;
   GtkWidget *file_lst;
- 
+  gpointer result_window;
+
   window = glade_xml_get_widget (user_data, "commit_dialog");
 
   file_lst = glade_xml_get_widget (user_data, "commit_file_lst");
@@ -184,9 +186,21 @@ nsvn__commit (GtkWidget *widget,
 
   nsvn_base_setup_log (nsvn, nsvn__get_logmessage, (void*)user_data);
 
+  gtk_widget_hide (window);
+
+  result_window = nsvn_dlg_result_show ();
+
+  nsvn_dlg_result_attach (result_window, nsvn);
+
+  while (g_main_context_iteration(NULL, FALSE));
+
   nsvn_wc_commit (nsvn, target_list, 1, 1);
 
   g_free (target_list);
+
+  nsvn_dlg_result_deattach (result_window, nsvn);
+
+  nsvn_dlg_result_hide (result_window);
 
   nsvn = nsvn_base_uninit (nsvn);
 

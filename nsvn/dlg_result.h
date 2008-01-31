@@ -15,21 +15,27 @@
 
 /* Functions to handle result dialog. */
 
-gboolean
-nsvn_dlg_result_hide (GtkWidget *parent_window,
-                      gpointer user_data);
+void
+nsvn_dlg_result_hide (gpointer);
 
-gboolean
-nsvn_dlg_result_show (GtkWidget *parent_window,
-                      gpointer user_data);
+gpointer
+nsvn_dlg_result_show (void);
 
+void
+nsvn_dlg_result_attach(gpointer,
+                       nsvn_t *nsvn);
 
+void
+nsvn_dlg_result_deattach(gpointer,
+                         nsvn_t *nsvn);
+
+#if 0
 /* Function to handle PROGRESS BAR. */
 gboolean
 nsvn_dlg_result_show_pbar (GtkWidget *parent_window,
                            gpointer user_data);
 
-gboolean
+
 nsvn_dlg_result_hide_pbar (GtkWidget *parent_window,
                            gpointer user_data);
 
@@ -47,5 +53,6 @@ gboolean
 nsvn_dlg_result_set_summary (GtkWidget *parent_window,
                              char *value,
                              gpointer user_data);
+#endif
 
 #endif /* NSVN_DLG_RESULT_H */

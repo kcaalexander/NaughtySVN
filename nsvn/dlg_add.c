@@ -23,6 +23,7 @@
 #include "svn/naughtysvn.h"
 #include "svn_wc.h"
 #include "dlg_add.h"
+#include "dlg_result.h"
 #include "global.h"
 
 #define DLG_GLADE_FILE  "naughtysvn.glade"
@@ -68,6 +69,7 @@ nsvn__add_files (GtkWidget *widget,
   GtkTreeIter iter;
   gboolean found = FALSE, is_recurse = FALSE;
   nsvn_t *nsvn;
+  gpointer result_window;
 
   window = glade_xml_get_widget (user_data, "add_dialog");
 
@@ -84,6 +86,12 @@ nsvn__add_files (GtkWidget *widget,
   if (! model) return;
 
   nsvn = nsvn_base_init (NULL);
+
+  result_window = nsvn_dlg_result_show ();
+
+  nsvn_dlg_result_attach (result_window, nsvn);
+
+  while (g_main_context_iteration(NULL, FALSE));
 
   /* Walk through all the rows in store. */
   found = gtk_tree_model_get_iter_first (model, &iter);
@@ -107,6 +115,10 @@ nsvn__add_files (GtkWidget *widget,
         }
       found = gtk_tree_model_iter_next (model, &iter);
     }
+
+  nsvn_dlg_result_deattach (result_window, nsvn);
+
+  nsvn_dlg_result_hide (result_window);
 
   nsvn = nsvn_base_uninit (nsvn);
   gtk_widget_destroy (window);
