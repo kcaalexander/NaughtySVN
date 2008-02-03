@@ -22,6 +22,7 @@
 
 #include "svn/naughtysvn.h"
 #include "dlg_update.h"
+#include "dlg_result.h"
 #include "global.h"
 
 #define DLG_GLADE_FILE  "naughtysvn.glade"
@@ -126,6 +127,7 @@ nsvn__update_wc (GtkWidget *widget,
   const char **target_list;
   unsigned int nitems, i;
   char *revstr;
+  gpointer result_window;
 
   /* Updated widgets. */
   window = glade_xml_get_widget (user_data, "update_dialog");
@@ -153,7 +155,13 @@ nsvn__update_wc (GtkWidget *widget,
       target_list[i] = g_list_nth_data (files, i);
   target_list[nitems] = NULL;
 
+  gtk_widget_destroy (window);
+
   nsvn = nsvn_base_init (NULL);
+
+  result_window = nsvn_dlg_result_show ();
+
+  nsvn_dlg_result_attach (result_window, nsvn);
 
   if (nsvn_wc_update (nsvn, target_list, revstr,
                       nrecurse, ignextn) == EXIT_SUCCESS)
@@ -168,8 +176,11 @@ nsvn__update_wc (GtkWidget *widget,
 
   g_free(target_list);
 
+  nsvn_dlg_result_deattach (result_window, nsvn);
+
+  nsvn_dlg_result_hide (result_window);
+
   nsvn = nsvn_base_uninit (nsvn);
-  gtk_widget_destroy (window);
 
   return EXIT_SUCCESS;
 }
