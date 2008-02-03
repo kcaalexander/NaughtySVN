@@ -195,6 +195,15 @@ notify_func (void *baton,
   while (g_main_context_iteration(NULL, FALSE));
 }
 
+static void
+progress_func (apr_off_t progress,
+               apr_off_t total,
+               void *baton,
+               apr_pool_t *pool)
+{
+  while (g_main_context_iteration(NULL, FALSE));
+}
+
 static svn_error_t *
 cancel_func (void *baton)
 {
@@ -450,6 +459,8 @@ nsvn_dlg_result_attach(gpointer user_data,
     nsvn_base_setup_notify (nsvn, notify_func, context);
 
     nsvn_base_setup_cancel (nsvn, cancel_func, context);
+
+    nsvn_base_setup_progress (nsvn, progress_func, context);
   }
 }
 
@@ -464,5 +475,7 @@ nsvn_dlg_result_deattach(gpointer user_data,
     nsvn_base_setup_notify (nsvn, 0, 0);
 
     nsvn_base_setup_cancel (nsvn, 0, 0);
+
+    nsvn_base_setup_progress (nsvn, 0, 0);
   }
 }
