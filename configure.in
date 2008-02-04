@@ -206,20 +206,20 @@ CFLAGS="$CFLAGS -export-dynamic"
 if test "$enable_maintainer" = "yes" ; then
   enable_debugging="yes"
 
-  CFLAGS+="$CFLAGS -DSVN_DEBUG -DAP_DEBUG -DNEON_SSL -DNEON_ZLIB -DNSVN_DEBUG "
+  CFLAGS+="-DSVN_DEBUG -DAP_DEBUG -DNEON_SSL -DNEON_ZLIB -DNSVN_DEBUG "
 
   if test "$GCC" = "yes"; then
-    CFLAGS+="$CFLAGS -Wpointer-arith -Wwrite-strings -Wshadow -Wall -Wmissing-prototypes -Wmissing-declarations "
+    CFLAGS+="-Wpointer-arith -Wwrite-strings -Wshadow -Wall -Wmissing-prototypes -Wmissing-declarations "
   fi
 fi
 
 if test "$enable_debugging" = "yes" ; then
   dnl If debugging enabled, we don't want optimization
-  CFLAGS+=["`echo $CFLAGS' ' | sed -e 's/-O[^ ]* //g'`"]
+  CFLAGS+=["`echo $CFLAGS' ' | sed -e 's/-O[^ ]* / /g'`"]
 else
   dnl If debugging disabled, we will optimization
   if test "$enable_debugging" = "no" ; then
-    CFLAGS+=["`echo $CFLAGS' ' | sed -e 's/-g[0-9] //g' | sed -e 's/-g/ /g'`"]
+    CFLAGS+=["`echo $CFLAGS' ' | sed -e 's/-g[0-9]? / /g'`"]
   fi
 fi
 
