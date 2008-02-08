@@ -394,6 +394,16 @@ nsvn__checkout_url (GtkWidget *widget,
                        _("Repository creation failed ..."),
                        GNOME_MESSAGE_BOX_ERROR,
                        buttons);
+
+
+          g_free (wcpath);
+          g_free (basename);
+
+          nsvn_dlg_result_deattach (result_window, nsvn);
+
+          nsvn = nsvn_base_uninit (nsvn);
+
+          break;
         }
       
       g_free (wcpath);

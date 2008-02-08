@@ -21,6 +21,7 @@
 #include <libgnomevfs/gnome-vfs-utils.h>
 
 #include "svn/naughtysvn.h"
+#include "svn/svn-nsvn-types.h" /* we need access to err */
 #include "svn_client.h"
 #include "svn_types.h"
 #include "svn_wc.h"
@@ -36,7 +37,9 @@ struct dlg_result_context
   GtkWidget *window;
   GtkWidget *cancel;
   GtkWidget *ok;
+  GtkWidget *output_lbl;
   GladeXML *dlg_gui;
+  gchar *error_message;
 };
 
 enum
@@ -249,6 +252,12 @@ nsvn_dlg_result_hide (gpointer user_data)
   if (!context)
     return;
 
+  if (context->error_message)
+  {
+    gtk_label_set_text (GTK_LABEL(context->output_lbl), context->error_message);  
+    g_free(context->error_message);
+  }
+
   gtk_widget_set_sensitive (context->cancel, FALSE);
 
   gtk_widget_set_sensitive (context->ok, TRUE);
@@ -365,6 +374,7 @@ nsvn_dlg_result_show (void)
   GtkWidget *window;
   GtkWidget *result_output_lst;
   GtkWidget *cancel, *ok;
+  GtkWidget *output_lbl;
   struct dlg_result_context *context;
 
   /* Error-out if supporting glade file missing in default path. */
@@ -380,8 +390,9 @@ nsvn_dlg_result_show (void)
   result_output_lst = glade_xml_get_widget (dlg_gui, "result_output_lst");
   cancel = glade_xml_get_widget (dlg_gui, "result_cancel_btn");
   ok = glade_xml_get_widget (dlg_gui, "result_ok_btn");
+  output_lbl = glade_xml_get_widget (dlg_gui, "result_output_lbl");
 
-  if ( ! ( window && result_output_lst ) )
+  if ( ! ( window && result_output_lst && output_lbl) )
   {
     g_object_unref (dlg_gui);
     return 0;
@@ -397,6 +408,7 @@ nsvn_dlg_result_show (void)
   context->ok = ok;
   context->cancel = cancel;
   context->dlg_gui = dlg_gui;
+  context->output_lbl = output_lbl;
 
   context->store = gtk_list_store_new (NUM_COLUMNS,
                                        G_TYPE_INT,
@@ -472,6 +484,19 @@ nsvn_dlg_result_deattach(gpointer user_data,
 
   if (context)
   {
+    if (nsvn->err)
+    {
+      GString *string = g_string_new(0);
+      svn_error_t *err = nsvn->err;
+      while (err)
+      {
+        g_string_append_printf(string, "%s%s", string->len?"\n":"", err->message);
+	err = err->child;
+      }
+      context->error_message = string->str;
+      g_string_free( string, FALSE);
+    }
+
     nsvn_base_setup_notify (nsvn, 0, 0);
 
     nsvn_base_setup_cancel (nsvn, 0, 0);
