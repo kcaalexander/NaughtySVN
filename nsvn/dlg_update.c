@@ -164,7 +164,7 @@ nsvn__update_wc (GtkWidget *widget,
   nsvn_dlg_result_attach (result_window, nsvn);
 
   if (nsvn_wc_update (nsvn, target_list, revstr,
-                      nrecurse, ignextn) == EXIT_SUCCESS)
+                      !nrecurse, ignextn) == EXIT_SUCCESS)
     {
       MSG_DEBUG("success\n");
       /* do stuff to display the output of the command */
