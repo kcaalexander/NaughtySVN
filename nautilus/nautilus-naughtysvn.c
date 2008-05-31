@@ -31,7 +31,8 @@
 #include "nautilus-naughtysvn.h"
 #include "svn/naughtysvn.h"
 #include "svn/svn-nsvn-types.h"
-#include "svn_wc.h"
+#include <svn_pools.h>
+#include <svn_wc.h>
 
 #include <gtk/gtk.h>
 #include <glade/glade.h>
@@ -41,9 +42,8 @@
 
 static GObjectClass *parent_class;
 
-GtkWidget *
-nsvn_properties_view_page (const char *location);
-
+static GtkWidget *
+nsvn_properties_view_page (NautilusFileInfo *file);
 
 static void
 nsvn_log (NautilusMenuItem *item,
@@ -785,23 +785,296 @@ nautilus_nsvn_get_prop_type (void)
   return nsvn_prop_type;
 }
 
-
-GtkWidget *
-nsvn_properties_view_page (const char *location)
+static const char *
+svn_node_kind_t_to_str(svn_node_kind_t kind)
 {
-  GtkWidget *page;
+  switch (kind)
+  {
+    case svn_node_none:
+      return "none";
+    case svn_node_file:
+      return "file";
+    case svn_node_dir:
+      return "dir";
+    default:
+    case svn_node_unknown:
+      return "unknown";
+  }
+}
+
+static const gchar *
+svn_wc_status_kind_to_str(enum svn_wc_status_kind kind)
+{
+  switch (kind)
+  {
+    case svn_wc_status_none:
+      return "none";
+    case svn_wc_status_unversioned:
+      return "unversioned";
+    case svn_wc_status_normal:
+      return "normal";
+    case svn_wc_status_added:
+      return "added";
+    case svn_wc_status_missing:
+      return "missing";
+    case svn_wc_status_deleted:
+      return "deleted";
+    case svn_wc_status_replaced:
+      return "replaced";
+    case svn_wc_status_modified:
+      return "modified";
+    case svn_wc_status_merged:
+      return "merged";
+    case svn_wc_status_conflicted:
+      return "conflicted";
+    case svn_wc_status_ignored:
+      return "ignored";
+    case svn_wc_status_obstructed:
+      return "obstructed";
+    case svn_wc_status_external:
+      return "external";
+    case svn_wc_status_incomplete:
+      return "incomplete";
+    default:
+      return "unknown";
+  }
+}
+static const gchar *
+svn_wc_schedule_t_to_str(svn_wc_schedule_t schedule)
+{
+  switch (schedule)
+  {
+    case svn_wc_schedule_normal:
+      return "normal";
+    case svn_wc_schedule_add:
+      return "add";
+    case svn_wc_schedule_delete:
+      return "delete";
+    case svn_wc_schedule_replace:
+      return "replace";
+    default:
+      return "unknown";
+  }
+}
+
+static GtkWidget *
+nsvn_properties_view_page_content (apr_pool_t *pool, const gchar *dir, const gchar *path)
+{
+  GtkWidget *page, *summary_txt;
   GladeXML *dlg_gui;
+
+  svn_wc_status2_t *status = 0;
+  svn_error_t *err;
+  svn_wc_adm_access_t *adm_access;
+#if 0
+  apr_hash_t *prop_list;
+#endif
+
+  err = svn_wc_adm_open3 (&adm_access,
+                          0, /* associated, */
+                          dir,
+                          FALSE, /* writelock */
+                          0, /* depth */
+                          0, /* cancel-func */
+                          0, /* cancel-baton */
+                          pool);
+  if (err != SVN_NO_ERROR)
+  {
+    char buf[512];
+    g_warning ("svn_wc_adm_open3() failed: %s\n", svn_err_best_message(err, buf, sizeof(buf)));
+    svn_error_clear (err);
+    return 0;
+  }
+
+  err = svn_wc_status2 (&status, path, adm_access, pool);
+  if (err != SVN_NO_ERROR)
+  {
+    char buf[512];
+    g_warning ("svn_wc_status2() failed: %s\n", svn_err_best_message(err, buf, sizeof(buf)));
+    svn_error_clear (err);
+    return 0;
+  }
+
+  if (!status->entry)
+    return 0;
 
   dlg_gui = glade_xml_new (GLADEDIR "/" DLG_GLADE_FILE, "property_page", NULL);
   if (!dlg_gui)
-    {
-      g_warning ("Could not find " GLADEDIR "/" DLG_GLADE_FILE "\n");
-      return NULL;
-    }
+  {
+    g_warning ("Could not find " GLADEDIR "/" DLG_GLADE_FILE "\n");
+    return 0;
+  }
 
   /* Getting Widgets in repository creation dialog. */
   page = glade_xml_get_widget (dlg_gui, "property_page");
+  summary_txt = glade_xml_get_widget (dlg_gui, "property_summary_txt");
 
+  if (page && summary_txt)
+  {
+    GString *text = g_string_new("");
+    gchar datetime[APR_RFC822_DATE_LEN];
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer ( GTK_TEXT_VIEW ( summary_txt ) );
+
+    if (status->entry->name && status->entry->name[0])
+      g_string_append_printf (text, "Name: %s\n", status->entry->name);
+    g_string_append_printf (text, "Revision: %" SVN_REVNUM_T_FMT "\n", status->entry->revision);
+    g_string_append_printf (text, "URL: %s\n", status->entry->url);
+    g_string_append_printf (text, "Repos: %s\n", status->entry->repos);
+    g_string_append_printf (text, "Text status: %s\n" , svn_wc_status_kind_to_str(status->text_status));
+    g_string_append_printf (text, "Prop status: %s\n" , svn_wc_status_kind_to_str(status->text_status));
+    gtk_text_buffer_set_text (buffer, text->str, text->len);
+    /* buffer should not be g_unref()'ed.
+     * "text" data however should be released.
+     */
+    g_string_free (text, TRUE);
+
+#if 0
+    /* nice for debug, can be removed later */
+    fprintf(stderr, "status->entry->name = %s\n", status->entry->name);
+    fprintf(stderr, "status->entry->revision = %" SVN_REVNUM_T_FMT "\n", status->entry->revision);
+    fprintf(stderr, "status->entry->url = %s\n", status->entry->url);
+    fprintf(stderr, "status->entry->repos = %s\n", status->entry->repos);
+    fprintf(stderr, "status->entry->uuid = %s\n", status->entry->uuid);
+    fprintf(stderr, "status->entry->kind = %s\n", svn_node_kind_t_to_str(status->entry->kind));
+    fprintf(stderr, "status->entry->schedule = %s\n", svn_wc_schedule_t_to_str(status->entry->schedule));
+    fprintf(stderr, "status->entry->copied = %d\n", status->entry->copied);
+    fprintf(stderr, "status->entry->deleted = %d\n", status->entry->deleted);
+    fprintf(stderr, "status->entry->absent = %d\n", status->entry->absent);
+    fprintf(stderr, "status->entry->incomplete = %d\n", status->entry->incomplete);
+    fprintf(stderr, "status->entry->copyfrom_url = %s\n", status->entry->copyfrom_url);
+    fprintf(stderr, "status->entry->copyfrom_rev = %" SVN_REVNUM_T_FMT "\n", status->entry->copyfrom_rev);
+    fprintf(stderr, "status->entry->conflict_old = %s\n", status->entry->conflict_old);
+    fprintf(stderr, "status->entry->conflict_new = %s\n", status->entry->conflict_new);
+    fprintf(stderr, "status->entry->conflict_wrk = %s\n", status->entry->conflict_wrk);
+    fprintf(stderr, "status->entry->prejfile = %s\n", status->entry->prejfile);
+    if ( !status->entry->text_time || (apr_rfc822_date (datetime, status->entry->text_time) != APR_SUCCESS) )
+      strcpy(datetime, "N/A");
+    fprintf(stderr, "status->entry->text_time = %s\n", datetime);
+    if ( !status->entry->prop_time || (apr_rfc822_date (datetime, status->entry->prop_time) != APR_SUCCESS) )
+      strcpy(datetime, "N/A");
+    fprintf(stderr, "status->entry->prop_time = %s\n", datetime);
+    fprintf(stderr, "status->entry->checksum = %s\n", status->entry->checksum);
+    fprintf(stderr, "status->entry->cmt_rev = %" SVN_REVNUM_T_FMT "\n", status->entry->cmt_rev);
+    if ( !status->entry->cmt_date || (apr_rfc822_date (datetime, status->entry->cmt_date) != APR_SUCCESS) )
+      strcpy(datetime, "N/A");
+    fprintf(stderr, "status->entry->cmt_date = %s\n", datetime);
+    fprintf(stderr, "status->entry->cmt_author = %s\n", status->entry->cmt_author);
+    fprintf(stderr, "status->entry->lock_token = %s\n", status->entry->lock_token);
+    fprintf(stderr, "status->entry->lock_owner = %s\n", status->entry->lock_owner);
+    fprintf(stderr, "status->entry->lock_comment = %s\n", status->entry->lock_comment);
+    if ( !status->entry->lock_creation_date || (apr_rfc822_date (datetime, status->entry->lock_creation_date) != APR_SUCCESS) )
+      strcpy(datetime, "N/A");
+    fprintf(stderr, "status->entry->lock_creation_date = %s\n", datetime);
+    fprintf(stderr, "status->entry->has_props = %d\n", status->entry->has_props);
+    fprintf(stderr, "status->entry->has_prop_mods = %d\n", status->entry->has_prop_mods);
+    fprintf(stderr, "status->entry->cachable_props = %s\n", status->entry->cachable_props);
+    fprintf(stderr, "status->entry->present_props = %s\n", status->entry->present_props);
+    fprintf(stderr, "status->text_status = %s\n" , svn_wc_status_kind_to_str(status->text_status));
+    fprintf(stderr, "status->prop_status = %s\n", svn_wc_status_kind_to_str(status->prop_status));
+    fprintf(stderr, "status->locked = %d\n", status->locked);
+    fprintf(stderr, "status->copied = %d\n", status->copied);
+    fprintf(stderr, "status->switched = %d\n", status->switched);
+    fprintf(stderr, "status->repos_text_status = %s\n" , svn_wc_status_kind_to_str(status->repos_text_status));
+    fprintf(stderr, "status->repos_prop_status = %s\n", svn_wc_status_kind_to_str(status->repos_prop_status));
+    if (status->repos_lock)
+    {
+      fprintf(stderr, "status->repos_lock->path = %s\n", status->repos_lock->path);
+      fprintf(stderr, "status->repos_lock->token = %s\n", status->repos_lock->token);
+      fprintf(stderr, "status->repos_lock->owner = %s\n", status->repos_lock->owner);
+      fprintf(stderr, "status->repos_lock->comment = %s\n", status->repos_lock->comment);
+      fprintf(stderr, "status->repos_lock->is_dav_comment = %d\n", status->repos_lock->is_dav_comment);
+       if ( !status->repos_lock->creation_date || (apr_rfc822_date (datetime, status->repos_lock->creation_date) != APR_SUCCESS) )
+        strcpy(datetime, "N/A");
+      fprintf(stderr, "status->repos_lock->creation_date = %s\n", datetime);
+      if ( !status->repos_lock->expiration_date || (apr_rfc822_date (datetime, status->repos_lock->expiration_date) != APR_SUCCESS) )
+        strcpy(datetime, "N/A");
+      fprintf(stderr, "status->repos_lock->expiration_date = %s\n", datetime);
+    }
+    fprintf(stderr, "status->ood_kind = %s\n", svn_node_kind_t_to_str(status->ood_kind));
+    fprintf(stderr, "status->ood_last_cmt_author = %s\n", status->ood_last_cmt_author);
+#endif
+  }
+#if 0
+  prop_list = 0;
+  err = svn_wc_prop_list ( &prop_list, path, adm_access, pool);
+  if (err != SVN_NO_ERROR)
+  {
+    char buf[512];
+    g_warning ("svn_wc_adm_open3() failed: %s\n", svn_err_best_message(err, buf, sizeof(buf)));
+    svn_error_clear (err);
+  } else {
+    apr_hash_index_t *index;
+    index = apr_hash_first (pool, prop_list);
+    while (index)
+    {
+      const void *key;
+      apr_ssize_t klen;
+      svn_prop_t *val;
+
+      apr_hash_this (index, &key, &klen, (void **)&val);
+
+      fprintf(stderr, "key = %s\n", key);
+      fprintf(stderr, "prop.name = %s\n", val->name);
+      /*fprintf(stderr, "prop.value.data = %d\n", val->value->data);*/
+
+      index = apr_hash_next (index);
+    }
+  }
+#endif
+
+  return (page);
+}
+
+static GtkWidget *
+nsvn_properties_view_page (NautilusFileInfo *file)
+{
+  GtkWidget *page;
+
+  apr_allocator_t *allocator;
+  apr_pool_t *pool;
+
+  gchar *uri;
+  gchar *path;
+  gchar *dir;
+
+  uri = nautilus_file_info_get_uri (file);
+  path = gnome_vfs_get_local_path_from_uri (uri);
+  if (!path)
+  {
+    g_free(uri);
+    return NULL;
+  }
+
+  if (apr_allocator_create (&allocator))
+  {
+    g_free(path);
+    g_free(uri); 
+    return NULL;
+  }
+
+  apr_allocator_max_free_set (allocator,
+                              SVN_ALLOCATOR_RECOMMENDED_MAX_FREE);
+  pool = svn_pool_create_ex (NULL,
+                             allocator);
+  apr_allocator_owner_set (allocator, pool);
+
+  dir = g_strdup(path);
+
+  if (!nautilus_file_info_is_directory (file))
+  {
+    gchar *split = g_strrstr(dir, "/");
+    if (split)
+     *split = 0;
+  }
+
+  page = nsvn_properties_view_page_content (pool, dir, path);
+
+  apr_pool_destroy (pool);
+
+  g_free(dir);
+  g_free(path);
+  g_free(uri);
+ 
   return (page);
 }
 
@@ -811,16 +1084,14 @@ nsvn_properties_get_pages (NautilusPropertyPageProvider *provider,
                            GList *files)
 {
   GList *pages = NULL;
-  NautilusFileInfo *file;
-  char *uri = NULL;
   GtkWidget *page = NULL, *label;
   NautilusPropertyPage *property_page;
+  NautilusFileInfo *file;
 
   /* okay, make the page */
   file = NAUTILUS_FILE_INFO (files->data);
-  uri = nautilus_file_info_get_uri (file);
   label = gtk_label_new (_("NaughtySVN"));
-  page = nsvn_properties_view_page (uri);
+  page = nsvn_properties_view_page (file);
   if (page == NULL)
     goto go;
   property_page = nautilus_property_page_new ("NaughtySVNProperties",
@@ -828,7 +1099,6 @@ nsvn_properties_get_pages (NautilusPropertyPageProvider *provider,
 
   pages = g_list_prepend (pages, property_page);
 go:
-  g_free (uri);
   return pages;
 }
 
@@ -1038,7 +1308,7 @@ emblem_async_thread_worker (gpointer userdata)
     }
 
     g_mutex_unlock (emblem_async_queue_mutex);
-  
+
     g_static_mutex_unlock (&emblem_async_shutdown_mutex);
 
     swork.result = svn_wc_status_none;
