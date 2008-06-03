@@ -39,7 +39,7 @@ AM_CFLAGS = \
 		-Wall -g
 
 nautilus_extension_libdir=`$(PKG_CONFIG) libnautilus-extension --variable=libdir`
-nautilus_extensiondir=$(nautilus_extension_libdir)/nautilus/extensions-1.0
+nautilus_extensiondir=`$(PKG_CONFIG) libnautilus-extension --variable=extensiondir`
 
 nautilus_extension_LTLIBRARIES=libnautilus-naughtysvn.la
 

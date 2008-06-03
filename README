@@ -163,13 +163,13 @@ What happens on installation
    'pkg-config' tool and file 'libnautilus-extension.pc'.
 
     * nautilus/libnautilus-naughtysvn.so will be copied to
-      nautilus_extension_libdir/nautilus/extensions-1.0/
+      nautilus_extension_libdir/nautilus/extensions-x.0/
 
     * nautilus/libnautilus-naughtysvn.la will be copied to
-      nautilus_extension_libdir/nautilus/extensions-1.0/
+      nautilus_extension_libdir/nautilus/extensions-x.0/
 
     * nautilus/libnautilus-naughtysvn.a will be copied to
-      nautilus_extension_libdir/nautilus/extensions-1.0/
+      nautilus_extension_libdir/nautilus/extensions-x.0/
 
 
  - Shared and static libraries from svn module of NSVN will be
