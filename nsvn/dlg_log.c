@@ -100,7 +100,7 @@ nsvn__populate_logmsgs (void *data, apr_hash_t *changed_path,
   window = glade_xml_get_widget ((GladeXML*)data, "log_dialog");
   store = g_object_get_data (G_OBJECT(window), "store");
   nsvn = g_object_get_data (G_OBJECT(data), "nsvn");
-  
+
   /* Convert time to human readable format. */
   svn_time_from_cstring(&temp, date, pool);
   hdate = svn_time_to_human_cstring(temp, pool);
@@ -213,8 +213,8 @@ nsvn__showlogmsg (GtkWidget *widget,
                 strcpy (action, "Replaced");
               else if (log_item->action == 'M')
                 strcpy (action, "Modified");
-              else 
-                action[0] = 0; 
+              else
+                action[0] = 0;
 
               /* Allocating a new row in store. */
               gtk_list_store_append (cstore, &iter);
@@ -254,10 +254,10 @@ nsvn__showlog (GtkWidget *widget,
   nocopyhist_chk = glade_xml_get_widget (user_data, "log_nocopyhist_chk");
 
   target[0] = g_object_get_data (G_OBJECT(window), "path");
-  fromrev = gtk_entry_get_text (GTK_ENTRY(fromrev_ent)); 
-  torev = gtk_entry_get_text (GTK_ENTRY(torev_ent)); 
-  limit = atoi(gtk_entry_get_text (GTK_ENTRY(limit_ent))); 
-  
+  fromrev = gtk_entry_get_text (GTK_ENTRY(fromrev_ent));
+  torev = gtk_entry_get_text (GTK_ENTRY(torev_ent));
+  limit = atoi(gtk_entry_get_text (GTK_ENTRY(limit_ent)));
+
   store = g_object_get_data (G_OBJECT(window), "store");
   gtk_list_store_clear(GTK_LIST_STORE(store));
 
