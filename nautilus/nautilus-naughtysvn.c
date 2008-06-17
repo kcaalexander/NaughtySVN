@@ -785,6 +785,7 @@ nautilus_nsvn_get_prop_type (void)
   return nsvn_prop_type;
 }
 
+#if 0
 static const char *
 svn_node_kind_t_to_str(svn_node_kind_t kind)
 {
@@ -801,6 +802,7 @@ svn_node_kind_t_to_str(svn_node_kind_t kind)
       return "unknown";
   }
 }
+#endif
 
 static const gchar *
 svn_wc_status_kind_to_str(enum svn_wc_status_kind kind)
@@ -839,6 +841,8 @@ svn_wc_status_kind_to_str(enum svn_wc_status_kind kind)
       return "unknown";
   }
 }
+
+#if 0
 static const gchar *
 svn_wc_schedule_t_to_str(svn_wc_schedule_t schedule)
 {
@@ -856,6 +860,7 @@ svn_wc_schedule_t_to_str(svn_wc_schedule_t schedule)
       return "unknown";
   }
 }
+#endif
 
 static GtkWidget *
 nsvn_properties_view_page_content (apr_pool_t *pool, const gchar *dir, const gchar *path)
@@ -912,7 +917,9 @@ nsvn_properties_view_page_content (apr_pool_t *pool, const gchar *dir, const gch
   if (page && summary_txt)
   {
     GString *text = g_string_new("");
+#if 0
     gchar datetime[APR_RFC822_DATE_LEN];
+#endif
     GtkTextBuffer *buffer = gtk_text_view_get_buffer ( GTK_TEXT_VIEW ( summary_txt ) );
 
     if (status->entry->name && status->entry->name[0])
