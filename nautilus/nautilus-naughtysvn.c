@@ -1372,62 +1372,75 @@ emblem_async_thread_worker (gpointer userdata)
                     single_entry_info_callback,
                     &swork, FALSE,
                     TRUE, FALSE, TRUE, FALSE);
-    switch (swork.result)
-    {
-      case svn_wc_status_none:
-      case svn_wc_status_unversioned:
-      case svn_wc_status_missing:
-      case svn_wc_status_ignored:
-      case svn_wc_status_obstructed:
-      case svn_wc_status_external:
-      case svn_wc_status_incomplete:
-        break;
-      case svn_wc_status_normal:
-        {
-          enum svn_wc_status_kind result = svn_wc_status_normal;
 
-          nsvn->ctx->cancel_func = multi_entry_cancelled;
-          nsvn->ctx->cancel_baton = work;
-
-          nsvn_wc_status (nsvn, work->path,
-                          multi_entry_info_callback,
-                          &result, TRUE,
-                          FALSE, FALSE, TRUE, FALSE);
-
-          nsvn->ctx->cancel_func = NULL;
-          nsvn->ctx->cancel_baton = NULL;
-
-          switch (result)
-          {
-            default:
-              nautilus_file_info_add_emblem (work->file, "svn-normal");
-              break;
-            case svn_wc_status_modified:
-              nautilus_file_info_add_emblem (work->file, "svn-modified");
-              break;
-            case svn_wc_status_conflicted:
-              nautilus_file_info_add_emblem (work->file, "svn-conflict");
-              break;
-          }
-          break;
-	}
-      case svn_wc_status_added:
-        nautilus_file_info_add_emblem (work->file, "svn-added");
-        break;
-      case svn_wc_status_deleted:
-        nautilus_file_info_add_emblem (work->file, "svn-deleted");
-        break;
-      case svn_wc_status_merged:
-      case svn_wc_status_replaced:
-      case svn_wc_status_modified:
-        nautilus_file_info_add_emblem (work->file, "svn-modified");
-        break;
-      case svn_wc_status_conflicted:
-        nautilus_file_info_add_emblem (work->file, "svn-conflict");
-        break;
-    }
-
+    gdk_threads_enter();
     g_mutex_lock (emblem_async_queue_mutex);
+
+    if (!work->cancelled)
+      switch (swork.result)
+      {
+        case svn_wc_status_none:
+        case svn_wc_status_unversioned:
+        case svn_wc_status_missing:
+        case svn_wc_status_ignored:
+        case svn_wc_status_obstructed:
+        case svn_wc_status_external:
+        case svn_wc_status_incomplete:
+          break;
+        case svn_wc_status_normal:
+          {
+            enum svn_wc_status_kind result = svn_wc_status_normal;
+
+            g_mutex_unlock (emblem_async_queue_mutex);
+            gdk_threads_leave();
+
+            nsvn->ctx->cancel_func = multi_entry_cancelled;
+            nsvn->ctx->cancel_baton = work;
+
+            nsvn_wc_status (nsvn, work->path,
+                            multi_entry_info_callback,
+                            &result, TRUE,
+                            FALSE, FALSE, TRUE, FALSE);
+
+            nsvn->ctx->cancel_func = NULL;
+            nsvn->ctx->cancel_baton = NULL;
+
+	    gdk_threads_enter();
+            g_mutex_lock (emblem_async_queue_mutex);
+
+            if (work->cancelled)
+              break;
+
+            switch (result)
+            {
+              default:
+                nautilus_file_info_add_emblem (work->file, "svn-normal");
+                break;
+              case svn_wc_status_modified:
+                nautilus_file_info_add_emblem (work->file, "svn-modified");
+                break;
+              case svn_wc_status_conflicted:
+                nautilus_file_info_add_emblem (work->file, "svn-conflict");
+                break;
+            }
+            break;
+          }
+        case svn_wc_status_added:
+          nautilus_file_info_add_emblem (work->file, "svn-added");
+          break;
+        case svn_wc_status_deleted:
+          nautilus_file_info_add_emblem (work->file, "svn-deleted");
+          break;
+        case svn_wc_status_merged:
+        case svn_wc_status_replaced:
+        case svn_wc_status_modified:
+          nautilus_file_info_add_emblem (work->file, "svn-modified");
+          break;
+        case svn_wc_status_conflicted:
+          nautilus_file_info_add_emblem (work->file, "svn-conflict");
+          break;
+      }
+
     work = g_queue_pop_head (emblem_async_queue);
     if (!work->cancelled)
       nautilus_info_provider_update_complete_invoke (work->update_complete,
@@ -1435,6 +1448,7 @@ emblem_async_thread_worker (gpointer userdata)
                                                      (NautilusOperationHandle*)work,
                                                      NAUTILUS_OPERATION_COMPLETE);
     g_mutex_unlock (emblem_async_queue_mutex);
+    gdk_threads_leave();
     g_free (work->path);
     g_closure_unref (work->update_complete);
     g_object_unref (work->file);
