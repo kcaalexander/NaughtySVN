@@ -177,7 +177,7 @@ nsvn__showlogmsg (GtkWidget *widget,
           char *path;
           apr_pool_t *pool;
           GtkListStore *cstore;
-          GtkTreeIter iter;
+          GtkTreeIter clog_iter;
 
           nsvn = g_object_get_data (G_OBJECT(user_data), "nsvn");
           pool = (apr_pool_t*)nsvn_base_get_aprpool(nsvn);
@@ -214,8 +214,8 @@ nsvn__showlogmsg (GtkWidget *widget,
                 action[0] = 0;
 
               /* Allocating a new row in store. */
-              gtk_list_store_append (cstore, &iter);
-              gtk_list_store_set (cstore, &iter,
+              gtk_list_store_append (cstore, &clog_iter);
+              gtk_list_store_set (cstore, &clog_iter,
                                   CLOG_COLUMN_ACTION, action,
                                   CLOG_COLUMN_PATH, path,
                                   CLOG_COLUMN_COPY_PATH, log_item->copyfrom_path,
