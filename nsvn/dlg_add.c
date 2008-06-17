@@ -207,7 +207,7 @@ nsvn__populate_unrevfiles (void *data,
       
         {
           GdkPixbuf *icon;
-          gchar *basename;
+          gchar *bname;
           gchar *dirname;
 
           //TODO: Move out icon rendering code out of this function.
@@ -225,16 +225,16 @@ nsvn__populate_unrevfiles (void *data,
                                            GTK_STOCK_FILE,
                                            GTK_ICON_SIZE_MENU,
                                            NULL);
-          basename = g_path_get_basename (path);
+          bname = g_path_get_basename (path);
           dirname = g_path_get_dirname (path);
 
           gtk_list_store_set (store, &iter,
                               COLUMN_CHECK, TRUE,
                               COLUMN_STOCK, icon,
-                              COLUMN_BASENAME, basename,
+                              COLUMN_BASENAME, bname,
                               COLUMN_PATH, dirname, -1);
 
-          g_free(basename);
+          g_free(bname);
           g_free(dirname);
         }
     }

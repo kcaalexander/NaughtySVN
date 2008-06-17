@@ -249,7 +249,7 @@ nsvn__populate_files (void *data,
     case svn_wc_status_merged:
     {
       GdkPixbuf *icon = 0;
-      gchar *basename;
+      gchar *bname;
       gchar *dirname;
 
       /* Allocating a new row in store. */
@@ -277,16 +277,16 @@ nsvn__populate_files (void *data,
                                            GTK_ICON_SIZE_MENU,
                                            NULL);
       }
-      basename = g_path_get_basename (path);
+      bname = g_path_get_basename (path);
       dirname = g_path_get_dirname (path);
 
       gtk_list_store_set (store, &iter,
                           COLUMN_CHECK, TRUE,
                           COLUMN_STOCK, icon,
-                          COLUMN_BASENAME, basename,
+                          COLUMN_BASENAME, bname,
                           COLUMN_PATH, dirname, -1);
 
-      g_free(basename);
+      g_free(bname);
       g_free(dirname);
     }
   }

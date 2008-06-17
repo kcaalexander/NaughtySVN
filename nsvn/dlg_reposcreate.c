@@ -77,7 +77,7 @@ nsvn__create_repository  (GtkWidget *widget,
   char *fs_type = NULL;
   gboolean is_sync = FALSE;
   gboolean is_logrm = FALSE;
-  gchar *basename;
+  gchar *bname;
 
   /* Getting widgets */
   entry = glade_xml_get_widget (user_data, "repocreate_nrepo_ent");
@@ -88,7 +88,7 @@ nsvn__create_repository  (GtkWidget *widget,
   logrm = glade_xml_get_widget (user_data, "repocreate_logrm_chk");
 
   path = g_object_get_data (G_OBJECT(window), "path");
-  basename = g_path_get_basename(path);
+  bname = g_path_get_basename(path);
   txt = gtk_entry_get_text (GTK_ENTRY(entry));
 
   if (g_strcasecmp (txt, "") == 0)
@@ -98,11 +98,11 @@ nsvn__create_repository  (GtkWidget *widget,
                    _("Repository name invalid ..."),
                    GNOME_MESSAGE_BOX_ERROR,
                    buttons);
-      gtk_entry_set_text (GTK_ENTRY(entry), basename);
+      gtk_entry_set_text (GTK_ENTRY(entry), bname);
       return;
     }
   
-  if (g_strcasecmp (basename, txt) != 0)
+  if (g_strcasecmp (bname, txt) != 0)
     newpath = g_build_path (G_DIR_SEPARATOR_S,
                             path, txt, NULL);
   else
@@ -139,7 +139,7 @@ nsvn__create_repository  (GtkWidget *widget,
   
   g_free (newpath);
   g_free (fs_type);
-  g_free (basename);
+  g_free (bname);
   
   return;
 }
@@ -178,7 +178,7 @@ nsvn_dlg_reposcreate    (GtkWidget *widget,
   GtkWidget *create_btn;
   GtkWidget *cancel_btn;
   char *uri;
-  char *basename;
+  char *bname;
 
   uri = gnome_vfs_get_uri_from_local_path ((const char*) user_data);
 
@@ -202,8 +202,8 @@ nsvn_dlg_reposcreate    (GtkWidget *widget,
 
   g_object_set_data (G_OBJECT(window), "path", user_data);
  
-  basename = g_path_get_basename ((char*)user_data);
-  gtk_entry_set_text (GTK_ENTRY(nrepo_ent), basename);
+  bname = g_path_get_basename ((char*)user_data);
+  gtk_entry_set_text (GTK_ENTRY(nrepo_ent), bname);
   
   /* Connecting widgets to callbacks */
   g_signal_connect (G_OBJECT (fsfs_rad), "clicked",
@@ -226,6 +226,6 @@ nsvn_dlg_reposcreate    (GtkWidget *widget,
   gtk_widget_grab_focus (nrepo_ent);
   gtk_widget_show (window);
 
-  g_free(basename);
+  g_free(bname);
   return EXIT_SUCCESS;
 }
