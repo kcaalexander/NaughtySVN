@@ -106,7 +106,30 @@ nsvn__populate_logmsgs (void *data, apr_hash_t *changed_path,
   hdate = svn_time_to_human_cstring(temp, pool);
 
   nsvn_pool = (apr_pool_t*)nsvn_base_get_aprpool(nsvn);
-  duplicate = apr_hash_copy(nsvn_pool, changed_path);
+  duplicate = apr_hash_make(nsvn_pool);
+  {
+    apr_hash_index_t *hi;
+    char *path;
+    apr_pool_t *pool;
+    pool = (apr_pool_t*)nsvn_base_get_aprpool(nsvn);
+
+    for (hi = apr_hash_first (pool, changed_path);
+         hi != NULL;
+         hi = apr_hash_next (hi))
+    {
+      void *val;
+      char *path;
+      svn_log_changed_path_t *log_item;
+
+      apr_hash_this(hi, (void *) &path, NULL, &val);
+      log_item = val;
+
+      path = apr_pstrdup(nsvn_pool, path);
+      log_item = svn_log_changed_path_dup(log_item, nsvn_pool);
+      val = log_item;
+      apr_hash_set(duplicate, (void *) path, APR_HASH_KEY_STRING, val);
+    }
+  }
 
   /* Allocating a new row in store. */
   gtk_list_store_append (store, &iter);
