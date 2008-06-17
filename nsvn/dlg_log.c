@@ -109,10 +109,8 @@ nsvn__populate_logmsgs (void *data, apr_hash_t *changed_path,
   duplicate = apr_hash_make(nsvn_pool);
   {
     apr_hash_index_t *hi;
-    apr_pool_t *pool;
-    pool = (apr_pool_t*)nsvn_base_get_aprpool(nsvn);
 
-    for (hi = apr_hash_first (pool, changed_path);
+    for (hi = apr_hash_first (nsvn_pool, changed_path);
          hi != NULL;
          hi = apr_hash_next (hi))
     {
