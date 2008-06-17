@@ -921,7 +921,7 @@ nsvn_properties_view_page_content (apr_pool_t *pool, const gchar *dir, const gch
     g_string_append_printf (text, "URL: %s\n", status->entry->url);
     g_string_append_printf (text, "Repos: %s\n", status->entry->repos);
     g_string_append_printf (text, "Text status: %s\n" , svn_wc_status_kind_to_str(status->text_status));
-    g_string_append_printf (text, "Prop status: %s\n" , svn_wc_status_kind_to_str(status->text_status));
+    g_string_append_printf (text, "Prop status: %s\n" , svn_wc_status_kind_to_str(status->prop_status));
     gtk_text_buffer_set_text (buffer, text->str, text->len);
     /* buffer should not be g_unref()'ed.
      * "text" data however should be released.
@@ -1213,9 +1213,34 @@ single_entry_info_callback (void *data,
 
   if (strcmp (work->path, path))
     return EXIT_SUCCESS;
- 
+
   work->result = status->text_status;
 
+  if (work->result == svn_wc_status_normal)
+  {
+    switch (status->prop_status)
+    {
+      case svn_wc_status_none:
+      case svn_wc_status_unversioned:
+      case svn_wc_status_missing:
+      case svn_wc_status_ignored:
+      case svn_wc_status_obstructed:
+      case svn_wc_status_external:
+      case svn_wc_status_incomplete:
+      case svn_wc_status_normal:
+        break;
+      case svn_wc_status_added:
+      case svn_wc_status_deleted:
+      case svn_wc_status_replaced:
+      case svn_wc_status_modified:
+      case svn_wc_status_merged:
+        work->result = svn_wc_status_modified;
+        break;
+      case svn_wc_status_conflicted:
+        work->result = svn_wc_status_conflicted;
+        break;
+    }
+  }
   return EXIT_SUCCESS;
 }
 
@@ -1250,6 +1275,29 @@ multi_entry_info_callback (void *data,
 
   result = data;
   switch (status->text_status)
+  {
+    case svn_wc_status_none:
+    case svn_wc_status_unversioned:
+    case svn_wc_status_missing:
+    case svn_wc_status_ignored:
+    case svn_wc_status_obstructed:
+    case svn_wc_status_external:
+    case svn_wc_status_incomplete:
+    case svn_wc_status_normal:
+      break;
+    case svn_wc_status_added:
+    case svn_wc_status_deleted:
+    case svn_wc_status_replaced:
+    case svn_wc_status_modified:
+    case svn_wc_status_merged:
+      if (*result == svn_wc_status_normal)
+        *result = svn_wc_status_modified;
+      break;
+    case svn_wc_status_conflicted:
+      *result = svn_wc_status_conflicted;
+      break;
+  }
+  switch (status->prop_status)
   {
     case svn_wc_status_none:
     case svn_wc_status_unversioned:
