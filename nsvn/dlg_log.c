@@ -60,7 +60,7 @@ nsvn__destroy_window (GtkWidget *widget,
   nsvn_t *nsvn;
 
   window = glade_xml_get_widget (user_data, "log_dialog");
-  nsvn = g_object_get_data(G_OBJECT(window), "nsvn");
+  nsvn = g_object_get_data(G_OBJECT(user_data), "nsvn");
   nsvn = nsvn_base_uninit(nsvn);
   g_object_unref (G_OBJECT(user_data));
   gtk_main_quit ();
@@ -99,7 +99,7 @@ nsvn__populate_logmsgs (void *data, apr_hash_t *changed_path,
 
   window = glade_xml_get_widget ((GladeXML*)data, "log_dialog");
   store = g_object_get_data (G_OBJECT(window), "store");
-  nsvn = g_object_get_data (G_OBJECT(window), "nsvn");
+  nsvn = g_object_get_data (G_OBJECT(data), "nsvn");
   
   /* Convert time to human readable format. */
   svn_time_from_cstring(&temp, date, pool);
@@ -159,7 +159,7 @@ nsvn__showlogmsg (GtkWidget *widget,
           GtkListStore *cstore;
           GtkTreeIter iter;
 
-          nsvn = g_object_get_data (G_OBJECT(window), "nsvn");
+          nsvn = g_object_get_data (G_OBJECT(user_data), "nsvn");
           pool = (apr_pool_t*)nsvn_base_get_aprpool(nsvn);
           cstore = g_object_get_data (G_OBJECT(window), "cstore");
           gtk_list_store_clear(GTK_LIST_STORE(cstore));
@@ -238,12 +238,12 @@ nsvn__showlog (GtkWidget *widget,
   store = g_object_get_data (G_OBJECT(window), "store");
   gtk_list_store_clear(GTK_LIST_STORE(store));
 
-  nsvn = g_object_get_data (G_OBJECT(window), "nsvn");
+  nsvn = g_object_get_data (G_OBJECT(user_data), "nsvn");
   if (nsvn != NULL)
     nsvn = nsvn_base_clear(nsvn);
 
   nsvn = nsvn_base_init(NULL);
-  g_object_set_data(G_OBJECT(window), "nsvn", (void*)nsvn);
+  g_object_set_data(G_OBJECT(user_data), "nsvn", (void*)nsvn);
 
   nsvn_wc_log (nsvn, target, fromrev, torev, limit, TRUE,
                gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(nocopyhist_chk)),
