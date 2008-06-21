@@ -439,11 +439,22 @@ nsvn_create_menuitem_add (NautilusMenuProvider *provider,
           {
             // In its a file, Getting parent directory to
             // find a entity is a working copy path or not.
+            //
+            // In a dir, check that the dir is not in SVN,
+            // if not, run the same checks as for files on
+            // the parent directory.
             if (nautilus_file_info_is_directory (file))
-              wc_path = path;
-            else
-              wc_path = g_path_get_dirname (path);
-
+            {
+              if (nsvn_wc_check_is_wcpath (NULL, path, &wc_for) == EXIT_SUCCESS)
+              {
+                /* path is already in SVN */
+                g_free(path);
+                g_free(uri);
+                file_ptr = g_list_next (file_ptr);
+                continue;
+              }
+            }
+            wc_path = g_path_get_dirname (path);
             if (nsvn_wc_check_is_wcpath (NULL, wc_path, &wc_for) == EXIT_SUCCESS)
               {
                 item = nautilus_menu_item_new ("NautilusNSVN::FT_Add",
@@ -457,15 +468,13 @@ nsvn_create_menuitem_add (NautilusMenuProvider *provider,
 
                 items = g_list_append (items, item);
 
-                if (wc_path != path)
-                  g_free (wc_path);
+                g_free (wc_path);
                 g_free (path);
                 g_free (uri);
                 break;
             }
 
-            if (wc_path != path)
-              g_free (wc_path);
+            g_free (wc_path);
             g_free (path);
           }
           g_free (uri);
