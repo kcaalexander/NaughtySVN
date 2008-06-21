@@ -1042,7 +1042,7 @@ nsvn_properties_view_page (NautilusFileInfo *file)
 
   gchar *uri;
   gchar *path;
-  gchar *dir;
+  gchar *wc_path;
 
   uri = nautilus_file_info_get_uri (file);
   path = gnome_vfs_get_local_path_from_uri (uri);
@@ -1065,18 +1065,17 @@ nsvn_properties_view_page (NautilusFileInfo *file)
                              allocator);
   apr_allocator_owner_set (allocator, pool);
 
-  dir = g_strdup(path);
-
   if (!nautilus_file_info_is_directory (file))
-    dir = g_path_get_dirname (path);
+    wc_path = g_path_get_dirname (path);
   else
-    dir = g_strdup (path);
+    wc_path = path;
 
-  page = nsvn_properties_view_page_content (pool, dir, path);
+  page = nsvn_properties_view_page_content (pool, wc_path, path);
 
   apr_pool_destroy (pool);
 
-  g_free(dir);
+  if (wc_path != path)
+    g_free(wc_path);
   g_free(path);
   g_free(uri);
  
