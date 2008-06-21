@@ -1068,11 +1068,9 @@ nsvn_properties_view_page (NautilusFileInfo *file)
   dir = g_strdup(path);
 
   if (!nautilus_file_info_is_directory (file))
-  {
-    gchar *split = g_strrstr(dir, "/");
-    if (split)
-     *split = 0;
-  }
+    dir = g_path_get_dirname (path);
+  else
+    dir = g_strdup (path);
 
   page = nsvn_properties_view_page_content (pool, dir, path);
 
