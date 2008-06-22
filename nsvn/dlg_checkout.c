@@ -117,7 +117,13 @@ static int
 nsvn__destroy_filechooser_window (GtkWidget *widget,
                                   gpointer user_data)
 {
-  gtk_widget_hide (GTK_WIDGET(user_data));
+  GtkWidget *window;
+
+  window = glade_xml_get_widget (user_data, "filechooser_dialog");
+  
+  gtk_widget_destroy (window);
+  g_object_unref (G_OBJECT(user_data));
+
   return 0;
 }
 
@@ -126,44 +132,22 @@ static int
 nsvn__select_filechooser_window (GtkWidget *widget,
                                  gpointer user_data)
 {
-  GSList *lst, *item;
+  GSList *item;
   GtkWidget *window;
-  GtkWidget *parent;
-  GtkWidget *url_tbl;
-  unsigned int nrows;
-  char wid_name[25];
-  char *extra_data;
 
   window = glade_xml_get_widget (user_data, "filechooser_dialog");
-  parent = glade_xml_get_widget (user_data, "checkout_dialog");
-  url_tbl = glade_xml_get_widget (user_data, "checkout_url_tbl");
-
-  extra_data = g_object_get_data (G_OBJECT(window), URLADD_EXTRA_DATA);
   
-  lst = gtk_file_chooser_get_uris (GTK_FILE_CHOOSER(window));
-  item = lst;
-
-  nrows = atoi (extra_data);
-  while (item != NULL)
+  item = gtk_file_chooser_get_uris (GTK_FILE_CHOOSER(window));
+  if (item)
     {
       GtkWidget *wid;
-
-      sprintf (wid_name, CO_URLENT_NAME, nrows);
-      wid = g_object_get_data (G_OBJECT (parent), wid_name);
+      wid = g_object_get_data (G_OBJECT (window), "ENTRY_WIDGET");
       if (wid)
         gtk_entry_set_text (GTK_ENTRY (wid), (char*)item->data);
-      item = item->next;
-      if (item != NULL && GTK_TABLE (url_tbl)->nrows == nrows)
-        {
-          nsvn__add_url_item (parent, (GladeXML*) user_data);
-          nrows = GTK_TABLE (url_tbl)->nrows;
-        }
-      else
-        nrows ++;
+      g_slist_free (item);
     }
-  g_slist_free (lst);
 
-  gtk_widget_hide (GTK_WIDGET(window));
+  nsvn__destroy_filechooser_window(widget, user_data);
   return 0;
 }
 
@@ -172,6 +156,7 @@ static int
 nsvn__choose_dir_item (GtkWidget *widget,
                        GladeXML *user_data)
 {
+  GladeXML *dlg_gui;
   GtkWidget *window;
   GtkWidget *parent;
   GtkWidget *cancel;
@@ -181,10 +166,18 @@ nsvn__choose_dir_item (GtkWidget *widget,
   char *url;
   char widname[25];
 
-  window = glade_xml_get_widget (user_data, "filechooser_dialog");
+  /* Error-out if supporting glade file missing in default path. */
+  dlg_gui = glade_xml_new (GLADEDIR "/" DLG_GLADE_FILE, "filechooser_dialog", NULL);
+  if (!dlg_gui)
+    {
+      g_warning (_("Could not find " GLADEDIR "/" DLG_GLADE_FILE "\n"));
+      return EXIT_FAILURE;
+    }
+
+  window = glade_xml_get_widget (dlg_gui, "filechooser_dialog");
   parent = glade_xml_get_widget (user_data, "checkout_dialog");
-  cancel = glade_xml_get_widget (user_data, "filechooser_cancel_btn");
-  choose = glade_xml_get_widget (user_data, "filechooser_select_btn");
+  cancel = glade_xml_get_widget (dlg_gui, "filechooser_cancel_btn");
+  choose = glade_xml_get_widget (dlg_gui, "filechooser_select_btn");
 
   extra_data = g_object_get_data (G_OBJECT(widget), URLADD_EXTRA_DATA); 
   g_object_set_data (G_OBJECT(window), URLADD_EXTRA_DATA, extra_data);
@@ -192,6 +185,7 @@ nsvn__choose_dir_item (GtkWidget *widget,
   /* Reading given URL and making it the default top-level directory. */
   sprintf (widname, CO_URLENT_NAME, atoi(extra_data));
   urlwid = g_object_get_data (G_OBJECT (parent), widname);
+  g_object_set_data (G_OBJECT(window), "ENTRY_WIDGET", urlwid);
   url = (char*) gtk_entry_get_text (GTK_ENTRY (urlwid));
   url = g_strstrip (url);
   if (url[0] !='\0')
@@ -207,10 +201,10 @@ nsvn__choose_dir_item (GtkWidget *widget,
                     window);
   g_signal_connect (G_OBJECT (cancel), "clicked",
                     G_CALLBACK (nsvn__destroy_filechooser_window),
-                    window);
+                    dlg_gui);
   g_signal_connect (G_OBJECT (choose), "clicked",
                     G_CALLBACK (nsvn__select_filechooser_window),
-                    user_data);
+                    dlg_gui);
 
   gtk_widget_show (window);
   return 0;
