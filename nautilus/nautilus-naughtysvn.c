@@ -366,8 +366,54 @@ nsvn_create_menuitem_update (NautilusMenuProvider *provider,
                              GList *items)
 {
   NautilusMenuItem *item = NULL;
+  GList *file_ptr = files;
+  int versioneditems=0;
 
-  if (!files)// && files->next != NULL)
+  /* If we have files, then check all entries until we find a entry that is versioned, else bail out
+   *   entries that are directories are checked as they are
+   *   entries that are files, we check if the parent directory is versioned.
+   * If all above fails, bail out
+   *
+   * Append "Update" to the context menu
+   */
+
+  if (!files)
+    return items;
+
+  while (file_ptr)
+  {
+    NautilusFileInfo *file;
+    gchar *uri;
+    gchar *path;
+
+    file = NAUTILUS_FILE_INFO (file_ptr->data);
+    uri = nautilus_file_info_get_uri (file);
+    path = gnome_vfs_get_local_path_from_uri (uri);
+
+    if (path)
+    {
+      if (nautilus_file_info_is_directory (file))
+      {
+        int wc_for;
+        if (nsvn_wc_check_is_wcpath (NULL, path, &wc_for) == EXIT_SUCCESS)
+          versioneditems++;
+      } else {
+        gchar *wc_path;
+        int wc_for;
+        wc_path = g_path_get_dirname (path);
+        if (nsvn_wc_check_is_wcpath (NULL, wc_path, &wc_for) == EXIT_SUCCESS)
+          versioneditems++;
+        g_free (wc_path);
+      }
+      g_free(path);
+    }
+    g_free(uri);
+    if (versioneditems)
+      break;
+    else
+      file_ptr = g_list_next (file_ptr);
+  }
+  if (!versioneditems)
     return items;
 
   item = nautilus_menu_item_new ("NautilusNSVN::FT_Update",
@@ -688,6 +734,8 @@ nautilus_nsvn_get_background_items (NautilusMenuProvider *provider,
 
   files = g_list_append (files, current_folder);
 
+  items = nsvn_create_menuitem_update (provider, widget,
+                                       files, items);
   items = nsvn_create_menuitem_reposcreate (provider, widget,
                                             files, items);
 
