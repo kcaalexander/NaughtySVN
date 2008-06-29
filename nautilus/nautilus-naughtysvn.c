@@ -522,66 +522,63 @@ nsvn_create_menuitem_add (NautilusMenuProvider *provider,
   nsvn_t *nsvn;
   nsvn = nsvn_base_init (NULL);
 
-  if (files)
+  // Walking through the selected list to find any
+  // on the selected items is a part of the wc.
+  while (file_ptr)
     {
-      // Walking through the selected list to find any
-      // on the selected items is a part of the wc.
-      while (file_ptr)
+      NautilusFileInfo *file;
+      char *uri;
+      char *path;
+      char *wc_path;
+
+      file = NAUTILUS_FILE_INFO (file_ptr->data);
+      uri = nautilus_file_info_get_uri (file);
+      path = gnome_vfs_get_local_path_from_uri (uri);
+
+      if (path)
         {
-          NautilusFileInfo *file;
-          char *uri;
-          char *path;
-          char *wc_path;
-
-          file = NAUTILUS_FILE_INFO (file_ptr->data);
-          uri = nautilus_file_info_get_uri (file);
-          path = gnome_vfs_get_local_path_from_uri (uri);
-
-          if (path)
-          {
-            // In its a file, Getting parent directory to
-            // find a entity is a working copy path or not.
-            //
-            // In a dir, check that the dir is not in SVN,
-            // if not, run the same checks as for files on
-            // the parent directory.
-            if (nautilus_file_info_is_directory (file))
+          // In its a file, Getting parent directory to
+          // find a entity is a working copy path or not.
+          //
+          // In a dir, check that the dir is not in SVN,
+          // if not, run the same checks as for files on
+          // the parent directory.
+          if (nautilus_file_info_is_directory (file))
             {
               if (nsvn_wc_check_is_wcpath (NULL, path, &wc_for) == EXIT_SUCCESS)
-              {
-                /* path is already in SVN */
-                g_free(path);
-                g_free(uri);
-                file_ptr = g_list_next (file_ptr);
-                continue;
-              }
+                {
+                  /* path is already in SVN */
+                  g_free(path);
+                  g_free(uri);
+                  file_ptr = g_list_next (file_ptr);
+                  continue;
+                }
             }
-            wc_path = g_path_get_dirname (path);
-            if (nsvn_wc_check_is_wcpath (NULL, wc_path, &wc_for) == EXIT_SUCCESS)
-              {
-                item = nautilus_menu_item_new ("NautilusNSVN::FT_Add",
-                                     _("NaughtySVN Add"),
-                                     _("Add a unversioned item to Subversion"),
-                                     PIXDIR "/add.png");
-                g_object_set_data (G_OBJECT (item), "files",
-                                   (void*)g_list_copy (files));
-                g_signal_connect (item, "activate", G_CALLBACK (nsvn_add),
-                                  provider);
+          wc_path = g_path_get_dirname (path);
+          if (nsvn_wc_check_is_wcpath (NULL, wc_path, &wc_for) == EXIT_SUCCESS)
+            {
+              item = nautilus_menu_item_new ("NautilusNSVN::FT_Add",
+                                   _("NaughtySVN Add"),
+                                   _("Add a unversioned item to Subversion"),
+                                   PIXDIR "/add.png");
+              g_object_set_data (G_OBJECT (item), "files",
+                                 (void*)g_list_copy (files));
+              g_signal_connect (item, "activate", G_CALLBACK (nsvn_add),
+                                provider);
 
-                items = g_list_append (items, item);
+              items = g_list_append (items, item);
 
-                g_free (wc_path);
-                g_free (path);
-                g_free (uri);
-                break;
+              g_free (wc_path);
+              g_free (path);
+              g_free (uri);
+              break;
             }
 
-            g_free (wc_path);
-            g_free (path);
-          }
-          g_free (uri);
-          file_ptr = g_list_next (file_ptr);
+          g_free (wc_path);
+          g_free (path);
         }
+      g_free (uri);
+      file_ptr = g_list_next (file_ptr);
     }
   nsvn = nsvn_base_uninit (nsvn);
   return items;
