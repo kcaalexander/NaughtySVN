@@ -438,18 +438,74 @@ nsvn_create_menuitem_commit (NautilusMenuProvider *provider,
                              GList *items)
 {
   NautilusMenuItem *item = NULL;
+  GList *file_ptr = files;
+  nsvn_t *nsvn;
+  nsvn = nsvn_base_init (NULL);
 
-  item = nautilus_menu_item_new ("NautilusNSVN::FT_Commit",
-           _("NaughtySVN Commit"),
-           _("Make permanent changes in Subversion repository"),
-           PIXDIR "/commit.png");
-  g_object_set_data (G_OBJECT (item), "files",
-                     (void*)g_list_copy (files));
-  g_signal_connect (item, "activate", G_CALLBACK (nsvn_commit),
-                    provider);
+  /* Walking through the selected list to find any
+   * on the selected items is a part of the wc.
+   */
+  while (file_ptr)
+    {
+      NautilusFileInfo *file;
+      gchar *uri;
+      gchar *path;
+      int wc_for;
 
-  items = g_list_append (items, item);
+      file = NAUTILUS_FILE_INFO (file_ptr->data);
+      uri = nautilus_file_info_get_uri (file);
+      path = gnome_vfs_get_local_path_from_uri (uri);
 
+      if (path)
+        {
+          /* If its a file, getting parent directory to
+           * find a entity is a working copy path or not.
+           *
+           *If its a dir, check that the dir is in  is a
+           * working copy or not.
+           */
+          if (nautilus_file_info_is_directory (file))
+            {
+              if (nsvn_wc_check_is_wcpath (NULL, path, &wc_for) != EXIT_SUCCESS)
+                {
+                  g_free (path);
+                  g_free (uri);
+                  file_ptr = g_list_next (file_ptr);
+                  continue;
+                }
+            } else {
+              gchar *wc_path;
+              wc_path = g_path_get_dirname (path);
+              if (nsvn_wc_check_is_wcpath (NULL, wc_path, &wc_for) != EXIT_SUCCESS)
+                {
+                  g_free (wc_path);
+                  g_free (path);
+                  g_free (uri);
+                  file_ptr = g_list_next (file_ptr);
+                  continue;
+                }
+              g_free (wc_path);
+            }
+
+          item = nautilus_menu_item_new ("NautilusNSVN::FT_Commit",
+                   _("NaughtySVN Commit"),
+                   _("Make permanent changes in Subversion repository"),
+                   PIXDIR "/commit.png");
+          g_object_set_data (G_OBJECT (item), "files",
+                             (void*)g_list_copy (files));
+          g_signal_connect (item, "activate", G_CALLBACK (nsvn_commit),
+                            provider);
+
+          items = g_list_append (items, item);
+
+          g_free (path);
+          g_free (uri);
+          break;
+        }
+      g_free (uri);
+      file_ptr = g_list_next (file_ptr);
+    }
+  nsvn = nsvn_base_uninit (nsvn);
   return items;
 }
 
