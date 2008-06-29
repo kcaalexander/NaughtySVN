@@ -725,24 +725,6 @@ nautilus_nsvn_get_toolbar_items (NautilusMenuProvider *provider,
 #endif
 
 static GList*
-nautilus_nsvn_get_background_items (NautilusMenuProvider *provider,
-                                    GtkWidget *widget,
-                                    NautilusFileInfo *current_folder)
-{
-  GList *items = NULL;
-  GList *files = NULL;
-
-  files = g_list_append (files, current_folder);
-
-  items = nsvn_create_menuitem_update (provider, widget,
-                                       files, items);
-  items = nsvn_create_menuitem_reposcreate (provider, widget,
-                                            files, items);
-
-  return items;
-}
-
-static GList*
 nautilus_nsvn_get_file_items (NautilusMenuProvider *provider,
                               GtkWidget *widget,
                               GList *files)
@@ -770,6 +752,18 @@ nautilus_nsvn_get_file_items (NautilusMenuProvider *provider,
   return items;
 }
 
+static GList*
+nautilus_nsvn_get_background_items (NautilusMenuProvider *provider,
+                                    GtkWidget *widget,
+                                    NautilusFileInfo *current_folder)
+{
+  GList *items = NULL;
+  GList *files = NULL;
+
+  files = g_list_append (files, current_folder);
+
+  return nautilus_nsvn_get_file_items ( provider, widget, files );
+}
 
 static void
 nautilus_nsvn_menu_provider_iface_init (NautilusMenuProviderIface *iface)
