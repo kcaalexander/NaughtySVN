@@ -784,14 +784,6 @@ nautilus_nsvn_get_file_items (NautilusMenuProvider *provider,
 {
   GList *items = NULL;
 
-  items = nsvn_create_menuitem_reposcreate (provider, widget,
-                                            files, items);
-  items = nsvn_create_menuitem_aboutnsvn (provider, widget,
-                                          files, items);
-  items = nsvn_create_menuitem_preferences (provider, widget,
-                                            files, items);
-  items = nsvn_create_menuitem_checkout (provider, widget,
-                                         files, items);
   items = nsvn_create_menuitem_add (provider, widget,
                                     files, items);
   items = nsvn_create_menuitem_commit (provider, widget,
@@ -802,6 +794,14 @@ nautilus_nsvn_get_file_items (NautilusMenuProvider *provider,
                                     files, items);
   items = nsvn_create_menuitem_refresh (provider, widget,
                                         files, items);
+  items = nsvn_create_menuitem_checkout (provider, widget,
+                                         files, items);
+  items = nsvn_create_menuitem_reposcreate (provider, widget,
+                                            files, items);
+  items = nsvn_create_menuitem_preferences (provider, widget,
+                                            files, items);
+  items = nsvn_create_menuitem_aboutnsvn (provider, widget,
+                                          files, items);
   return items;
 }
 
