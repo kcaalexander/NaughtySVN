@@ -168,7 +168,7 @@ nsvn__cancel  (GtkWidget *widget,
 
 gboolean
 nsvn_dlg_reposcreate    (GtkWidget *widget,
-                         gpointer user_data)
+                         const gchar **user_data)
 {
   GladeXML *dlg_gui;
   GtkWidget *window;
@@ -180,7 +180,7 @@ nsvn_dlg_reposcreate    (GtkWidget *widget,
   char *uri;
   char *bname;
 
-  uri = gnome_vfs_get_uri_from_local_path ((const char*) user_data);
+  uri = gnome_vfs_get_uri_from_local_path (*user_data);
 
   /* Error-out if supporting glade file missing in default path. */
   dlg_gui = glade_xml_new (GLADEDIR "/" DLG_GLADE_FILE,
@@ -200,9 +200,9 @@ nsvn_dlg_reposcreate    (GtkWidget *widget,
   create_btn = glade_xml_get_widget (dlg_gui, "repocreate_create_btn");
   cancel_btn = glade_xml_get_widget (dlg_gui, "repocreate_cancel_btn");
 
-  g_object_set_data (G_OBJECT(window), "path", user_data);
+  g_object_set_data (G_OBJECT(window), "path", (gpointer)*user_data);
  
-  bname = g_path_get_basename ((char*)user_data);
+  bname = g_path_get_basename (*user_data);
   gtk_entry_set_text (GTK_ENTRY(nrepo_ent), bname);
   
   /* Connecting widgets to callbacks */

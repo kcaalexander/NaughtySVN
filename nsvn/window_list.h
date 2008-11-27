@@ -25,7 +25,7 @@
 
 typedef gboolean
 (*nsvn_command_func_t) (GtkWidget *widget,
-                        gpointer user_data);
+                        const gchar **);
 
 typedef struct nsvn_command {
   const char *cmd;

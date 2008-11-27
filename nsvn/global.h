@@ -27,4 +27,4 @@ Show_Msgbox (
 
 
 GList*
-Split_Arg (const char *arg, GList **args_list);
+Split_Arg (const char **arg, GList **args_list);

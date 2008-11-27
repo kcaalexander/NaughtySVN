@@ -275,7 +275,7 @@ nsvn__showlog (GtkWidget *widget,
 
 gboolean
 nsvn_dlg_log (GtkWidget *widget,
-              gpointer args)
+              const gchar **args)
 {
   GladeXML *dlg_gui;
   GtkWidget *window;

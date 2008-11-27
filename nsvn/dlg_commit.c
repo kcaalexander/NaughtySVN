@@ -297,12 +297,12 @@ nsvn__populate_files (void *data,
 static GtkTreeModel*
 nsvn__find_files (GtkWidget *widget,
                   GtkListStore *store,
-                  gpointer args)
+                  const gchar **args)
 {
   nsvn_t *nsvn;
   GList *files = NULL;
 
-  Split_Arg ((char*) args, &files);
+  Split_Arg (args, &files);
 
   g_object_set_data (G_OBJECT(widget), "files", files);
 
@@ -326,7 +326,7 @@ nsvn__find_files (GtkWidget *widget,
 
 gboolean
 nsvn_dlg_commit (GtkWidget *widget,
-                 gpointer args)
+                 const gchar **args)
 {
   GladeXML *dlg_gui;
   GtkWidget *window;

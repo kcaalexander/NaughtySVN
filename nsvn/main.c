@@ -60,8 +60,9 @@ and is not expected to be called from command line\n"));
           strcasecmp(commands_list[i].cmd, argv[2]) == 0 &&
           commands_list[i].cmd_func != NULL)
         {
-          if (commands_list[i].cmd_func (NULL, argv[3]) == EXIT_SUCCESS)
+          if (commands_list[i].cmd_func (NULL, (const gchar **)(argv+3)) == EXIT_SUCCESS)
             found = TRUE;
+	  break;
         }
       i = i + 1;
     }

@@ -474,7 +474,7 @@ nsvn__toggle_revtype (GtkWidget *widget,
 
 gboolean
 nsvn_dlg_checkout (GtkWidget *widget,
-                   gpointer user_data)
+                   const gchar **user_data)
 {
   GladeXML *dlg_gui;
   GtkWidget *window;
@@ -502,7 +502,7 @@ nsvn_dlg_checkout (GtkWidget *widget,
   cancel_btn = glade_xml_get_widget (dlg_gui, "checkout_cancel_btn");
   wcpath_ent = glade_xml_get_widget (dlg_gui, "checkout_wcpath_ent");
 
-  gtk_entry_set_text (GTK_ENTRY(wcpath_ent), (const char*) user_data);
+  gtk_entry_set_text (GTK_ENTRY(wcpath_ent), *user_data);
 
   url_lbl = glade_xml_get_widget (dlg_gui, "checkout_url1_lbl");
   g_object_set_data (G_OBJECT(window), "checkout_url1_lbl", url_lbl);

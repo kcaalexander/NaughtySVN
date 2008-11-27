@@ -45,6 +45,26 @@ static GObjectClass *parent_class;
 static GtkWidget *
 nsvn_properties_view_page (NautilusFileInfo *file);
 
+static gchar **
+g_queue_to_gchar_array (GQueue *queue)
+{
+  gint index = 0;
+  gchar **retval = g_malloc ((queue->length+1) * sizeof (gpointer));
+  GList *current;
+
+  for (current = queue->head; current; current = g_list_next (current) )
+    retval[index++] = current->data;
+  retval[index] = NULL;
+  return retval;
+}
+
+static void
+g_free_wrap ( gpointer data,
+              gpointer user_data)
+{
+  g_free (data);
+}
+
 static void
 nsvn_log (NautilusMenuItem *item,
           gpointer user_data)
@@ -59,11 +79,21 @@ nsvn_log (NautilusMenuItem *item,
 
   if (path)
   {
-    GString *cmd;
-    cmd = g_string_new ("naughtysvn");
-    g_string_append_printf (cmd, " MID=NSVN CMD=log \"%s\"", path);
-    g_spawn_command_line_async (cmd->str, NULL);
-    g_string_free (cmd, TRUE);
+    gchar *argv[5];
+    argv[0] = "naughtysvn";
+    argv[1] = "MID=NSVN";
+    argv[2] = "CMD=log";
+    argv[3] = path;
+    argv[4] = NULL;
+    g_spawn_async ( NULL, /* working_directory */
+                    argv,
+                    NULL, /* envp */
+                    G_SPAWN_SEARCH_PATH,
+                    NULL, /* child_setup */
+		    NULL, /* user-data */
+		    NULL, /* child_pid */
+		    NULL /* error */
+		  );
     g_free (path);
   }
   g_free (uri);
@@ -76,10 +106,13 @@ nsvn_update (NautilusMenuItem *item,
 {
   GList *files=NULL;
   GList *file_ptr=NULL;
-  GString *cmd;
+  GQueue *cmd = g_queue_new();
   gint file_count=0;
 
-  cmd = g_string_new ("naughtysvn MID=NSVN CMD=update \"");
+  g_queue_push_tail (cmd, g_strdup("naughtysvn"));
+  g_queue_push_tail (cmd, g_strdup("MID=NSVN"));
+  g_queue_push_tail (cmd, g_strdup("CMD=update"));
+
   files =  g_object_get_data (G_OBJECT(item), "files");
   file_ptr = files;
 
@@ -93,26 +126,29 @@ nsvn_update (NautilusMenuItem *item,
       path = gnome_vfs_get_local_path_from_uri (uri);
       if (path)
       {
-        g_string_append_printf (cmd, "%s", path);
-
-        //Appending the unique delimiter to the argument if more args follows.
-        if (file_count)
-          g_string_append_printf (cmd, "%c", ARG_RECORD_SEPARATOR);
-
-        g_free (path);
+        g_queue_push_tail (cmd, path);
         file_count++;
       }
       g_free (uri);
       file_ptr = g_list_next (file_ptr);
     }
-    
-  g_string_append (cmd, "\"");
 
   if (file_count)
-    g_spawn_command_line_async (cmd->str, NULL);
-  g_string_free (cmd, TRUE);
-  file_ptr = NULL;
-  g_list_free (files);
+  {
+    gchar **argv = g_queue_to_gchar_array (cmd);
+    g_spawn_async ( NULL, /* working_directory */
+                    argv,
+                    NULL, /* envp */
+                    G_SPAWN_SEARCH_PATH,
+                    NULL, /* child_setup */
+		    NULL, /* user-data */
+		    NULL, /* child_pid */
+		    NULL /* error */
+		  );
+    g_free (argv);
+  }
+  g_queue_foreach (cmd, g_free_wrap, NULL);
+  g_queue_free (cmd);
 }
 
 
@@ -122,10 +158,12 @@ nsvn_commit (NautilusMenuItem *item,
 {
   GList *files=NULL;
   GList *file_ptr=NULL;
-  GString *cmd;
+  GQueue *cmd = g_queue_new();
   gint file_count=0;
 
-  cmd = g_string_new ("naughtysvn MID=NSVN CMD=commit \"");
+  g_queue_push_tail (cmd, g_strdup("naughtysvn"));
+  g_queue_push_tail (cmd, g_strdup("MID=NSVN"));
+  g_queue_push_tail (cmd, g_strdup("CMD=commit"));
   files =  g_object_get_data (G_OBJECT(item), "files");
   file_ptr = files;
 
@@ -139,28 +177,30 @@ nsvn_commit (NautilusMenuItem *item,
       path = gnome_vfs_get_local_path_from_uri (uri);
       if (path)
       {
-        g_string_append_printf (cmd, "%s", path);
-
-        //Appending the unique delimiter to the argument if more args follows.
-        if (file_count)
-          g_string_append_printf (cmd, "%c", ARG_RECORD_SEPARATOR);
-
-        g_free (path);
+        g_queue_push_tail (cmd, path);
         file_count++;
       }
       g_free (uri);
       file_ptr = g_list_next (file_ptr);
     }
-    
-  g_string_append (cmd, "\"");
 
   if (file_count)
-    g_spawn_command_line_async (cmd->str, NULL);
-  g_string_free (cmd, TRUE);
-  file_ptr = NULL;
-  g_list_free (files);
+  {
+    gchar **argv = g_queue_to_gchar_array (cmd);
+    g_spawn_async ( NULL, /* working_directory */
+                    argv,
+                    NULL, /* envp */
+                    G_SPAWN_SEARCH_PATH,
+                    NULL, /* child_setup */
+		    NULL, /* user-data */
+		    NULL, /* child_pid */
+		    NULL /* error */
+		  );
+    g_free (argv);
+  }
+  g_queue_foreach (cmd, g_free_wrap, NULL);
+  g_queue_free (cmd);
 }
-
 
 static void
 nsvn_add (NautilusMenuItem *item,
@@ -168,10 +208,12 @@ nsvn_add (NautilusMenuItem *item,
 {
   GList *files=NULL;
   GList *file_ptr=NULL;
-  GString *cmd;
+  GQueue *cmd = g_queue_new();
   gint file_count=0;
 
-  cmd = g_string_new ("naughtysvn MID=NSVN CMD=add \"");
+  g_queue_push_tail (cmd, g_strdup("naughtysvn"));
+  g_queue_push_tail (cmd, g_strdup("MID=NSVN"));
+  g_queue_push_tail (cmd, g_strdup("CMD=add"));
   files =  g_object_get_data (G_OBJECT(item), "files");
   file_ptr = files;
 
@@ -185,26 +227,29 @@ nsvn_add (NautilusMenuItem *item,
       path = gnome_vfs_get_local_path_from_uri (uri);
       if (path)
       {
-        g_string_append_printf (cmd, "%s", path);
-
-        //Appending the unique delimiter to the argument if more args follows.
-        if (file_count)
-          g_string_append_printf (cmd, "%c", ARG_RECORD_SEPARATOR);
-
-        g_free (path);
+        g_queue_push_tail (cmd, path);
         file_count++;
       }
       g_free (uri);
       file_ptr = g_list_next (file_ptr);
     }
-    
-  g_string_append (cmd, "\"");
 
   if (file_count)
-    g_spawn_command_line_async (cmd->str, NULL);
-  g_string_free (cmd, TRUE);
-  file_ptr = NULL;
-  g_list_free (files);
+  {
+    gchar **argv = g_queue_to_gchar_array (cmd);
+    g_spawn_async ( NULL, /* working_directory */
+                    argv,
+                    NULL, /* envp */
+                    G_SPAWN_SEARCH_PATH,
+                    NULL, /* child_setup */
+		    NULL, /* user-data */
+		    NULL, /* child_pid */
+		    NULL /* error */
+		  );
+    g_free (argv);
+  }
+  g_queue_foreach (cmd, g_free_wrap, NULL);
+  g_queue_free (cmd);
 }
 
 
@@ -222,11 +267,21 @@ nsvn_checkout (NautilusMenuItem *item,
 
   if (path)
   {
-    GString *cmd;
-    cmd = g_string_new ("naughtysvn");
-    g_string_append_printf (cmd, " MID=NSVN CMD=checkout \"%s\"", path);
-    g_spawn_command_line_async (cmd->str, NULL);
-    g_string_free (cmd, TRUE);
+    gchar *argv[5];
+    argv[0] = "naughtysvn";
+    argv[1] = "MID=NSVN";
+    argv[2] = "CMD=checkout";
+    argv[3] = path;
+    argv[4] = NULL;
+    g_spawn_async ( NULL, /* working_directory */
+                    argv,
+                    NULL, /* envp */
+                    G_SPAWN_SEARCH_PATH,
+                    NULL, /* child_setup */
+		    NULL, /* user-data */
+		    NULL, /* child_pid */
+		    NULL /* error */
+		  );
     g_free (path);
   }
   g_free (uri);
@@ -237,11 +292,7 @@ static void
 nsvn_preferences (NautilusMenuItem *item,
                   gpointer user_data)
 {
-  GString *cmd;
-
-  cmd = g_string_new ("naughtysvn MID=NSVN CMD=preferences");
-  g_spawn_command_line_async (cmd->str, NULL);
-  g_string_free (cmd, TRUE);
+  g_spawn_command_line_async ("naughtysvn MID=NSVN CMD=preferences", NULL);
 }
 
 
@@ -249,11 +300,7 @@ static void
 nsvn_about_nsvn (NautilusMenuItem *item,
                  gpointer user_data)
 {
-  GString *cmd;
-
-  cmd = g_string_new ("naughtysvn MID=NSVN CMD=about_nsvn");
-  g_spawn_command_line_async (cmd->str, NULL);
-  g_string_free (cmd, TRUE);
+  g_spawn_command_line_async ("naughtysvn MID=NSVN CMD=about_nsvn", NULL);
 }
 
 
@@ -271,11 +318,21 @@ nsvn_repos_create (NautilusMenuItem *item,
 
   if (path)
   {
-    GString *cmd;
-    cmd = g_string_new ("naughtysvn");
-    g_string_append_printf (cmd, " MID=NSVN CMD=create_repos \"%s\"", path);
-    g_spawn_command_line_async (cmd->str, NULL);
-    g_string_free (cmd, TRUE);
+    gchar *argv[5];
+    argv[0] = "naughtysvn";
+    argv[1] = "MID=NSVN";
+    argv[2] = "CMD=create_repos";
+    argv[3] = path;
+    argv[4] = NULL;
+    g_spawn_async ( NULL, /* working_directory */
+                    argv,
+                    NULL, /* envp */
+                    G_SPAWN_SEARCH_PATH,
+                    NULL, /* child_setup */
+		    NULL, /* user-data */
+		    NULL, /* child_pid */
+		    NULL /* error */
+		  );
     g_free (path);
   }
   g_free (uri);

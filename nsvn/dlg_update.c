@@ -188,7 +188,7 @@ nsvn__update_wc (GtkWidget *widget,
 
 gboolean
 nsvn_dlg_update (GtkWidget *widget,
-                 gpointer args)
+                 const gchar **args)
 {
   GladeXML *dlg_gui;
   GtkWidget *window;
@@ -244,7 +244,7 @@ nsvn_dlg_update (GtkWidget *widget,
                     G_CALLBACK (nsvn__toggle_revtype),
                     rev_wid);
 
-  Split_Arg ((char*) args, &files);
+  Split_Arg (args, &files);
   g_object_set_data (G_OBJECT(window), "files", files);
 
   /* Activating dialog box. */

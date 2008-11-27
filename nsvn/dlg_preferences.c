@@ -176,7 +176,7 @@ nsvn__save_settings  (GtkWidget *widget,
 
 gboolean
 nsvn_dlg_preferences (GtkWidget *widget,
-                      gpointer user_data)
+                      const gchar **user_data)
 {
   GladeXML *dlg_gui;
   GtkWidget *window;

@@ -15,7 +15,7 @@
 
 gboolean
 nsvn_dlg_update (GtkWidget *widget,
-                 gpointer user_data);
+                 const gchar **user_data);
 
 void
 on_externals_update_check_toggled (GtkWidget *widget,

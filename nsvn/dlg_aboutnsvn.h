@@ -15,6 +15,6 @@
 
 gboolean
 nsvn_dlg_aboutnsvn   (GtkWidget *widget,
-                      gpointer user_data);
+                      const gchar ** user_data);
 
 #endif /* NSVN_DLG_ABOUTNSVN_H */

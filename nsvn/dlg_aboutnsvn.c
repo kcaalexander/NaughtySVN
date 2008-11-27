@@ -37,7 +37,7 @@ nsvn__destroy_window  (GtkWidget *widget,
 
 gboolean
 nsvn_dlg_aboutnsvn (GtkWidget *widget,
-                    gpointer user_data)
+                    const gchar **user_data)
 {
   GladeXML *dlg_gui;
   GtkWidget *window;
