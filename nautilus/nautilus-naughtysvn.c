@@ -816,7 +816,6 @@ nautilus_nsvn_get_background_items (NautilusMenuProvider *provider,
                                     GtkWidget *widget,
                                     NautilusFileInfo *current_folder)
 {
-  GList *items = NULL;
   GList *files = NULL;
 
   files = g_list_append (files, current_folder);
