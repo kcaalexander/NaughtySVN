@@ -654,7 +654,6 @@ nsvn_create_menuitem_checkout (NautilusMenuProvider *provider,
 {
   NautilusMenuItem *item = NULL;
   NautilusFileInfo *file;
-  char *scheme;
   char *uri;
   char *path;
 
@@ -665,17 +664,14 @@ nsvn_create_menuitem_checkout (NautilusMenuProvider *provider,
     return items;
 
   file = NAUTILUS_FILE_INFO (files->data);
-  scheme = nautilus_file_info_get_uri_scheme (file);
   uri = nautilus_file_info_get_uri (file);
   path = gnome_vfs_get_local_path_from_uri (uri);
 
   if (path)
   {
-    if (strcmp (scheme, "file") != 0 ||
-        !nautilus_file_info_is_directory (file) ||
+    if (!nautilus_file_info_is_directory (file) ||
         nsvn_wc_check_is_wcpath (NULL, path, NULL) == EXIT_SUCCESS)
       {
-        g_free (scheme);
         g_free (path);
         g_free (uri);
         return items;
@@ -683,7 +679,6 @@ nsvn_create_menuitem_checkout (NautilusMenuProvider *provider,
     g_free (path);
   }
   g_free (uri);
-  g_free (scheme);
 
   item = nautilus_menu_item_new ("NautilusNSVN::FT_Checkout",
                                  _("NaughtySVN Checkout"),
@@ -750,7 +745,6 @@ nsvn_create_menuitem_reposcreate (NautilusMenuProvider *provider,
 {
   NautilusMenuItem *item = NULL;
   NautilusFileInfo *file;
-  char *scheme;
   char *uri;
   char *path;
 
@@ -761,18 +755,15 @@ nsvn_create_menuitem_reposcreate (NautilusMenuProvider *provider,
     return items;
 
   file = NAUTILUS_FILE_INFO (files->data);
-  scheme = nautilus_file_info_get_uri_scheme (file);
   uri = nautilus_file_info_get_uri (file);
   path = gnome_vfs_get_local_path_from_uri (uri);
 
   if (path)
     {
       GList *files = NULL;
-      if (strcmp (scheme, "file") != 0 ||
-          !nautilus_file_info_is_directory (file) ||
+      if (!nautilus_file_info_is_directory (file) ||
           nsvn_wc_check_is_wcpath (NULL, path, NULL) == EXIT_SUCCESS)
         {
-          g_free (scheme);
           g_free (path);
           g_free (uri);
           return items;
@@ -792,7 +783,6 @@ nsvn_create_menuitem_reposcreate (NautilusMenuProvider *provider,
 
       g_free (path);
     }
-  g_free (scheme);
   g_free (uri);
 
   return items;
