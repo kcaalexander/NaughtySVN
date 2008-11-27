@@ -69,11 +69,13 @@ static void
 nsvn_log (NautilusMenuItem *item,
           gpointer user_data)
 {
+  GList *files;
   NautilusFileInfo *file;
   char *uri;
   char *path;
 
-  file = g_object_get_data (G_OBJECT(item), "files");
+  files = g_object_get_data (G_OBJECT(item), "files");
+  file = files->data; /* only one file is given to log */
   uri = nautilus_file_info_get_uri (file);
   path = gnome_vfs_get_local_path_from_uri (uri);
 
@@ -257,11 +259,13 @@ static void
 nsvn_checkout (NautilusMenuItem *item,
                gpointer user_data)
 {
+  GList *files;
   NautilusFileInfo *file;
   char *uri;
   char *path;
 
-  file = g_object_get_data (G_OBJECT(item), "files");
+  files = g_object_get_data (G_OBJECT(item), "files");
+  file = files->data; /* only one file is given to checkout */
   uri = nautilus_file_info_get_uri (file);
   path = gnome_vfs_get_local_path_from_uri (uri);
 
@@ -308,11 +312,13 @@ static void
 nsvn_repos_create (NautilusMenuItem *item,
                    gpointer user_data)
 {
+  GList *files;
   NautilusFileInfo *file;
   char *uri;
   char *path;
 
-  file = g_object_get_data (G_OBJECT(item), "files");
+  files = g_object_get_data (G_OBJECT(item), "files");
+  file = files->data; /* only one file is given to repos_create */
   uri = nautilus_file_info_get_uri (file);
   path = gnome_vfs_get_local_path_from_uri (uri);
 
@@ -355,8 +361,6 @@ nsvn_refresh (NautilusMenuItem *item,
       file = NAUTILUS_FILE_INFO (file_ptr->data);
       nautilus_file_info_invalidate_extension_info (file);
     }
-    
-  g_list_free (files);
 }
 
 static GList*
@@ -403,7 +407,7 @@ nsvn_create_menuitem_log (NautilusMenuProvider *provider,
              _("NaughtySVN Show Log"),
              _("Show the log messages"),
              PIXDIR "/log.png");
-    g_object_set_data (G_OBJECT (item), "files", file);
+    g_object_set_data_full (G_OBJECT (item), "files", nautilus_file_info_list_copy(files), (GDestroyNotify) nautilus_file_info_list_free);
     g_signal_connect (item, "activate", G_CALLBACK (nsvn_log),
                       provider);
 
@@ -480,8 +484,7 @@ nsvn_create_menuitem_update (NautilusMenuProvider *provider,
            _("NaughtySVN Update"),
            _("Bring changes from the repository into the working copy"),
            PIXDIR "/update.png");
-  g_object_set_data (G_OBJECT (item), "files",
-                     (void*)g_list_copy (files));
+  g_object_set_data_full (G_OBJECT (item), "files", nautilus_file_info_list_copy(files), (GDestroyNotify) nautilus_file_info_list_free);
   g_signal_connect (item, "activate", G_CALLBACK (nsvn_update),
                     provider);
 
@@ -551,8 +554,7 @@ nsvn_create_menuitem_commit (NautilusMenuProvider *provider,
                    _("NaughtySVN Commit"),
                    _("Make permanent changes in Subversion repository"),
                    PIXDIR "/commit.png");
-          g_object_set_data (G_OBJECT (item), "files",
-                             (void*)g_list_copy (files));
+          g_object_set_data_full (G_OBJECT (item), "files", nautilus_file_info_list_copy(files), (GDestroyNotify) nautilus_file_info_list_free);
           g_signal_connect (item, "activate", G_CALLBACK (nsvn_commit),
                             provider);
 
@@ -621,8 +623,7 @@ nsvn_create_menuitem_add (NautilusMenuProvider *provider,
                                    _("NaughtySVN Add"),
                                    _("Add a unversioned item to Subversion"),
                                    PIXDIR "/add.png");
-              g_object_set_data (G_OBJECT (item), "files",
-                                 (void*)g_list_copy (files));
+              g_object_set_data_full (G_OBJECT (item), "files", nautilus_file_info_list_copy(files), (GDestroyNotify) nautilus_file_info_list_free);
               g_signal_connect (item, "activate", G_CALLBACK (nsvn_add),
                                 provider);
 
@@ -688,7 +689,8 @@ nsvn_create_menuitem_checkout (NautilusMenuProvider *provider,
                                  _("NaughtySVN Checkout"),
                                  _("Checkout out a Subversion repository"),
                                  PIXDIR "/checkout.png");
-  g_object_set_data (G_OBJECT (item), "files", file);
+  g_object_set_data_full (G_OBJECT (item), "files", nautilus_file_info_list_copy(files), (GDestroyNotify) nautilus_file_info_list_free);
+
   g_signal_connect (item, "activate", G_CALLBACK (nsvn_checkout),
                     provider);
 
@@ -765,6 +767,7 @@ nsvn_create_menuitem_reposcreate (NautilusMenuProvider *provider,
 
   if (path)
     {
+      GList *files = NULL;
       if (strcmp (scheme, "file") != 0 ||
           !nautilus_file_info_is_directory (file) ||
           nsvn_wc_check_is_wcpath (NULL, path, NULL) == EXIT_SUCCESS)
@@ -778,7 +781,9 @@ nsvn_create_menuitem_reposcreate (NautilusMenuProvider *provider,
                                      _("NaughtySVN Create Repository"),
                                      _("Create FSFS/BDB subversion repository"),
                                      PIXDIR "/create_repos.png");
-      g_object_set_data (G_OBJECT (item), "files", file);
+      files = g_list_append (files, file);
+      g_object_set_data_full (G_OBJECT (item), "files", nautilus_file_info_list_copy(files), (GDestroyNotify) nautilus_file_info_list_free);
+      g_list_free(files);
       g_signal_connect (item, "activate",
                         G_CALLBACK (nsvn_repos_create),
                         provider);
@@ -808,8 +813,7 @@ nsvn_create_menuitem_refresh (NautilusMenuProvider *provider,
            _("NaughtySVN Refresh"),
            _("Refreshes the emblems on the icons"),
            PIXDIR "/refresh.png");
-  g_object_set_data (G_OBJECT (item), "files",
-                     (void*)g_list_copy (files));
+  g_object_set_data_full (G_OBJECT (item), "files", nautilus_file_info_list_copy(files), (GDestroyNotify) nautilus_file_info_list_free);
   g_signal_connect (item, "activate", G_CALLBACK (nsvn_refresh),
                     provider);
 
