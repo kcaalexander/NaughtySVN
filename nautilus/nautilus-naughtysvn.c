@@ -314,7 +314,10 @@ nsvn_create_menuitem_log (NautilusMenuProvider *provider,
   char *path;
   char *wc_path;
 
-  if ((!files) || (files && files->next != NULL))
+  if (!files)
+    return items;
+
+  if (files->next)
     return items;
 
   file = NAUTILUS_FILE_INFO (files->data);
@@ -597,10 +600,12 @@ nsvn_create_menuitem_checkout (NautilusMenuProvider *provider,
   char *uri;
   char *path;
 
-  if (!files)// && files->next != NULL)
+  if (!files)
     return items;
 
-#if 1
+  if (files->next)
+    return items;
+
   file = NAUTILUS_FILE_INFO (files->data);
   scheme = nautilus_file_info_get_uri_scheme (file);
   uri = nautilus_file_info_get_uri (file);
@@ -621,7 +626,6 @@ nsvn_create_menuitem_checkout (NautilusMenuProvider *provider,
   }
   g_free (uri);
   g_free (scheme);
-#endif
 
   item = nautilus_menu_item_new ("NautilusNSVN::FT_Checkout",
                                  _("NaughtySVN Checkout"),
@@ -686,46 +690,48 @@ nsvn_create_menuitem_reposcreate (NautilusMenuProvider *provider,
                                   GList *items)
 {
   NautilusMenuItem *item = NULL;
+  NautilusFileInfo *file;
+  char *scheme;
+  char *uri;
+  char *path;
 
-  if (files && files->next == NULL)
+  if (!files)
+    return items;
+
+  if (files->next)
+    return items;
+
+  file = NAUTILUS_FILE_INFO (files->data);
+  scheme = nautilus_file_info_get_uri_scheme (file);
+  uri = nautilus_file_info_get_uri (file);
+  path = gnome_vfs_get_local_path_from_uri (uri);
+
+  if (path)
     {
-      NautilusFileInfo *file;
-      char *scheme;
-      char *uri;
-      char *path;
+      if (strcmp (scheme, "file") != 0 ||
+          !nautilus_file_info_is_directory (file) ||
+          nsvn_wc_check_is_wcpath (NULL, path, NULL) == EXIT_SUCCESS)
+        {
+          g_free (scheme);
+          g_free (path);
+          g_free (uri);
+          return items;
+        }
+      item = nautilus_menu_item_new ("NautilusNSVN::FT_Create_Repos",
+                                     _("NaughtySVN Create Repository"),
+                                     _("Create FSFS/BDB subversion repository"),
+                                     PIXDIR "/create_repos.png");
+      g_object_set_data (G_OBJECT (item), "files", file);
+      g_signal_connect (item, "activate",
+                        G_CALLBACK (nsvn_repos_create),
+                        provider);
 
-      file = NAUTILUS_FILE_INFO (files->data);
-      scheme = nautilus_file_info_get_uri_scheme (file);
-      uri = nautilus_file_info_get_uri (file);
-      path = gnome_vfs_get_local_path_from_uri (uri);
+      items = g_list_append (items, item);
 
-      if (path)
-      {
-        if (strcmp (scheme, "file") != 0 ||
-            !nautilus_file_info_is_directory (file) ||
-            nsvn_wc_check_is_wcpath (NULL, path, NULL) == EXIT_SUCCESS)
-          {
-            g_free (scheme);
-            g_free (path);
-            g_free (uri);
-            return items;
-          }
-        item = nautilus_menu_item_new ("NautilusNSVN::FT_Create_Repos",
-                                       _("NaughtySVN Create Repository"),
-                                       _("Create FSFS/BDB subversion repository"),
-                                       PIXDIR "/create_repos.png");
-        g_object_set_data (G_OBJECT (item), "files", file);
-        g_signal_connect (item, "activate",
-                          G_CALLBACK (nsvn_repos_create),
-                          provider);
-
-        items = g_list_append (items, item);
-
-        g_free (path);
-      }
-      g_free (scheme);
-      g_free (uri);
+      g_free (path);
     }
+  g_free (scheme);
+  g_free (uri);
 
   return items;
 }
@@ -738,7 +744,7 @@ nsvn_create_menuitem_refresh (NautilusMenuProvider *provider,
 {
   NautilusMenuItem *item = NULL;
 
-  if (!files)// && files->next != NULL)
+  if (!files)
     return items;
 
   item = nautilus_menu_item_new ("NautilusNSVN::FT_Refresh",
