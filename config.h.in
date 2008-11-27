@@ -1,8 +1,5 @@
 /* config.h.in.  Generated from configure.in by autoheader.  */
 
-/* Defining record seprarator */
-#undef ARG_RECORD_SEPARATOR
-
 /* GTKSpell package. */
 #undef HAVE_GTKSPELL
 
