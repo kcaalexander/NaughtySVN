@@ -8,7 +8,7 @@ AC_DEFUN([AM_CHECK_SVN_HEADER],
 
   dnl Checking for user supplied subversion include path.
   AC_ARG_WITH(svn-include,
-  [[  --with-svn-include=DIR   Use the given path to the subversion headers.]],
+  [[  --with-svn-include=DIR  Use the given path to the subversion headers.]],
   [
     if test "$withval" != "yes" -a "$withval" != ""; then
       SVN_INCLUDES=$withval
@@ -43,7 +43,7 @@ AC_DEFUN([AM_CHECK_SVN_LIB],
 
   dnl Checking for user supplied subversion library path.
   AC_ARG_WITH(svn-lib,
-  [[  --with-svn-lib=DIR  Use the given path to the subversion libraries.]],
+  [[  --with-svn-lib=DIR      Use the given path to the subversion libraries.]],
   [
     if test "$withval" != "yes" -a "$withval" != ""; then
         SVN_LIBS=$withval
