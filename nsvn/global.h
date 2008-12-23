@@ -9,6 +9,8 @@
 *
 * ====================================================================
 */
+#ifndef NSVN_GLOBAL_H
+#define NSVN_GLOBAL_H
 
 #include <gnome.h>
 
@@ -28,3 +30,5 @@ Show_Msgbox (
 
 GList*
 Split_Arg (const char **arg, GList **args_list);
+
+#endif /* NSVN_GLOBAL_H */

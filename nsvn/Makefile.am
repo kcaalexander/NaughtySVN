@@ -40,7 +40,8 @@ naughtysvn_SOURCES = \
 		dlg_add.c dlg_add.h \
 		dlg_update.c dlg_update.h \
 		dlg_log.c dlg_log.h \
-		dlg_result.c dlg_result.h
+		dlg_result.c dlg_result.h \
+		dlg_auth.c dlg_auth.h
 
 naughtysvn_LDADD = \
 		$(glib_LIBS) \
