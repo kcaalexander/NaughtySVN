@@ -38,7 +38,6 @@ libnaughtysvn_la_SOURCES = \
 		svn-nsvn-admin.c \
 		svn-nsvn-init.c \
 		svn-nsvn-auth.c \
-		dlg_auth.c dlg_auth.h \
 		svn-nsvn-wc.c \
 		svn-nsvn-repos.c \
 		svn-nsvn-common.c

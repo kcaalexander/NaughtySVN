@@ -21,127 +21,268 @@
 #include "svn_pools.h"
 #include "svn_types.h"
 
-#define NEED_svn_gtk_setup_auth_baton
 #include "naughtysvn.h"
-#include "dlg_auth.h"
+#include "svn-nsvn-types.h"
 
-svn_error_t *
-svn_gtk_setup_auth_baton (svn_auth_baton_t **ab,
-                          const char *auth_username,
-                          const char *auth_password,
-                          const char *config_dir,
-                          svn_boolean_t no_auth_cache,
-                          svn_config_t *cfg,
-                          apr_pool_t *pool)
+
+int
+nsvn_auth_register (nsvn_t *n,
+                    const char *def_username,
+                    const char *def_password,
+                    const char *config_dir,
+                    int non_interactive,
+                    int store_passwd,
+                    int auth_cache,
+//                  int store_passwd_as_plaintext,
+//                  int store_ssl_cert_passphrase,
+//                  int store_ssl_cert_passphrase_as_plaintext,
+                    apr_array_header_t *providers)
 {
-  svn_boolean_t store_password_val = TRUE;
-  svn_auth_provider_object_t *provider;
+  if (n == NULL || providers == NULL)
+    return EXIT_FAILURE;
 
-  apr_array_header_t *providers = apr_array_make(pool, 12, sizeof(svn_auth_provider_object_t *));
+  svn_auth_open(&(n->ctx->auth_baton),
+                (apr_array_header_t*) providers,
+                n->pool);
 
-#ifdef WIN32
-  svn_auth_get_windows_simple_provider(&provider, pool);
-  APR_ARRAY_PUSH(providers, svn_auth_provider_object_t *) = provider;
-#endif
-#ifdef SVN_HAVE_KEYCHAIN_SERVICES
-  svn_auth_get_keychain_simple_provider(&provider, pool);
-  APR_ARRAY_PUSH(providers, svn_auth_provider_object_t *) = provider;
-#endif
-  svn_auth_get_simple_provider(&provider, pool);
-  APR_ARRAY_PUSH(providers, svn_auth_provider_object_t *) = provider;
-  svn_auth_get_username_provider(&provider, pool);
-  APR_ARRAY_PUSH(providers, svn_auth_provider_object_t *) = provider;
+  if (def_username)
+    svn_auth_set_parameter(n->ctx->auth_baton, SVN_AUTH_PARAM_DEFAULT_USERNAME,
+                           def_username);
 
-  /* The server-cert, client-cert, and client-cert-password providers. */
-  svn_auth_get_ssl_server_trust_file_provider(&provider, pool);
-  APR_ARRAY_PUSH(providers, svn_auth_provider_object_t *) = provider;
-  svn_auth_get_ssl_client_cert_file_provider(&provider, pool);
-  APR_ARRAY_PUSH(providers, svn_auth_provider_object_t *) = provider;
-  svn_auth_get_ssl_client_cert_pw_file_provider(&provider, pool);
-  APR_ARRAY_PUSH(providers, svn_auth_provider_object_t *) = provider;
-
-  /* Two basic prompt providers: username/password, and just username. */
-  svn_auth_get_simple_prompt_provider(&provider,
-                                      svn_gtk_auth_simple_prompt,
-                                      NULL /*pb*/,
-                                      2, /* retry limit */
-                                      pool);
-  APR_ARRAY_PUSH(providers, svn_auth_provider_object_t *) = provider;
-
-  svn_auth_get_username_prompt_provider(&provider,
-                                        svn_gtk_auth_username_prompt,
-                                        NULL /*pb*/,
-                                        2, /* retry limit */
-                                        pool);
-  APR_ARRAY_PUSH(providers, svn_auth_provider_object_t *) = provider;
-
-  /* Three ssl prompt providers, for server-certs, client-certs,
-     and client-cert-passphrases.  */
-
-  svn_auth_get_ssl_server_trust_prompt_provider(&provider,
-                                                svn_gtk_auth_ssl_server_trust_prompt,
-                                                NULL /*pb*/,
-                                                pool);
-  APR_ARRAY_PUSH(providers, svn_auth_provider_object_t *) = provider;
-
-  svn_auth_get_ssl_client_cert_prompt_provider(&provider,
-                                               svn_gtk_auth_ssl_client_cert_prompt,
-                                               NULL /*pb*/,
-                                               2,
-                                               pool);
-  APR_ARRAY_PUSH(providers, svn_auth_provider_object_t *) = provider;
-
-  svn_auth_get_ssl_client_cert_pw_prompt_provider(&provider,
-                                                  svn_gtk_auth_ssl_client_cert_pw_prompt,
-                                                  NULL /*pb*/,
-                                                  2,
-                                                  pool);
-  APR_ARRAY_PUSH(providers, svn_auth_provider_object_t *) = provider;
-
-  /* Build an authentication baton to give to libsvn_client. */
-  svn_auth_open(ab, providers, pool);
-
-  /* Place any default --username or --password credentials into the 
-     auth_baton's run-time parameter hash. */
-
-  if (auth_username)
-    svn_auth_set_parameter(*ab,
-                           SVN_AUTH_PARAM_DEFAULT_USERNAME,
-                           auth_username);
-                           
-  if (auth_password)
-    svn_auth_set_parameter(*ab,
-                           SVN_AUTH_PARAM_DEFAULT_PASSWORD,
-                           auth_password);
-
-  /* Same with the --non-interactive option. */
+  if (def_password)
+    svn_auth_set_parameter(n->ctx->auth_baton, SVN_AUTH_PARAM_DEFAULT_PASSWORD,
+                           def_password);
 
   if (config_dir)
-    svn_auth_set_parameter(*ab,
-                           SVN_AUTH_PARAM_CONFIG_DIR,
+    svn_auth_set_parameter(n->ctx->auth_baton, SVN_AUTH_PARAM_CONFIG_DIR,
                            config_dir);
 
-  SVN_ERR(svn_config_get_bool(cfg,
-                              &store_password_val,
-                              SVN_CONFIG_SECTION_AUTH,
-                              SVN_CONFIG_OPTION_STORE_PASSWORDS,
-                              TRUE));
+  if (non_interactive)
+    svn_auth_set_parameter(n->ctx->auth_baton,
+                           SVN_AUTH_PARAM_NON_INTERACTIVE, "");
 
-  if (! store_password_val)
-    svn_auth_set_parameter(*ab, SVN_AUTH_PARAM_DONT_STORE_PASSWORDS, "");
+  if (store_passwd)
+    svn_auth_set_parameter(n->ctx->auth_baton,
+                           SVN_AUTH_PARAM_DONT_STORE_PASSWORDS, "");
 
-  /* There are two different ways the user can disable disk caching
-     of credentials:  either via --no-auth-cache, or in the config
-     file ('store-auth-creds = no'). */
+  if (!auth_cache || !store_passwd)
+    svn_auth_set_parameter(n->ctx->auth_baton,
+                           SVN_AUTH_PARAM_NO_AUTH_CACHE, "");
 
-  SVN_ERR(svn_config_get_bool(cfg,
-                              &store_password_val,
-                              SVN_CONFIG_SECTION_AUTH,
-                              SVN_CONFIG_OPTION_STORE_AUTH_CREDS,
-                              TRUE));
+  return EXIT_SUCCESS;
+}
 
-  if (no_auth_cache || ! store_password_val)
-      svn_auth_set_parameter(*ab, SVN_AUTH_PARAM_NO_AUTH_CACHE, "");
 
-  return SVN_NO_ERROR;
+int
+nsvn_auth_get_simple_provider (nsvn_t *n,
+                               apr_array_header_t **providers)
+{
+  svn_auth_provider_object_t *provider;
+
+  if (n == NULL)
+    return EXIT_FAILURE;
+
+  if ((*providers) == NULL)
+    *providers = apr_array_make (n->pool, 0,
+                                 sizeof (svn_auth_provider_object_t *));
+
+  svn_client_get_simple_provider(&provider, n->pool);
+  *(svn_auth_provider_object_t**)apr_array_push(*providers) = provider;
+
+  return EXIT_SUCCESS;
+}
+
+
+int
+nsvn_auth_get_username_provider (nsvn_t *n,
+                                 apr_array_header_t **providers)
+{
+  svn_auth_provider_object_t *provider;
+
+  if (n == NULL)
+    return EXIT_FAILURE;
+
+  if ((*providers) == NULL)
+    *providers = apr_array_make (n->pool, 0,
+                                 sizeof (svn_auth_provider_object_t *));
+
+  svn_client_get_username_provider (&provider, n->pool);
+  *(svn_auth_provider_object_t**)apr_array_push(*providers) = provider;
+
+  return EXIT_SUCCESS;
+}
+
+
+int
+nsvn_auth_get_ssl_server_trust_file_provider (nsvn_t *n,
+                                              apr_array_header_t **providers)
+{
+  svn_auth_provider_object_t *provider;
+
+  if (n == NULL)
+    return EXIT_FAILURE;
+
+  if ((*providers) == NULL)
+    *providers = apr_array_make (n->pool, 0,
+                                 sizeof (svn_auth_provider_object_t *));
+
+  svn_client_get_ssl_server_trust_file_provider (&provider, n->pool);
+  *(svn_auth_provider_object_t**)apr_array_push(*providers) = provider;
+
+  return EXIT_SUCCESS;
+}
+
+
+int
+nsvn_auth_get_ssl_client_cert_file_provider (nsvn_t *n,
+                                             apr_array_header_t **providers)
+{
+  svn_auth_provider_object_t *provider;
+
+  if (n == NULL)
+    return EXIT_FAILURE;
+
+  if ((*providers) == NULL)
+    *providers = apr_array_make (n->pool, 0,
+                                 sizeof (svn_auth_provider_object_t *));
+
+  svn_client_get_ssl_client_cert_file_provider (&provider, n->pool);
+  *(svn_auth_provider_object_t**)apr_array_push(*providers) = provider;
+
+  return EXIT_SUCCESS;
+}
+
+
+int
+nsvn_auth_get_ssl_client_cert_pw_file_provider (nsvn_t *n,
+                                                apr_array_header_t **providers)
+{
+  svn_auth_provider_object_t *provider;
+
+  if (n == NULL)
+    return EXIT_FAILURE;
+
+  if ((*providers) == NULL)
+    *providers = apr_array_make (n->pool, 0,
+                                 sizeof (svn_auth_provider_object_t *));
+
+  svn_client_get_ssl_client_cert_pw_file_provider (&provider, n->pool);
+  *(svn_auth_provider_object_t**)apr_array_push(*providers) = provider;
+
+  return EXIT_SUCCESS;
+}
+
+
+int
+nsvn_auth_get_simple_prompt_provider (nsvn_t *n,
+                                      svn_auth_simple_prompt_func_t prompt_func,
+                                      int retry_limit,
+                                      apr_array_header_t **providers)
+{
+  svn_auth_provider_object_t *provider;
+
+  if (n == NULL)
+    return EXIT_FAILURE;
+
+  if ((*providers) == NULL)
+    *providers = apr_array_make (n->pool, 0,
+                                 sizeof (svn_auth_provider_object_t *));
+
+  svn_client_get_simple_prompt_provider (&provider, prompt_func,
+                                         n->ctx, retry_limit, n->pool);
+  *(svn_auth_provider_object_t**)apr_array_push(*providers) = provider;
+
+  return EXIT_SUCCESS;
+}
+
+
+int
+nsvn_auth_get_username_prompt_provider (nsvn_t *n,
+                                    svn_auth_username_prompt_func_t prompt_func,
+                                    int retry_limit,
+                                    apr_array_header_t **providers)
+{
+  svn_auth_provider_object_t *provider;
+
+  if (n == NULL)
+    return EXIT_FAILURE;
+
+  if ((*providers) == NULL)
+    *providers = apr_array_make (n->pool, 0,
+                                 sizeof(svn_auth_provider_object_t *));
+
+  svn_client_get_username_prompt_provider (&provider, prompt_func,
+                                           n->ctx, retry_limit, n->pool);
+  *(svn_auth_provider_object_t**)apr_array_push(*providers) = provider;
+
+  return EXIT_SUCCESS;
+}
+
+
+int
+nsvn_auth_get_ssl_server_trust_prompt_provider (nsvn_t *n,
+                      svn_auth_ssl_server_trust_prompt_func_t prompt_func,
+                      apr_array_header_t **providers)
+{
+  svn_auth_provider_object_t *provider;
+
+  if (n == NULL)
+    return EXIT_FAILURE;
+
+  if ((*providers) == NULL)
+    *providers = apr_array_make (n->pool, 0,
+                                 sizeof (svn_auth_provider_object_t *));
+
+  svn_client_get_ssl_server_trust_prompt_provider (&provider, prompt_func,
+                                                   n->ctx, n->pool);
+  *(svn_auth_provider_object_t**)apr_array_push(*providers) = provider;
+
+  return EXIT_SUCCESS;
+}
+
+
+int
+nsvn_auth_get_ssl_client_cert_prompt_provider (nsvn_t *n,
+                     svn_auth_ssl_client_cert_prompt_func_t prompt_func,
+                     int retry_limit,
+                     apr_array_header_t **providers)
+{
+  svn_auth_provider_object_t *provider;
+
+  if (n == NULL)
+    return EXIT_FAILURE;
+
+  if ((*providers) == NULL)
+    *providers = apr_array_make (n->pool, 0,
+                                 sizeof (svn_auth_provider_object_t *));
+
+  svn_client_get_ssl_client_cert_prompt_provider (&provider, prompt_func,
+                                                  n->ctx, retry_limit, n->pool);
+  *(svn_auth_provider_object_t**)apr_array_push(*providers) = provider;
+
+  return EXIT_SUCCESS;
+}
+
+
+int
+nsvn_auth_get_ssl_client_cert_pw_prompt_provider (nsvn_t *n,
+                  svn_auth_ssl_client_cert_pw_prompt_func_t prompt_func,
+                  int retry_limit,
+                  apr_array_header_t **providers)
+{
+  svn_auth_provider_object_t *provider;
+
+  if (n == NULL)
+    return EXIT_FAILURE;
+
+  if ((*providers) == NULL)
+    *providers = apr_array_make (n->pool, 0,
+                                 sizeof (svn_auth_provider_object_t *));
+
+  svn_client_get_ssl_client_cert_pw_prompt_provider (&provider, prompt_func,
+                                                     n->ctx, retry_limit,
+                                                     n->pool);
+  *(svn_auth_provider_object_t**)apr_array_push(*providers) = provider;
+
+  return EXIT_SUCCESS;
 }
