@@ -24,12 +24,14 @@
 #include <gtkspell/gtkspell.h>
 #endif
 
+#include <svn_wc.h>
+
 #include "svn/naughtysvn.h"
+#include "dlg_auth.h"
 #include "dlg_commit.h"
 #include "dlg_result.h"
 #include "global.h"
 
-#include "svn_wc.h"
 
 #define DLG_GLADE_FILE  "naughtysvn.glade"
 
@@ -183,6 +185,7 @@ nsvn__commit (GtkWidget *widget,
   target_list[nitems] = NULL;
 
   nsvn = nsvn_base_init (NULL);
+  nsvn_setup_auth(nsvn);
 
   nsvn_base_setup_log (nsvn, nsvn__get_logmessage, (void*)user_data);
 
@@ -307,6 +310,8 @@ nsvn__find_files (GtkWidget *widget,
   g_object_set_data (G_OBJECT(widget), "files", files);
 
   nsvn = nsvn_base_init (NULL);
+  nsvn_setup_auth(nsvn);
+
   g_object_set_data (G_OBJECT(widget), "store", store);
 
   /* Iterating thorugh the file list. */

@@ -21,6 +21,7 @@
 #include <libgnomevfs/gnome-vfs-utils.h>
 
 #include "svn/naughtysvn.h"
+#include "dlg_auth.h"
 #include "dlg_update.h"
 #include "dlg_result.h"
 #include "global.h"
@@ -158,6 +159,7 @@ nsvn__update_wc (GtkWidget *widget,
   gtk_widget_destroy (window);
 
   nsvn = nsvn_base_init (NULL);
+  nsvn_setup_auth(nsvn);
 
   result_window = nsvn_dlg_result_show ();
 

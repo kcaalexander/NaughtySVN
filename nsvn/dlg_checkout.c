@@ -23,6 +23,7 @@
 #include "svn/naughtysvn.h"
 #include "dlg_checkout.h"
 #include "dlg_result.h"
+#include "dlg_auth.h"
 #include "global.h"
 
 #define DLG_GLADE_FILE  "naughtysvn.glade"
@@ -361,6 +362,7 @@ nsvn__checkout_url (GtkWidget *widget,
 
       //TODO: Not a good idea to reinit and uninit nsvn library while in loop
       nsvn = nsvn_base_init (NULL);
+      nsvn_setup_auth(nsvn);
 
       nsvn_dlg_result_attach (result_window, nsvn);
 

@@ -20,13 +20,15 @@
 #include <glade/glade.h>
 #include <libgnomevfs/gnome-vfs-utils.h>
 
-#include "svn/naughtysvn.h"
-#include "dlg_log.h"
-#include "global.h"
-
 #include <svn_client.h>
 #include <svn_time.h>
 #include <apr_pools.h>
+
+#include "svn/naughtysvn.h"
+#include "dlg_auth.h"
+#include "dlg_log.h"
+#include "global.h"
+
 
 #define DLG_GLADE_FILE  "naughtysvn.glade"
 
@@ -263,6 +265,8 @@ nsvn__showlog (GtkWidget *widget,
     nsvn = nsvn_base_clear(nsvn);
 
   nsvn = nsvn_base_init(NULL);
+  nsvn_setup_auth(nsvn);
+
   g_object_set_data(G_OBJECT(user_data), "nsvn", (void*)nsvn);
 
   nsvn_wc_log (nsvn, target, fromrev, torev, limit, TRUE,

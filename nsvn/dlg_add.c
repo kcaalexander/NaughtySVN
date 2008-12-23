@@ -19,9 +19,10 @@
 #include <gtk/gtk.h>
 #include <glade/glade.h>
 #include <libgnomevfs/gnome-vfs-utils.h>
+#include <svn_wc.h>
 
 #include "svn/naughtysvn.h"
-#include "svn_wc.h"
+#include "dlg_auth.h"
 #include "dlg_add.h"
 #include "dlg_result.h"
 #include "global.h"
@@ -86,6 +87,7 @@ nsvn__add_files (GtkWidget *widget,
   if (! model) return;
 
   nsvn = nsvn_base_init (NULL);
+  nsvn_setup_auth(nsvn);
 
   result_window = nsvn_dlg_result_show ();
 
@@ -256,6 +258,8 @@ nsvn__find_unrevfiles (GtkWidget *widget,
   g_object_set_data (G_OBJECT(widget), "files", files);
 
   nsvn = nsvn_base_init (NULL);
+  nsvn_setup_auth(nsvn);
+
   g_object_set_data (G_OBJECT(widget), "store", store);
 
   /* Iterating thorugh the file list. */
