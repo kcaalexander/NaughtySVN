@@ -71,6 +71,7 @@ nsvn_log (NautilusMenuItem *item,
 {
   GList *files;
   NautilusFileInfo *file;
+  GQueue *cmd = g_queue_new();
   char *uri;
   char *path;
 
@@ -79,14 +80,14 @@ nsvn_log (NautilusMenuItem *item,
   uri = nautilus_file_info_get_uri (file);
   path = gnome_vfs_get_local_path_from_uri (uri);
 
+  g_queue_push_tail (cmd, g_strdup("naughtysvn"));
+  g_queue_push_tail (cmd, g_strdup("MID=NSVN"));
+  g_queue_push_tail (cmd, g_strdup("CMD=log"));
+  g_queue_push_tail (cmd, g_strdup(path));
+
   if (path)
   {
-    gchar *argv[5];
-    argv[0] = "naughtysvn";
-    argv[1] = "MID=NSVN";
-    argv[2] = "CMD=log";
-    argv[3] = path;
-    argv[4] = NULL;
+    gchar **argv = g_queue_to_gchar_array (cmd);
     g_spawn_async ( NULL, /* working_directory */
                     argv,
                     NULL, /* envp */
@@ -99,6 +100,8 @@ nsvn_log (NautilusMenuItem *item,
     g_free (path);
   }
   g_free (uri);
+  g_queue_foreach (cmd, g_free_wrap, NULL);
+  g_queue_free (cmd);
 }
 
 
@@ -261,6 +264,7 @@ nsvn_checkout (NautilusMenuItem *item,
 {
   GList *files;
   NautilusFileInfo *file;
+  GQueue *cmd = g_queue_new();
   char *uri;
   char *path;
 
@@ -269,14 +273,14 @@ nsvn_checkout (NautilusMenuItem *item,
   uri = nautilus_file_info_get_uri (file);
   path = gnome_vfs_get_local_path_from_uri (uri);
 
+  g_queue_push_tail (cmd, g_strdup("naughtysvn"));
+  g_queue_push_tail (cmd, g_strdup("MID=NSVN"));
+  g_queue_push_tail (cmd, g_strdup("CMD=checkout"));
+  g_queue_push_tail (cmd, g_strdup(path));
+
   if (path)
   {
-    gchar *argv[5];
-    argv[0] = "naughtysvn";
-    argv[1] = "MID=NSVN";
-    argv[2] = "CMD=checkout";
-    argv[3] = path;
-    argv[4] = NULL;
+    gchar **argv = g_queue_to_gchar_array (cmd);
     g_spawn_async ( NULL, /* working_directory */
                     argv,
                     NULL, /* envp */
@@ -289,6 +293,8 @@ nsvn_checkout (NautilusMenuItem *item,
     g_free (path);
   }
   g_free (uri);
+  g_queue_foreach (cmd, g_free_wrap, NULL);
+  g_queue_free (cmd);
 }
 
 
@@ -314,6 +320,7 @@ nsvn_repos_create (NautilusMenuItem *item,
 {
   GList *files;
   NautilusFileInfo *file;
+  GQueue *cmd = g_queue_new();
   char *uri;
   char *path;
 
@@ -322,14 +329,14 @@ nsvn_repos_create (NautilusMenuItem *item,
   uri = nautilus_file_info_get_uri (file);
   path = gnome_vfs_get_local_path_from_uri (uri);
 
+  g_queue_push_tail (cmd, g_strdup("naughtysvn"));
+  g_queue_push_tail (cmd, g_strdup("MID=NSVN"));
+  g_queue_push_tail (cmd, g_strdup("CMD=create_repos"));
+  g_queue_push_tail (cmd, g_strdup(path));
+
   if (path)
   {
-    gchar *argv[5];
-    argv[0] = "naughtysvn";
-    argv[1] = "MID=NSVN";
-    argv[2] = "CMD=create_repos";
-    argv[3] = path;
-    argv[4] = NULL;
+    gchar **argv = g_queue_to_gchar_array (cmd);
     g_spawn_async ( NULL, /* working_directory */
                     argv,
                     NULL, /* envp */
@@ -342,6 +349,8 @@ nsvn_repos_create (NautilusMenuItem *item,
     g_free (path);
   }
   g_free (uri);
+  g_queue_foreach (cmd, g_free_wrap, NULL);
+  g_queue_free (cmd);
 }
 
 static void
