@@ -407,16 +407,19 @@ nsvn_create_menuitem_log (NautilusMenuProvider *provider,
              _("NaughtySVN Show Log"),
              _("Show the log messages"),
              PIXDIR "/log.png");
-    g_object_set_data_full (G_OBJECT (item), "files", nautilus_file_info_list_copy(files), (GDestroyNotify) nautilus_file_info_list_free);
+    g_object_set_data_full (G_OBJECT (item), "files",
+                            nautilus_file_info_list_copy(files),
+                            (GDestroyNotify) nautilus_file_info_list_free);
     g_signal_connect (item, "activate", G_CALLBACK (nsvn_log),
                       provider);
 
     items = g_list_append (items, item);
 
-    if (wc_path!=path)
+    if (wc_path != path)
       g_free (wc_path);
     g_free (path);
   }
+
   g_free (uri);
 
   return items;
@@ -433,9 +436,9 @@ nsvn_create_menuitem_update (NautilusMenuProvider *provider,
   GList *file_ptr = files;
   int versioneditems=0;
 
-  /* If we have files, then check all entries until we find a entry that is versioned, else bail out
-   *   entries that are directories are checked as they are
-   *   entries that are files, we check if the parent directory is versioned.
+  /* If we have files, then check all entries until we find a entry that is
+   * versioned, else bail out entries that are directories are checked as they
+   * are entries that are files, we check if the parent directory is versioned.
    * If all above fails, bail out
    *
    * Append "Update" to the context menu
@@ -484,7 +487,9 @@ nsvn_create_menuitem_update (NautilusMenuProvider *provider,
            _("NaughtySVN Update"),
            _("Bring changes from the repository into the working copy"),
            PIXDIR "/update.png");
-  g_object_set_data_full (G_OBJECT (item), "files", nautilus_file_info_list_copy(files), (GDestroyNotify) nautilus_file_info_list_free);
+  g_object_set_data_full (G_OBJECT (item), "files",
+                          nautilus_file_info_list_copy(files),
+                          (GDestroyNotify) nautilus_file_info_list_free);
   g_signal_connect (item, "activate", G_CALLBACK (nsvn_update),
                     provider);
 
@@ -554,7 +559,9 @@ nsvn_create_menuitem_commit (NautilusMenuProvider *provider,
                    _("NaughtySVN Commit"),
                    _("Make permanent changes in Subversion repository"),
                    PIXDIR "/commit.png");
-          g_object_set_data_full (G_OBJECT (item), "files", nautilus_file_info_list_copy(files), (GDestroyNotify) nautilus_file_info_list_free);
+          g_object_set_data_full (G_OBJECT (item), "files",
+                                  nautilus_file_info_list_copy(files),
+                                  (GDestroyNotify) nautilus_file_info_list_free);
           g_signal_connect (item, "activate", G_CALLBACK (nsvn_commit),
                             provider);
 
@@ -623,7 +630,9 @@ nsvn_create_menuitem_add (NautilusMenuProvider *provider,
                                    _("NaughtySVN Add"),
                                    _("Add a unversioned item to Subversion"),
                                    PIXDIR "/add.png");
-              g_object_set_data_full (G_OBJECT (item), "files", nautilus_file_info_list_copy(files), (GDestroyNotify) nautilus_file_info_list_free);
+              g_object_set_data_full (G_OBJECT (item), "files",
+                                      nautilus_file_info_list_copy(files),
+                                      (GDestroyNotify) nautilus_file_info_list_free);
               g_signal_connect (item, "activate", G_CALLBACK (nsvn_add),
                                 provider);
 
@@ -684,7 +693,9 @@ nsvn_create_menuitem_checkout (NautilusMenuProvider *provider,
                                  _("NaughtySVN Checkout"),
                                  _("Checkout out a Subversion repository"),
                                  PIXDIR "/checkout.png");
-  g_object_set_data_full (G_OBJECT (item), "files", nautilus_file_info_list_copy(files), (GDestroyNotify) nautilus_file_info_list_free);
+  g_object_set_data_full (G_OBJECT (item), "files",
+                          nautilus_file_info_list_copy(files),
+                          (GDestroyNotify) nautilus_file_info_list_free);
 
   g_signal_connect (item, "activate", G_CALLBACK (nsvn_checkout),
                     provider);
@@ -773,7 +784,9 @@ nsvn_create_menuitem_reposcreate (NautilusMenuProvider *provider,
                                      _("Create FSFS/BDB subversion repository"),
                                      PIXDIR "/create_repos.png");
       files = g_list_append (files, file);
-      g_object_set_data_full (G_OBJECT (item), "files", nautilus_file_info_list_copy(files), (GDestroyNotify) nautilus_file_info_list_free);
+      g_object_set_data_full (G_OBJECT (item), "files",
+                              nautilus_file_info_list_copy(files),
+                              (GDestroyNotify) nautilus_file_info_list_free);
       g_list_free(files);
       g_signal_connect (item, "activate",
                         G_CALLBACK (nsvn_repos_create),
@@ -803,7 +816,9 @@ nsvn_create_menuitem_refresh (NautilusMenuProvider *provider,
            _("NaughtySVN Refresh"),
            _("Refreshes the emblems on the icons"),
            PIXDIR "/refresh.png");
-  g_object_set_data_full (G_OBJECT (item), "files", nautilus_file_info_list_copy(files), (GDestroyNotify) nautilus_file_info_list_free);
+  g_object_set_data_full (G_OBJECT (item), "files",
+                          nautilus_file_info_list_copy(files),
+                          (GDestroyNotify) nautilus_file_info_list_free);
   g_signal_connect (item, "activate", G_CALLBACK (nsvn_refresh),
                     provider);
 
@@ -1023,7 +1038,9 @@ svn_wc_schedule_t_to_str(svn_wc_schedule_t schedule)
 #endif
 
 static GtkWidget *
-nsvn_properties_view_page_content (apr_pool_t *pool, const gchar *dir, const gchar *path)
+nsvn_properties_view_page_content (apr_pool_t *pool,
+                                   const gchar *dir,
+                                   const gchar *path)
 {
   GtkWidget *page, *summary_txt;
   GladeXML *dlg_gui;
@@ -1046,7 +1063,8 @@ nsvn_properties_view_page_content (apr_pool_t *pool, const gchar *dir, const gch
   if (err != SVN_NO_ERROR)
   {
     char buf[512];
-    g_warning ("svn_wc_adm_open3() failed: %s\n", svn_err_best_message(err, buf, sizeof(buf)));
+    g_warning ("svn_wc_adm_open3() failed: %s\n",
+               svn_err_best_message(err, buf, sizeof(buf)));
     svn_error_clear (err);
     return 0;
   }
@@ -1055,7 +1073,8 @@ nsvn_properties_view_page_content (apr_pool_t *pool, const gchar *dir, const gch
   if (err != SVN_NO_ERROR)
   {
     char buf[512];
-    g_warning ("svn_wc_status2() failed: %s\n", svn_err_best_message(err, buf, sizeof(buf)));
+    g_warning ("svn_wc_status2() failed: %s\n",
+               svn_err_best_message(err, buf, sizeof(buf)));
     svn_error_clear (err);
     return 0;
   }
@@ -1080,15 +1099,19 @@ nsvn_properties_view_page_content (apr_pool_t *pool, const gchar *dir, const gch
 #if 0
     gchar datetime[APR_RFC822_DATE_LEN];
 #endif
-    GtkTextBuffer *buffer = gtk_text_view_get_buffer ( GTK_TEXT_VIEW ( summary_txt ) );
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(
+                                                   GTK_TEXT_VIEW(summary_txt));
 
     if (status->entry->name && status->entry->name[0])
       g_string_append_printf (text, "Name: %s\n", status->entry->name);
-    g_string_append_printf (text, "Revision: %" SVN_REVNUM_T_FMT "\n", status->entry->revision);
+    g_string_append_printf (text, "Revision: %" SVN_REVNUM_T_FMT "\n",
+                            status->entry->revision);
     g_string_append_printf (text, "URL: %s\n", status->entry->url);
     g_string_append_printf (text, "Repos: %s\n", status->entry->repos);
-    g_string_append_printf (text, "Text status: %s\n" , svn_wc_status_kind_to_str(status->text_status));
-    g_string_append_printf (text, "Prop status: %s\n" , svn_wc_status_kind_to_str(status->prop_status));
+    g_string_append_printf (text, "Text status: %s\n",
+                            svn_wc_status_kind_to_str(status->text_status));
+    g_string_append_printf (text, "Prop status: %s\n",
+                            svn_wc_status_kind_to_str(status->prop_status));
     gtk_text_buffer_set_text (buffer, text->str, text->len);
     /* buffer should not be g_unref()'ed.
      * "text" data however should be released.
@@ -1670,7 +1693,8 @@ nsvn_info_update_file_info (NautilusInfoProvider     *provider,
   uri = nautilus_file_info_get_uri (file);
   path = gnome_vfs_get_local_path_from_uri (uri);
 
-  /* if the uri is not a local uri, path will be NULL, so then we don't care about it, just bail out. */
+  /* if the uri is not a local uri, path will be NULL, so then we don't
+   * care about it, just bail out. */
   if (path == NULL)
   {
     g_free (uri);
@@ -1745,7 +1769,8 @@ nsvn_info_update_file_info (NautilusInfoProvider     *provider,
 }
 
 static void
-info_provider_iface_init (NautilusInfoProviderIface *iface, gpointer iface_data)
+info_provider_iface_init (NautilusInfoProviderIface *iface,
+                          gpointer iface_data)
 {
   iface->update_file_info = nsvn_info_update_file_info;
   iface->cancel_update = nsvn_info_cancel;
@@ -1759,7 +1784,8 @@ info_provider_iface_init (NautilusInfoProviderIface *iface, gpointer iface_data)
     emblem_async_queue = g_queue_new ();
     emblem_async_queue_mutex = g_mutex_new ();
     emblem_async_queue_cond = g_cond_new ();
-    emblem_async_thread = g_thread_create (emblem_async_thread_worker, NULL, TRUE, &err);
+    emblem_async_thread = g_thread_create (emblem_async_thread_worker, NULL,
+                                           TRUE, &err);
     if (!emblem_async_thread)
       g_error ("naughtysvn: unable to start helper thread: %s\n", err->message);
   }
@@ -1769,7 +1795,8 @@ info_provider_iface_init (NautilusInfoProviderIface *iface, gpointer iface_data)
 }
 
 static void
-info_provider_iface_finalize (NautilusInfoProviderIface *iface, gpointer iface_data)
+info_provider_iface_finalize (NautilusInfoProviderIface *iface,
+                              gpointer iface_data)
 {
   g_static_mutex_lock (&emblem_async_refcount_mutex);
 
@@ -1779,11 +1806,13 @@ info_provider_iface_finalize (NautilusInfoProviderIface *iface, gpointer iface_d
     g_static_mutex_lock (&emblem_async_shutdown_mutex);
     emblem_async_shutdown = 1;
     g_mutex_lock (emblem_async_queue_mutex);
-    g_queue_push_head (emblem_async_queue, NULL); /* we insert an empty job, just to wake the thread up */
+    /* We insert an empty job, just to wake the thread up. */
+    g_queue_push_head (emblem_async_queue, NULL);
     g_cond_signal (emblem_async_queue_cond);
     g_mutex_unlock (emblem_async_queue_mutex);
     g_static_mutex_unlock (&emblem_async_shutdown_mutex);
-    g_thread_join (emblem_async_thread); /* we don't want to destroy interface until memory is safe */
+    /* We don't want to destroy interface until memory is safe. */
+    g_thread_join (emblem_async_thread);
     g_queue_free (emblem_async_queue);
     g_cond_free (emblem_async_queue_cond);
     g_mutex_free (emblem_async_queue_mutex);
