@@ -181,19 +181,25 @@ notify_func (void *baton,
   GtkTreeIter iter;
 
   fprintf(stderr, "path: %s\n", notify->path);
-  fprintf(stderr, "action: %s\n", svn_wc_notify_action_t_to_string(notify->action));
+  fprintf(stderr, "action: %s\n",
+          svn_wc_notify_action_t_to_string(notify->action));
   fprintf(stderr, "kind: %s\n", svn_node_kind_t_to_string(notify->kind));
   fprintf(stderr, "mime_type: %s\n", notify->mime_type?notify->mime_type:"");
   fprintf(stderr, "lock: TODO\n");//%s\n", svn_lock_t_to_string(notify->lock));
   fprintf(stderr, "err: %s\n", notify->err?notify->err->message:"");
-  fprintf(stderr, "content_state: %s\n", svn_wc_notify_state_t_to_string(notify->content_state));
-  fprintf(stderr, "prop_state: %s\n", svn_wc_notify_state_t_to_string(notify->prop_state));
-  fprintf(stderr, "lock_state: %s\n", svn_wc_notify_lock_state_t_to_string(notify->lock_state));
+  fprintf(stderr, "content_state: %s\n",
+          svn_wc_notify_state_t_to_string(notify->content_state));
+  fprintf(stderr, "prop_state: %s\n",
+          svn_wc_notify_state_t_to_string(notify->prop_state));
+  fprintf(stderr, "lock_state: %s\n",
+          svn_wc_notify_lock_state_t_to_string(notify->lock_state));
   fprintf(stderr, "revision: %" SVN_REVNUM_T_FMT "\n", notify->revision);
   fprintf(stderr, "\n");
 
   gtk_list_store_append (context->store, &iter);
-  gtk_list_store_set (context->store, &iter, COLUMN_ACTION, notify->action, COLUMN_PATH, notify->path, COLUMN_MIME, notify->mime_type, -1);
+  gtk_list_store_set (context->store, &iter, COLUMN_ACTION,
+                      notify->action, COLUMN_PATH, notify->path,
+                      COLUMN_MIME, notify->mime_type, -1);
 
   while (g_main_context_iteration(NULL, FALSE));
 }
@@ -254,18 +260,17 @@ nsvn_dlg_result_hide (gpointer user_data)
 
   if (context->error_message)
   {
-    gtk_label_set_text (GTK_LABEL(context->output_lbl), context->error_message);  
+    gtk_label_set_text (GTK_LABEL(context->output_lbl),
+                        context->error_message);
     g_free(context->error_message);
   }
 
   gtk_widget_set_sensitive (context->cancel, FALSE);
-
   gtk_widget_set_sensitive (context->ok, TRUE);
 
   gtk_main();
 
   gtk_widget_destroy (context->window);
-
   g_object_unref (context->dlg_gui);
 
   g_free (context);
@@ -399,9 +404,6 @@ nsvn_dlg_result_show (void)
   }
 
   gtk_widget_set_sensitive (ok, FALSE);
-  g_signal_connect (ok, "clicked", G_CALLBACK (ok_clicked), context);
-  g_signal_connect (cancel, "clicked", G_CALLBACK (cancel_clicked), context);
-  g_signal_connect (window, "delete-event", G_CALLBACK (window_delete_event), context);
 
   context = g_malloc0 (sizeof (*context));
   context->window = window;
@@ -410,22 +412,28 @@ nsvn_dlg_result_show (void)
   context->dlg_gui = dlg_gui;
   context->output_lbl = output_lbl;
 
-  context->store = gtk_list_store_new (NUM_COLUMNS,
-                                       G_TYPE_INT,
-                                       G_TYPE_STRING,
-                                       G_TYPE_STRING);
-  gtk_tree_view_set_model (GTK_TREE_VIEW (result_output_lst),
-                           GTK_TREE_MODEL (context->store));
+  context->store = gtk_list_store_new(NUM_COLUMNS,
+                                      G_TYPE_INT,
+                                      G_TYPE_STRING,
+                                      G_TYPE_STRING);
+  gtk_tree_view_set_model (GTK_TREE_VIEW(result_output_lst),
+                           GTK_TREE_MODEL(context->store));
+
+  g_signal_connect (ok, "clicked", G_CALLBACK(ok_clicked), context);
+  g_signal_connect (cancel, "clicked", G_CALLBACK(cancel_clicked), context);
+  g_signal_connect (window, "delete-event",
+                    G_CALLBACK(window_delete_event), context);
 
   /* Setting widgets in list */
   {
     GtkCellRenderer *renderer;
     GtkTreeViewColumn *column;
 
-    renderer = gtk_cell_renderer_text_new ();
+    renderer = gtk_cell_renderer_text_new();
     column = gtk_tree_view_column_new_with_attributes (_("Action"), renderer,
                                                        NULL);
-    gtk_tree_view_column_set_cell_data_func (column, renderer, action_column_data, NULL, NULL);
+    gtk_tree_view_column_set_cell_data_func (column, renderer,
+                                             action_column_data, NULL, NULL);
     gtk_tree_view_column_set_sort_column_id (column, COLUMN_ACTION);
     gtk_tree_view_append_column (GTK_TREE_VIEW(result_output_lst), column);
 
@@ -444,8 +452,6 @@ nsvn_dlg_result_show (void)
                                                        NULL);
     gtk_tree_view_column_set_sort_column_id (column, COLUMN_MIME);
     gtk_tree_view_append_column (GTK_TREE_VIEW(result_output_lst), column);
-
-
   }
 
   gtk_widget_show (window);
@@ -464,8 +470,8 @@ nsvn_dlg_result_attach(gpointer user_data,
     GtkWidget *result_output_lst;
     GtkTreeModel *model;
 
-    result_output_lst = glade_xml_get_widget (context->dlg_gui, "result_output_lst");
-
+    result_output_lst = glade_xml_get_widget (context->dlg_gui,
+                                              "result_output_lst");
     model = gtk_tree_view_get_model (GTK_TREE_VIEW (result_output_lst) );
 
     nsvn_base_setup_notify (nsvn, notify_func, context);
@@ -490,8 +496,9 @@ nsvn_dlg_result_deattach(gpointer user_data,
       svn_error_t *err = nsvn->err;
       while (err)
       {
-        g_string_append_printf(string, "%s%s", string->len?"\n":"", err->message);
-	err = err->child;
+        g_string_append_printf(string, "%s%s", string->len?"\n":"",
+                               err->message);
+        err = err->child;
       }
       context->error_message = string->str;
       g_string_free( string, FALSE);
