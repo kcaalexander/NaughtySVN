@@ -48,13 +48,13 @@ nsvn_properties_view_page (NautilusFileInfo *file);
 static gchar **
 g_queue_to_gchar_array (GQueue *queue)
 {
-  gint index = 0;
+  gint idx = 0;
   gchar **retval = g_malloc ((queue->length+1) * sizeof (gpointer));
   GList *current;
 
   for (current = queue->head; current; current = g_list_next (current) )
-    retval[index++] = current->data;
-  retval[index] = NULL;
+    retval[idx++] = current->data;
+  retval[idx] = NULL;
   return retval;
 }
 
@@ -771,7 +771,7 @@ nsvn_create_menuitem_reposcreate (NautilusMenuProvider *provider,
 
   if (path)
     {
-      GList *files = NULL;
+      GList *dir = NULL;
       if (!nautilus_file_info_is_directory (file) ||
           nsvn_wc_check_is_wcpath (NULL, path, NULL) == EXIT_SUCCESS)
         {
@@ -779,15 +779,16 @@ nsvn_create_menuitem_reposcreate (NautilusMenuProvider *provider,
           g_free (uri);
           return items;
         }
+
       item = nautilus_menu_item_new ("NautilusNSVN::FT_Create_Repos",
                                      _("NaughtySVN Create Repository"),
                                      _("Create FSFS/BDB subversion repository"),
                                      PIXDIR "/create_repos.png");
-      files = g_list_append (files, file);
+      dir = g_list_append (dir, file);
       g_object_set_data_full (G_OBJECT (item), "files",
-                              nautilus_file_info_list_copy(files),
+                              nautilus_file_info_list_copy(dir),
                               (GDestroyNotify) nautilus_file_info_list_free);
-      g_list_free(files);
+      g_list_free(dir);
       g_signal_connect (item, "activate",
                         G_CALLBACK (nsvn_repos_create),
                         provider);
