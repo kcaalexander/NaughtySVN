@@ -31,4 +31,8 @@ Show_Msgbox (
 GList*
 Split_Arg (const char **arg, GList **args_list);
 
+
+const char*
+Get_Homedir(void);
+
 #endif /* NSVN_GLOBAL_H */

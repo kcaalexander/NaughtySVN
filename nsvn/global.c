@@ -16,6 +16,7 @@
 #endif
 
 #include <gnome.h>
+#include <glib.h>
 #include <libgnomevfs/gnome-vfs-directory.h>
 #include <libgnomevfs/gnome-vfs-utils.h>
 
@@ -101,4 +102,15 @@ Split_Arg (const char **arg, GList **args_list)
     arg++;
   }
   return *args_list;
+}
+
+
+const char*
+Get_Homedir(void)
+{
+  const char *homedir = g_getenv ("HOME");
+  if (!homedir)
+     homedir = g_get_home_dir ();
+
+  return homedir;
 }
