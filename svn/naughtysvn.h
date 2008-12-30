@@ -53,18 +53,6 @@ nsvn_base_reinit (nsvn_t *instance,
 nsvn_t*
 nsvn_base_clear (nsvn_t *instance);
 
-/* used internally by nsvn_base_init */
-#ifdef NEED_svn_gtk_setup_auth_baton
-svn_error_t *
-svn_gtk_setup_auth_baton (svn_auth_baton_t **ab,
-                          const char *auth_username,
-                          const char *auth_password,
-                          const char *config_dir,
-                          svn_boolean_t no_auth_cache,
-                          svn_config_t *cfg,
-                          apr_pool_t *pool);
-#endif
-
 nsvn_t*
 nsvn_base_setup_cancel (nsvn_t *instance,
                         void *cancel_func,
