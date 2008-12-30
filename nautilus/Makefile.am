@@ -35,8 +35,7 @@ AM_CFLAGS = \
 		-I$(top_srcdir) \
 		-I$(top_builddir) \
 		$(SVN_CFLAGS) \
-		$(APR_CFLAGS) \
-		-Wall -g
+		$(APR_CFLAGS)
 
 nautilus_extension_libdir=`$(PKG_CONFIG) libnautilus-extension --variable=libdir`
 nautilus_extensiondir=`$(PKG_CONFIG) libnautilus-extension --variable=extensiondir`
