@@ -100,7 +100,7 @@ nsvn_gconf_write_config (nsvn_config_t *config,
     return 0;
 
   /* TODO: write config_dir string. */
-  if (config->config_dir == NULL && strcmp(config->config_dir, "") == 0)
+  if (config->config_dir == NULL || strcmp(config->config_dir, "") == 0)
     dir = g_build_path(G_DIR_SEPARATOR_S, ".subversion", NULL);
   else
     dir = g_build_path(G_DIR_SEPARATOR_S, config->config_dir, NULL);
