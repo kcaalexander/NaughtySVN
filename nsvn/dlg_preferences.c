@@ -27,22 +27,25 @@
 #define DLG_GLADE_FILE  "naughtysvn.glade"
 
 
-gboolean
+static gboolean
 nsvn__verify_log_tab (GladeXML *dlg_gui,
                       GtkWidget *window,
                       GConfClient *client);
 
-gboolean
+static gboolean
 nsvn__verify_general_tab (GladeXML *dlg_gui,
                           GtkWidget *window,
                           GConfClient *client);
 
-gboolean
+static gboolean
 nsvn__verify_save_preferences (GtkWidget *window,
                                gpointer user_data);
 
 
-gboolean
+static int
+nsvn__populate_settings (GtkWidget *window,
+                         GladeXML *user_data);
+static gboolean
 nsvn__verify_log_tab (GladeXML *dlg_gui,
                       GtkWidget *window,
                       GConfClient *client)
@@ -55,69 +58,67 @@ nsvn__verify_log_tab (GladeXML *dlg_gui,
 }
 
 
-gboolean
+static gboolean
 nsvn__verify_general_tab (GladeXML *dlg_gui,
                           GtkWidget *window,
                           GConfClient *client)
 {
   GtkWidget *widget;
-  void *value;
-  const char *buttons[] = {"OK", NULL};
+  char *value;
+//  const char *buttons[] = {"OK", NULL};
+  nsvn_config_t config;
+  int ret;
+
+  nsvn_gconf_create_config(&config);
 
   /* Configuration directory. */
   widget = glade_xml_get_widget (dlg_gui, "preferences_configdir_ent");
-  value = (void*) gtk_entry_get_text (GTK_ENTRY(widget));
-  if (g_path_is_absolute ((const char*) value) == FALSE)
+  value = g_strdup(gtk_entry_get_text (GTK_ENTRY(widget)));
+  config.config_dir = g_strstrip(value); 
+#if 0
+  if (!(strcmp(value, "") == 0)) //Not empty
     {
-      Show_Msgbox (window, FALSE, "Error",
-                   _("Needs an absolute path ..."),
-                   GNOME_MESSAGE_BOX_ERROR,
-                   buttons);
-      gtk_widget_grab_focus (widget);
-      return FALSE;
+      if (g_path_is_absolute ((const char*) value) == FALSE)
+        {
+          Show_Msgbox (window, FALSE, "Error",
+                       _("Needs an absolute path ..."),
+                       GNOME_MESSAGE_BOX_ERROR, buttons);
+          gtk_widget_grab_focus (widget);
+          return FALSE;
+        }
     }
-  if (nsvn_gconf_write_entry (NSVN_SVN_CONFIG_DIR_KEY, value,
-                          client))
-    return FALSE;
+#endif
 
   /* User Name. */
   widget = glade_xml_get_widget (dlg_gui, "preferences_uname_ent");
-  value = (void*) gtk_entry_get_text (GTK_ENTRY(widget));
-  if (nsvn_gconf_write_entry (NSVN_SVN_USERNAME_KEY, value,
-                              client))
-    return FALSE;
+  value = g_strdup(gtk_entry_get_text (GTK_ENTRY(widget)));
+  config.def_username = g_strstrip(value);
 
   /* User Password. */
   widget = glade_xml_get_widget (dlg_gui, "preferences_pword_ent");
-  value = (void*) gtk_entry_get_text (GTK_ENTRY(widget));
-  if (nsvn_gconf_write_entry (NSVN_SVN_PASSWORD_KEY, value,
-                              client))
-    return FALSE;
+  value = g_strdup(gtk_entry_get_text (GTK_ENTRY(widget)));
+  config.def_passwd = g_strstrip(value);
 
   /* Cache Authentication token. */
   widget = glade_xml_get_widget (dlg_gui, "preferences_cacheauth_chk");
-  if (gtk_toggle_button_get_active ((GTK_TOGGLE_BUTTON(widget))))
-    value = (void*)"0";
-  else
-    value = (void*)"1";
-  if (nsvn_gconf_write_entry (NSVN_CACHE_AUTH_TOKEN_KEY, value,
-                              client))
-    return FALSE;
+  config.no_cache_auth = gtk_toggle_button_get_active ((GTK_TOGGLE_BUTTON(widget)));
 
   /* Prompt for user name and password. */
   widget = glade_xml_get_widget (dlg_gui, "preferences_promptuser_chk");
-  if (gtk_toggle_button_get_active ((GTK_TOGGLE_BUTTON(widget))))
-    value = (void*)"0";
-  else
-    value = (void*)"1";
-  if (nsvn_gconf_write_entry (NSVN_PROMPT_USER_KEY, value, client))
-    return FALSE;
+  config.no_prompt_auth = gtk_toggle_button_get_active ((GTK_TOGGLE_BUTTON(widget)));
 
-  return TRUE;
+  /* Save password to disk. */
+  widget = glade_xml_get_widget (dlg_gui, "preferences_storepasswd_chk");
+  config.no_save_passwd = gtk_toggle_button_get_active ((GTK_TOGGLE_BUTTON(widget)));
+
+  ret = nsvn_gconf_write_config (&config, client);
+  nsvn_gconf_clean_config(&config);
+  
+  return ret;
 }
 
 
-gboolean
+static gboolean
 nsvn__verify_save_preferences (GtkWidget *window,
                                gpointer user_data)
 {
@@ -127,11 +128,18 @@ nsvn__verify_save_preferences (GtkWidget *window,
   client = gconf_client_get_default ();
 
   if (!nsvn__verify_general_tab (dlg_gui, window, client))
-    return FALSE;
+    {
+      g_object_unref((void*)client);
+      return FALSE;
+    }
 
   if (!nsvn__verify_log_tab (dlg_gui, window, client))
-    return FALSE;
+    {
+      g_object_unref((void*)client);
+      return FALSE;
+    }
 
+  g_object_unref((void*)client);
   return TRUE;
 }
 
@@ -164,13 +172,49 @@ nsvn__save_settings  (GtkWidget *widget,
   GtkWidget *window;
 
   window = glade_xml_get_widget (user_data, "preferences_dialog");
-  //TODO: Write user preferences into gconf.
   nsvn__verify_save_preferences (window, user_data);
 
   gtk_widget_destroy (window);
   g_object_unref (G_OBJECT(user_data));
   gtk_main_quit ();
   return 0;
+}
+
+
+static int
+nsvn__populate_settings (GtkWidget *window,
+                         GladeXML *user_data)
+{
+  GtkWidget *widget;
+  GConfClient *client;
+  nsvn_config_t config;
+
+  client = gconf_client_get_default ();
+  nsvn_gconf_create_config(&config);
+  nsvn_gconf_read_config(&config, client);
+  g_object_unref((void*)client);
+
+  widget = glade_xml_get_widget (user_data, "preferences_configdir_ent");
+  gtk_entry_set_text(GTK_ENTRY(widget), config.config_dir);
+
+  widget = glade_xml_get_widget (user_data, "preferences_uname_ent"); 
+  gtk_entry_set_text(GTK_ENTRY(widget), config.def_username);
+
+  widget = glade_xml_get_widget (user_data, "preferences_pword_ent");
+  gtk_entry_set_text(GTK_ENTRY(widget), config.def_passwd);
+
+  widget = glade_xml_get_widget (user_data, "preferences_cacheauth_chk");
+  gtk_toggle_button_set_active ((GTK_TOGGLE_BUTTON(widget)),
+                                config.no_cache_auth);
+
+  widget = glade_xml_get_widget (user_data, "preferences_promptuser_chk");
+  gtk_toggle_button_set_active ((GTK_TOGGLE_BUTTON(widget)),
+                                config.no_prompt_auth);
+
+  widget = glade_xml_get_widget (user_data, "preferences_storepasswd_chk");
+  gtk_toggle_button_set_active ((GTK_TOGGLE_BUTTON(widget)),
+                                config.no_save_passwd);
+  return TRUE;
 }
 
 
@@ -210,7 +254,10 @@ nsvn_dlg_preferences (GtkWidget *widget,
   g_signal_connect (G_OBJECT (ok_btn), "clicked",
                     G_CALLBACK (nsvn__save_settings),
                     dlg_gui);
-  
+ 
+  /*Read gconf and fill in the widgets. */
+  nsvn__populate_settings(window, dlg_gui);
+
   /* Activating dialog box */
   gtk_widget_grab_focus (cfgdir_ent);
   gtk_widget_show (window);
