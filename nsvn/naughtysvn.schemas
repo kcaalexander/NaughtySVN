@@ -1,125 +1,111 @@
 <gconfschemafile>
-    <schemalist>    
+  <schemalist>
+    <schema>
+      <key>/schemas/apps/naughtysvn/svn_conf_dir</key>
+      <applyto>/apps/naughtysvn/svn_conf_dir</applyto>
+      <owner>naughtysvn</owner>
+      <type>string</type>
+      <default>.subversion</default>
+      <locale name="C">
+        <short>Subversion configuration directory</short>
+        <long>NaughtySVN reads the Subversion user configuration from files present within this directroy.</long>
+      </locale>
+    </schema>
 
-      <schema>
+    <schema>
+      <key>/schemas/apps/naughtysvn/svn_user_name</key>
+      <applyto>/apps/naughtysvn/svn_user_name</applyto>
+      <owner>naughtysvn</owner>
+      <type>string</type>
+      <default></default>
+      <locale name="C">
+        <short>Subversion default user name</short>
+        <long>User name that Subversion understand and NaughtySVN uses this user name to do the Subversion client authentication.</long>
+      </locale>
+    </schema>
 
-        <key>/schemas/apps/naughtysvn/svn_conf_dir</key>
-	<applyto>/apps/naughtysvn/svn_conf_dir</applyto>
-	<owner>naughtysvn</owner>
-	<type>string</type>
-	<default></default>
-	<locale name="C">
-	  <short>Subversion configuration directory</short>
-	  <long>
-	    NaughtySVN reads the Subversion user configuration from
-	    files present within this directroy.
-	  </long>
-	</locale>
+    <schema>
+      <key>/schemas/apps/naughtysvn/svn_user_password</key>
+      <applyto>/apps/naughtysvn/svn_user_password</applyto>
+      <owner>naughtysvn</owner>
+      <type>string</type>
+      <default></default>
+      <locale name="C">
+        <short>Subversion default user password</short>
+        <long>User password that Subversion understand. NaughtySVN uses this password to do the Subversion client authentication.</long>
+      </locale>
+    </schema>
 
-      </schema>
+    <schema>
+      <key>/schemas/apps/naughtysvn/no_cache_auth_token</key>
+      <applyto>/apps/naughtysvn/no_cache_auth_token</applyto>
+      <owner>naughtysvn</owner>
+      <type>bool</type>
+      <default>false</default>
+      <locale name="C">
+        <short>Enable caching authentication credentials</short>
+        <long>Whether to enable or disable caching of authentication details to disk.</long>
+      </locale>
+    </schema>
 
-      <schema>
-      
-        <key>/schemas/apps/naughtysvn/svn_user_name</key>
-	<applyto>/apps/naughtysvn/svn_user_name</applyto>
-	<owner>naughtysvn</owner>
-	<type>string</type>
-	<default></default>
-	<locale name="C">
-	  <short>Subversion user name</short>
-	  <long>User name that Subversion understand and NaughtySVN uses
-          this user name to do the Subversion client authentication.</long>
-	</locale>
+    <schema>
+      <key>/schemas/apps/naughtysvn/no_prompt_for_user</key>
+      <applyto>/apps/naughtysvn/no_prompt_for_user</applyto>
+      <owner>naughtysvn</owner>
+      <type>bool</type>
+      <default>false</default>
+      <locale name="C">
+        <short>Enable prompting for username and password</short>
+        <long>Whether to enable or disable prompting for username and password if authentication failed.</long>
+      </locale>
+    </schema>
 
-      </schema>
+    <schema>
+      <key>/schemas/apps/naughtysvn/no_store_passwd</key>
+      <applyto>/apps/naughtysvn/no_store_passwd</applyto>
+      <owner>naughtysvn</owner>
+      <type>bool</type>
+      <default>false</default>
+      <locale name="C">
+        <short>Enable saving password to disk</short>
+        <long>Whether to enable or disable saving of password to disk.</long>
+      </locale>
+    </schema>
 
-      <schema>
-      
-        <key>/schemas/apps/naughtysvn/svn_user_password</key>
-	<applyto>/apps/naughtysvn/svn_user_password</applyto>
-	<owner>naughtysvn</owner>
-	<type>string</type>
-	<default></default>
-	<locale name="C">
-	  <short>Subversion user password</short>
-	  <long>User password that Subversion understand. NaughtySVN uses
-          this password to do the Subversion client authentication.</long>
-	</locale>
+    <schema>
+      <key>/schemas/apps/naughtysvn/log_template_default</key>
+      <applyto>/apps/naughtysvn/log_template_default</applyto>
+      <owner>naughtysvn</owner>
+      <type>string</type>
+      <default></default>
+      <locale name="C">
+        <short>Default log template</short>
+        <long>Default Subversion commit log message template to be used by NaughtySVN while commiting.</long>
+      </locale>
+    </schema>
 
-      </schema>
+    <schema>
+      <key>/schemas/apps/naughtysvn/log_templates/Default/name</key>
+      <applyto>/apps/naughtysvn/log_templates/Default/name</applyto>
+      <owner>naughtysvn</owner>
+      <type>string</type>
+      <default></default>
+      <locale name="C">
+      <short>Log template name</short>
+      <long>Log template name that NaughtySVN will use for all its profile.</long>
+      </locale>
+    </schema>
 
-      <schema>
-
-        <key>/schemas/apps/naughtysvn/cache_auth_token</key>
-	<applyto>/apps/naughtysvn/cache_auth_token</applyto>
-	<owner>naughtysvn</owner>
-	<type>bool</type>
-	<default>false</default>
-	<locale name="C">
-	  <short>Enable caching authentication credentials</short>
-	  <long>Whether to enable or disable caching of authentication
-          details by Subversion.</long>
-	</locale>
-
-      </schema>
-
-      <schema>
-
-        <key>/schemas/apps/naughtysvn/prompt_for_user</key>
-	<applyto>/apps/naughtysvn/prompt_for_user</applyto>
-	<owner>naughtysvn</owner>
-	<type>bool</type>
-	<default>false</default>
-	<locale name="C">
-	  <short>Enable prompting for username and password</short>
-	  <long>Whether to enable or disable prompting for username and
-          password if authentication failed.</long>
-	</locale>
-
-      </schema>
-
-      <schema>
-
-        <key>/schemas/apps/naughtysvn/log_template_default</key>
-	<applyto>/apps/naughtysvn/log_template_default</applyto>
-	<owner>naughtysvn</owner>
-	<type>string</type>
-	<default></default>
-	<locale name="C">
-	  <short>Default log template</short>
-	  <long>Default Subversion commit log message template
-          to be used by NaughtySVN while commiting.</long>
-	</locale>
-
-      </schema>
-
-      <schema>
-
-        <key>/schemas/apps/naughtysvn/log_templates/Default/name</key>
-	<applyto>/apps/naughtysvn/log_templates/Default/name</applyto>
-	<owner>naughtysvn</owner>
-	<type>string</type>
-	<default></default>
-	<locale name="C">
-	  <short>Log template name</short>
-	  <long>Log template name that NaughtySVN will use for
-          all its profile.</long>
-	</locale>
-
-      </schema>
-
-      <schema>
-
-        <key>/schemas/apps/naughtysvn/log_templates/Default/message</key>
-	<applyto>/apps/naughtysvn/log_templates/Default/message</applyto>
-	<owner>naughtysvn</owner>
-	<type>string</type>
-	<default></default>
-	<locale name="C">
-	  <short>Multi-line log message template string</short>
-	  <long>A multi-line log template message string.</long>
-	</locale>
-
-       </schema>
+    <schema>
+      <key>/schemas/apps/naughtysvn/log_templates/Default/message</key>
+      <applyto>/apps/naughtysvn/log_templates/Default/message</applyto>
+      <owner>naughtysvn</owner>
+      <type>string</type>
+      <default></default>
+      <locale name="C">
+        <short>Multi-line log message template string</short>
+        <long>A multi-line log template message string.</long>
+      </locale>
+    </schema>
   </schemalist>
 </gconfschemafile>
