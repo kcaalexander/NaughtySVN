@@ -65,7 +65,6 @@ nsvn__verify_general_tab (GladeXML *dlg_gui,
 {
   GtkWidget *widget;
   char *value;
-//  const char *buttons[] = {"OK", NULL};
   nsvn_config_t config;
   int ret;
 
@@ -75,19 +74,6 @@ nsvn__verify_general_tab (GladeXML *dlg_gui,
   widget = glade_xml_get_widget (dlg_gui, "preferences_configdir_ent");
   value = g_strdup(gtk_entry_get_text (GTK_ENTRY(widget)));
   config.config_dir = g_strstrip(value); 
-#if 0
-  if (!(strcmp(value, "") == 0)) //Not empty
-    {
-      if (g_path_is_absolute ((const char*) value) == FALSE)
-        {
-          Show_Msgbox (window, FALSE, "Error",
-                       _("Needs an absolute path ..."),
-                       GNOME_MESSAGE_BOX_ERROR, buttons);
-          gtk_widget_grab_focus (widget);
-          return FALSE;
-        }
-    }
-#endif
 
   /* User Name. */
   widget = glade_xml_get_widget (dlg_gui, "preferences_uname_ent");
