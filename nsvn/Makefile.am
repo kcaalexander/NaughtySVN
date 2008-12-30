@@ -6,8 +6,8 @@ glade_DATA = naughtysvn.glade
 schemadir = @GCONF_SCHEMA_FILE_DIR@
 schema_DATA = naughtysvn.schemas
 
-APR_CFLAGS =`$(APRCONFIGTOOL) --includes --cppflags --cflags`
-APR_LIBS =`$(APRCONFIGTOOL) --libs`
+APR_CFLAGS = `$(APRCONFIGTOOL) --includes --cppflags`
+APR_LIBS = `$(APRCONFIGTOOL) --libs`
 
 AM_CFLAGS = \
 		-DPACKAGE_DATA_DIR=\""$(datadir)"\" \
@@ -19,11 +19,9 @@ AM_CFLAGS = \
 		$(gnome_CFLAGS) \
 		$(libglade_CFLAGS) \
 		$(gtkspell_CFLAGS) \
-		-Wall -g \
 		-I$(top_builddir) \
 		$(SVN_CFLAGS) \
 		$(APR_CFLAGS)
-#		-DGLADEDIR=\""."\"
 
 bin_PROGRAMS = naughtysvn
 
