@@ -118,7 +118,10 @@ nsvn_base_init (const char *config_dir)
      config directory or not, if check needed add it here. */
 
   if (config_dir)
-    nsvn->config_dir = strdup (config_dir);
+    {
+      nsvn->config_dir = strdup (config_dir);
+      svn_config_ensure(nsvn->config_dir, nsvn->pool);
+    }
   else
     nsvn->config_dir = NULL;
 
