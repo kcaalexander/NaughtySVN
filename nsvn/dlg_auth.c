@@ -490,9 +490,9 @@ nsvn_setup_auth(nsvn_t *nsvn)
   nsvn_auth_get_ssl_client_cert_pw_prompt_provider(nsvn,
                     nsvn_auth_ssl_client_cert_pw_prompt, 2, &providers);
 
-  // TODO: Should get the values of config_dir, non_interactive, store_passwd,
+  // TODO: Should get the values of non_interactive, store_passwd,
   // auth_cache from gconf.
-  nsvn_auth_register(nsvn, NULL, NULL, NULL, 0, 1, 1, providers);
+  nsvn_auth_register(nsvn, NULL, NULL, 0, 1, 1, providers);
 
   return TRUE;
 }

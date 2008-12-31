@@ -98,7 +98,6 @@ int
 nsvn_auth_register (nsvn_t *n,
                     const char *def_username,
                     const char *def_password,
-                    const char *config_dir,
                     int non_interactive,
                     int store_passwd,
                     int auth_cache,
