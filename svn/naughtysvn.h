@@ -247,6 +247,15 @@ nsvn_wc_cleanup (nsvn_t *instance,
                  const char *dir);
 
 
+int
+nsvn_wc_switch (nsvn_t *instance,
+                const char *paths,
+                const char *url,
+                const char *rev_str,
+                int recurse,
+                long int *result_rev);
+
+
 /* Repository functions. */
 
 int

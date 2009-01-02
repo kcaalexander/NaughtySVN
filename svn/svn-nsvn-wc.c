@@ -438,6 +438,43 @@ nsvn_wc_cleanup (nsvn_t *instance,
 }
 
 
+int
+nsvn_wc_switch (nsvn_t *instance,
+                const char *paths,
+                const char *url,
+                const char *rev_str,
+                int recurse,
+                long int *result_rev)
+{
+  nsvn_t *nsvn;
+  svn_opt_revision_t revision;
+
+  if (instance == NULL)
+    nsvn = nsvn_base_init (NULL);
+  else
+    nsvn = (nsvn_t*) instance;
+
+  nsvn_common_parse_revision (instance, &revision, NULL,
+                              rev_str ? rev_str : "HEAD");
+
+  nsvn->err = svn_client_switch (result_rev, paths, url, &revision,
+                                 (svn_boolean_t) recurse,
+                                 nsvn->ctx, nsvn->pool);
+
+  if (nsvn->err != SVN_NO_ERROR )
+    {
+      MSG_DEBUG("Switch operation failed ...");
+      if (instance == NULL)
+        nsvn = nsvn_base_uninit (nsvn);
+      return EXIT_FAILURE;
+    };
+
+  if (instance == NULL)
+    nsvn = nsvn_base_uninit (nsvn);
+
+  return EXIT_SUCCESS;
+}
+
 /*
  * vim: ts=2 : sw=2
  */
