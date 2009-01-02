@@ -377,9 +377,6 @@ nsvn_wc_update (nsvn_t *instance,
   else
     nsvn = (nsvn_t*) instance;
 
-  if (instance == NULL)
-    return EXIT_FAILURE;
-
   nsvn_common_parse_revision (instance, &revision, NULL,
                               rev_str ? rev_str : "HEAD");
 
@@ -401,8 +398,13 @@ nsvn_wc_update (nsvn_t *instance,
   if (nsvn->err != SVN_NO_ERROR )
     {
       MSG_DEBUG("Updated operation failed ...");
+      if (instance == NULL)
+        nsvn = nsvn_base_uninit (nsvn);
       return EXIT_FAILURE;
     };
+
+  if (instance == NULL)
+    nsvn = nsvn_base_uninit (nsvn);
 
   return EXIT_SUCCESS;
 }
