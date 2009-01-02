@@ -80,4 +80,10 @@ nsvn_gconf_write_config_entry (const char *key,
                                void *value,
                                GConfClient *gcc);
 
+int
+nsvn_gconf_get_config (nsvn_config_t *config);
+
+int
+nsvn_gconf_set_config (nsvn_config_t *config);
+
 #endif /* NSVN_GCONF_H */
