@@ -94,8 +94,8 @@ nsvn_gconf_write_config (nsvn_config_t *config,
                          GConfClient *gcc)
 {
   char *dir=NULL;
+  char *path = NULL;
   char *dirname = NULL;
-  char *basename = NULL;
   char *config_dir = NULL;
 
   if (config == NULL)
@@ -107,18 +107,17 @@ nsvn_gconf_write_config (nsvn_config_t *config,
   else
     dir = g_build_path(G_DIR_SEPARATOR_S, config->config_dir, NULL);
 
-  dirname = g_path_get_dirname(dir);
-  basename = g_path_get_basename(dir);
+  path = g_path_get_dirname(dir);
+  dirname = g_path_get_basename(dir);
   //Assume HOME directory if nill parent directory.
-  if (dirname == NULL || strcmp(dirname, ".") == 0 ||
-      strcmp(basename, "/") == 0)
-    dirname = (char*)Get_Homedir();
-  //No basename given assume it as .subversion.
-  if (basename == NULL || strcmp(basename, "") == 0 ||
-      strcmp(basename, "/") == 0)
-    basename = g_strdup(".subversion");
+  if (path == NULL || strcmp(path, ".") == 0 || strcmp(path, "/") == 0)
+    path = (char*)Get_Homedir();
+  //No dirname given assume it as .subversion.
+  if (dirname == NULL || strcmp(dirname, "") == 0 ||
+      strcmp(dirname, "/") == 0)
+    dirname = g_strdup(".subversion");
  
-  config_dir = g_build_path(G_DIR_SEPARATOR_S, dirname, basename, NULL);
+  config_dir = g_build_path(G_DIR_SEPARATOR_S, path, dirname, NULL);
 
   nsvn_gconf_write_config_entry(NSVN_SVN_CONFIG_DIR_GCONF_KEY,
                                 NSVN_SVN_CONFIG_DIR_GCONF_SCHEMAS_KEY,
