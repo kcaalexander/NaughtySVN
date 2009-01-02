@@ -493,8 +493,8 @@ nsvn_setup_auth(nsvn_t *nsvn, nsvn_config_t *config)
   // TODO: Should get the values of non_interactive, store_passwd,
   // auth_cache from gconf.
   nsvn_auth_register(nsvn, config->def_username, config->def_passwd,
-                     config->no_prompt_auth, config->no_save_passwd,
-                     config->no_cache_auth, providers);
+                     !config->no_prompt_auth, !config->no_save_passwd,
+                     !config->no_cache_auth, providers);
 
   return TRUE;
 }
