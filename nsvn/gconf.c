@@ -244,3 +244,31 @@ nsvn_gconf_write_config_entry (const char *key,
     }
   return 1;
 }
+
+
+int
+nsvn_gconf_get_config (nsvn_config_t *config)
+{
+  GConfClient *client;
+  int ret;
+
+  client = gconf_client_get_default ();
+  ret = nsvn_gconf_read_config(config, client);
+  g_object_unref((void*)client);
+
+  return ret;
+}
+
+
+int
+nsvn_gconf_set_config (nsvn_config_t *config)
+{
+  GConfClient *client;
+  int ret;
+
+  client = gconf_client_get_default ();
+  ret = nsvn_gconf_write_config(config, client);
+  g_object_unref((void*)client);
+
+  return ret;
+}
