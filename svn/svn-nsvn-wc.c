@@ -407,6 +407,35 @@ nsvn_wc_update (nsvn_t *instance,
   return EXIT_SUCCESS;
 }
 
+
+int
+nsvn_wc_cleanup (nsvn_t *instance,
+                 const char *dir)
+{
+  nsvn_t *nsvn;
+
+  if (instance == NULL)
+    nsvn = nsvn_base_init (NULL);
+  else
+    nsvn = (nsvn_t*) instance;
+
+  nsvn->err = svn_client_cleanup (dir, nsvn->ctx, nsvn->pool);
+
+  if (nsvn->err != SVN_NO_ERROR)
+    {
+      MSG_DEBUG("Cleanup operation failed ...");
+      if (instance == NULL)
+        nsvn = nsvn_base_uninit (nsvn);
+      return EXIT_FAILURE;
+    }
+
+  if (instance == NULL)
+    nsvn = nsvn_base_uninit (nsvn);
+
+  return EXIT_SUCCESS;
+}
+
+
 /*
  * vim: ts=2 : sw=2
  */

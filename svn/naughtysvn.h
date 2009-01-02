@@ -242,6 +242,11 @@ nsvn_wc_update (nsvn_t *instance,
                 int ignore_externals);
 
 
+int
+nsvn_wc_cleanup (nsvn_t *instance,
+                 const char *dir);
+
+
 /* Repository functions. */
 
 int
