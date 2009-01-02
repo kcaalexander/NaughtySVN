@@ -459,7 +459,7 @@ nsvn_auth_ssl_client_cert_pw_prompt (svn_auth_cred_ssl_client_cert_pw_t **cred_p
 
 
 gboolean
-nsvn_setup_auth(nsvn_t *nsvn)
+nsvn_setup_auth(nsvn_t *nsvn, nsvn_config_t *config)
 {
   apr_array_header_t *providers = NULL;
 
@@ -492,7 +492,9 @@ nsvn_setup_auth(nsvn_t *nsvn)
 
   // TODO: Should get the values of non_interactive, store_passwd,
   // auth_cache from gconf.
-  nsvn_auth_register(nsvn, NULL, NULL, 0, 1, 1, providers);
+  nsvn_auth_register(nsvn, config->def_username, config->def_passwd,
+                     config->no_prompt_auth, config->no_save_passwd,
+                     config->no_cache_auth, providers);
 
   return TRUE;
 }

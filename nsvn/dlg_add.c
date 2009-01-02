@@ -71,6 +71,11 @@ nsvn__add_files (GtkWidget *widget,
   gboolean found = FALSE, is_recurse = FALSE;
   nsvn_t *nsvn;
   gpointer result_window;
+  nsvn_config_t config;
+
+  /* Getting preferences. */
+  nsvn_gconf_create_config(&config);
+  nsvn_gconf_get_config(&config);
 
   window = glade_xml_get_widget (user_data, "add_dialog");
 
@@ -86,8 +91,8 @@ nsvn__add_files (GtkWidget *widget,
   /* Nothing to do is no model present. */
   if (! model) return;
 
-  nsvn = nsvn_base_init (NULL);
-  nsvn_setup_auth(nsvn);
+  nsvn = nsvn_base_init (config.config_dir);
+  nsvn_setup_auth(nsvn, &config);
 
   result_window = nsvn_dlg_result_show ();
 
@@ -122,6 +127,7 @@ nsvn__add_files (GtkWidget *widget,
 
   nsvn_dlg_result_hide (result_window);
 
+  nsvn_gconf_clean_config(&config);
   nsvn = nsvn_base_uninit (nsvn);
   gtk_widget_destroy (window);
   return;
@@ -252,13 +258,18 @@ nsvn__find_unrevfiles (GtkWidget *widget,
 {
   nsvn_t *nsvn;
   GList *files = NULL;
+  nsvn_config_t config;
+
+  /* Getting preferences. */
+  nsvn_gconf_create_config(&config);
+  nsvn_gconf_get_config(&config);
 
   Split_Arg (args, &files);
 
   g_object_set_data (G_OBJECT(widget), "files", files);
 
-  nsvn = nsvn_base_init (NULL);
-  nsvn_setup_auth(nsvn);
+  nsvn = nsvn_base_init (config.config_dir);
+  nsvn_setup_auth(nsvn, &config);
 
   g_object_set_data (G_OBJECT(widget), "store", store);
 
@@ -272,6 +283,7 @@ nsvn__find_unrevfiles (GtkWidget *widget,
       files = g_list_next(files);
     }
 
+  nsvn_gconf_clean_config(&config);
   nsvn = nsvn_base_uninit (nsvn);
 
   return GTK_TREE_MODEL (store);

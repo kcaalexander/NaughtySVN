@@ -129,6 +129,11 @@ nsvn__update_wc (GtkWidget *widget,
   unsigned int nitems, i;
   char *revstr;
   gpointer result_window;
+  nsvn_config_t config;
+
+  /* Getting preferences. */
+  nsvn_gconf_create_config(&config);
+  nsvn_gconf_get_config(&config);
 
   /* Updated widgets. */
   window = glade_xml_get_widget (user_data, "update_dialog");
@@ -158,8 +163,8 @@ nsvn__update_wc (GtkWidget *widget,
 
   gtk_widget_destroy (window);
 
-  nsvn = nsvn_base_init (NULL);
-  nsvn_setup_auth(nsvn);
+  nsvn = nsvn_base_init (config.config_dir);
+  nsvn_setup_auth(nsvn, &config);
 
   result_window = nsvn_dlg_result_show ();
 
@@ -179,9 +184,9 @@ nsvn__update_wc (GtkWidget *widget,
   g_free(target_list);
 
   nsvn_dlg_result_deattach (result_window, nsvn);
-
   nsvn_dlg_result_hide (result_window);
 
+  nsvn_gconf_clean_config(&config);
   nsvn = nsvn_base_uninit (nsvn);
 
   return EXIT_SUCCESS;

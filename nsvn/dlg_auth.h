@@ -17,6 +17,7 @@
 #include <svn_auth.h>
 #include <svn_error_codes.h>
 
+#include "gconf.h"
 #include "svn/naughtysvn.h"
 
 /* this should be compatible with svn_cmdline_auth_simple_prompt */
@@ -58,6 +59,6 @@ nsvn_auth_ssl_client_cert_pw_prompt (svn_auth_cred_ssl_client_cert_pw_t **cred_p
                                      apr_pool_t *pool);
 
 gboolean
-nsvn_setup_auth(nsvn_t *nsvn);
+nsvn_setup_auth(nsvn_t *nsvn, nsvn_config_t *config);
 
 #endif /* NSVN_DLG_ADD_H */

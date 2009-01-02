@@ -148,6 +148,11 @@ nsvn__commit (GtkWidget *widget,
   gboolean found = FALSE;
   GtkWidget *file_lst;
   gpointer result_window;
+  nsvn_config_t config;
+
+  /* Getting preferences. */
+  nsvn_gconf_create_config(&config);
+  nsvn_gconf_get_config(&config);
 
   window = glade_xml_get_widget (user_data, "commit_dialog");
 
@@ -184,8 +189,8 @@ nsvn__commit (GtkWidget *widget,
       target_list[i] = g_list_nth_data (files, i);
   target_list[nitems] = NULL;
 
-  nsvn = nsvn_base_init (NULL);
-  nsvn_setup_auth(nsvn);
+  nsvn = nsvn_base_init (config.config_dir);
+  nsvn_setup_auth(nsvn, &config);
 
   nsvn_base_setup_log (nsvn, nsvn__get_logmessage, (void*)user_data);
 
@@ -205,6 +210,7 @@ nsvn__commit (GtkWidget *widget,
 
   nsvn_dlg_result_hide (result_window);
 
+  nsvn_gconf_clean_config(&config);
   nsvn = nsvn_base_uninit (nsvn);
 
 out2:
@@ -304,13 +310,18 @@ nsvn__find_files (GtkWidget *widget,
 {
   nsvn_t *nsvn;
   GList *files = NULL;
+  nsvn_config_t config;
+
+  /* Getting preferences. */
+  nsvn_gconf_create_config(&config);
+  nsvn_gconf_get_config(&config);
 
   Split_Arg (args, &files);
 
   g_object_set_data (G_OBJECT(widget), "files", files);
 
-  nsvn = nsvn_base_init (NULL);
-  nsvn_setup_auth(nsvn);
+  nsvn = nsvn_base_init (config.config_dir);
+  nsvn_setup_auth(nsvn, &config);
 
   g_object_set_data (G_OBJECT(widget), "store", store);
 
@@ -324,6 +335,7 @@ nsvn__find_files (GtkWidget *widget,
     files = g_list_next (files);
   }
 
+  nsvn_gconf_clean_config(&config);
   nsvn = nsvn_base_uninit (nsvn);
 
   return GTK_TREE_MODEL (store);

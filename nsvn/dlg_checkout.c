@@ -25,6 +25,7 @@
 #include "dlg_result.h"
 #include "dlg_auth.h"
 #include "global.h"
+#include "gconf.h"
 
 #define DLG_GLADE_FILE  "naughtysvn.glade"
 #define CO_MAX_URL 10
@@ -324,6 +325,11 @@ nsvn__checkout_url (GtkWidget *widget,
   void *nsvn;
   char *revstr;
   gpointer result_window;
+  nsvn_config_t config;
+
+  /* Getting preferences. */
+  nsvn_gconf_create_config(&config);
+  nsvn_gconf_get_config(&config);
 
   /* Checkout widgets. */
   window = glade_xml_get_widget (user_data, "checkout_dialog");
@@ -360,9 +366,10 @@ nsvn__checkout_url (GtkWidget *widget,
       char *wcpath;
       char *bname;
 
+
       //TODO: Not a good idea to reinit and uninit nsvn library while in loop
-      nsvn = nsvn_base_init (NULL);
-      nsvn_setup_auth(nsvn);
+      nsvn = nsvn_base_init (config.config_dir);
+      nsvn_setup_auth(nsvn, &config);
 
       nsvn_dlg_result_attach (result_window, nsvn);
 
@@ -416,6 +423,8 @@ nsvn__checkout_url (GtkWidget *widget,
 
   gtk_widget_destroy (window);
   g_object_unref (G_OBJECT(user_data));
+  nsvn_gconf_clean_config(&config);
+
   gtk_main_quit ();
   return 0;
 }

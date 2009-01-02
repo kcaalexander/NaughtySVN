@@ -245,6 +245,11 @@ nsvn__showlog (GtkWidget *widget,
   const char *torev;
   int limit=0;
   nsvn_t *nsvn=NULL;
+  nsvn_config_t config;
+
+  /* Getting preferences. */
+  nsvn_gconf_create_config(&config);
+  nsvn_gconf_get_config(&config);
 
   window = glade_xml_get_widget (user_data, "log_dialog");
   fromrev_ent = glade_xml_get_widget (user_data, "log_fromrev_ent");
@@ -264,14 +269,16 @@ nsvn__showlog (GtkWidget *widget,
   if (nsvn != NULL)
     nsvn = nsvn_base_clear(nsvn);
 
-  nsvn = nsvn_base_init(NULL);
-  nsvn_setup_auth(nsvn);
+  nsvn = nsvn_base_init (config.config_dir);
+  nsvn_setup_auth(nsvn, &config);
 
   g_object_set_data(G_OBJECT(user_data), "nsvn", (void*)nsvn);
 
   nsvn_wc_log (nsvn, target, fromrev, torev, limit, TRUE,
                gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(nocopyhist_chk)),
                nsvn__populate_logmsgs, (void*) user_data);
+
+  nsvn_gconf_clean_config(&config);
 
   return EXIT_SUCCESS;
 }
@@ -323,7 +330,7 @@ nsvn_dlg_log (GtkWidget *widget,
                     G_CALLBACK (nsvn__showlogmsg),
                     dlg_gui);
 
-  g_object_set_data (G_OBJECT(window), "path", args);
+  g_object_set_data (G_OBJECT(window), "path", strdup(args[0]));
 
   /* Creating Model for the log list. */
   store = gtk_list_store_new (NUM_LOG_COLUMNS,
