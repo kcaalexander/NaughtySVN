@@ -259,6 +259,15 @@ int
 nsvn_wc_mkdir (nsvn_t *instance,
                const char **paths);
 
+int
+nsvn_wc_blame (nsvn_t *instance,
+               const char *path,
+               const char *peg_rev,
+               const char *start_rev,
+               const char *end_rev,
+               void *callback,
+               void *callback_data);
+
 
 /* Repository functions. */
 

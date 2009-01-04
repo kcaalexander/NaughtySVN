@@ -519,6 +519,57 @@ nsvn_wc_mkdir (nsvn_t *instance,
   return EXIT_SUCCESS;
 }
 
+
+int
+nsvn_wc_blame (nsvn_t *instance,
+               const char *path,
+               const char *peg_rev,
+               const char *start_rev,
+               const char *end_rev,
+               void *callback,
+               void *callback_data)
+{
+  nsvn_t *nsvn;
+  svn_opt_revision_t start_revision;
+  svn_opt_revision_t end_revision;
+  svn_opt_revision_t peg_revision;
+
+  if (instance == NULL)
+    nsvn = nsvn_base_init (NULL);
+  else
+    nsvn = instance;
+
+  if (path == NULL)
+    return EXIT_SUCCESS;
+
+  nsvn_common_parse_revision (nsvn, &start_revision, NULL,
+                              start_rev ? start_rev : "HEAD");
+  nsvn_common_parse_revision (nsvn, &end_revision, NULL,
+                              end_rev ? end_rev : "HEAD");
+  nsvn_common_parse_revision (nsvn, &peg_revision, NULL,
+                              peg_rev ? peg_rev : "HEAD");
+
+  if (!nsvn->err)
+    {
+      nsvn->err = svn_client_blame2 (path, &peg_revision, &start_revision,
+                                     &end_revision, callback, callback_data,
+                                     nsvn->ctx, nsvn->pool);
+    }
+
+  if (nsvn->err)
+    {
+      if (instance == NULL)
+        nsvn = nsvn_base_uninit (nsvn);
+      return EXIT_FAILURE;
+    }
+
+  if (instance == NULL)
+    nsvn = nsvn_base_uninit (nsvn);
+
+  return EXIT_SUCCESS;
+}
+
+
 /*
  * vim: ts=2 : sw=2
  */
