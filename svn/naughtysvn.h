@@ -255,6 +255,10 @@ nsvn_wc_switch (nsvn_t *instance,
                 int recurse,
                 long int *result_rev);
 
+int
+nsvn_wc_mkdir (nsvn_t *instance,
+               const char **paths);
+
 
 /* Repository functions. */
 

@@ -475,6 +475,50 @@ nsvn_wc_switch (nsvn_t *instance,
   return EXIT_SUCCESS;
 }
 
+
+int
+nsvn_wc_mkdir (nsvn_t *instance,
+               const char **paths)
+{
+  nsvn_t *nsvn;
+  svn_commit_info_t *commit_info = NULL;
+  apr_array_header_t *apr_paths = NULL;
+  const char *path;
+  unsigned int idx = 0;
+
+  if (instance == NULL)
+    nsvn = nsvn_base_init (NULL);
+  else
+    nsvn = (nsvn_t*) instance;
+
+  /* Converting PATHS to apr_array_header_t type. */ 
+  apr_paths = apr_array_make(nsvn->pool, 0, sizeof(const char*));
+  path = paths[idx];
+
+  while (path != NULL)
+    {
+      *(const char**)apr_array_push(apr_paths) = apr_pstrdup(nsvn->pool, path);
+      path = paths[++idx];
+    }
+  //FIXME: Should I look for commit message it a URL is given.
+  //
+  nsvn->err = svn_client_mkdir2 (&commit_info, apr_paths,
+                                 nsvn->ctx, nsvn->pool);
+
+  if (nsvn->err != SVN_NO_ERROR )
+    {
+      MSG_DEBUG("Mkdir operation failed ...");
+      if (instance == NULL)
+        nsvn = nsvn_base_uninit (nsvn);
+      return EXIT_FAILURE;
+    };
+
+  if (instance == NULL)
+    nsvn = nsvn_base_uninit (nsvn);
+
+  return EXIT_SUCCESS;
+}
+
 /*
  * vim: ts=2 : sw=2
  */
