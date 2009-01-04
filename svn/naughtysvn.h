@@ -274,6 +274,17 @@ nsvn_wc_copy (nsvn_t *instance,
               const char *dst_path,
               const char *rev);
 
+int
+nsvn_wc_delete (nsvn_t *instance,
+                const char **paths,
+                int force);
+
+int
+nsvn_wc_move (nsvn_t *instance,
+              const char *src_path,
+              const char *dst_path,
+              int force);
+
 
 /* Repository functions. */
 

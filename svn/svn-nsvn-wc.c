@@ -573,7 +573,7 @@ nsvn_wc_blame (nsvn_t *instance,
 int
 nsvn_wc_copy (nsvn_t *instance,
               const char *src_path,
-              const char *dst_path, 
+              const char *dst_path,
               const char *rev)
 {
   nsvn_t *nsvn;
@@ -599,6 +599,89 @@ nsvn_wc_copy (nsvn_t *instance,
   if (nsvn->err != SVN_NO_ERROR )
     {
       MSG_DEBUG("Copy operation failed ...");
+      if (instance == NULL)
+        nsvn = nsvn_base_uninit (nsvn);
+      return EXIT_FAILURE;
+    };
+
+  if (instance == NULL)
+    nsvn = nsvn_base_uninit (nsvn);
+
+  return EXIT_SUCCESS;
+}
+
+
+int
+nsvn_wc_delete (nsvn_t *instance,
+                const char **paths,
+                int force)
+{
+  nsvn_t *nsvn;
+  svn_commit_info_t *commit_info = NULL;
+  apr_array_header_t *apr_paths = NULL;
+  const char *path;
+  unsigned int idx = 0;
+
+  if (instance == NULL)
+    nsvn = nsvn_base_init (NULL);
+  else
+    nsvn = (nsvn_t*) instance;
+
+  /* Converting PATHS to apr_array_header_t type. */
+  apr_paths = apr_array_make(nsvn->pool, 0, sizeof(const char*));
+  path = paths[idx];
+
+  while (path != NULL)
+    {
+      *(const char**)apr_array_push(apr_paths) = apr_pstrdup(nsvn->pool, path);
+      path = paths[++idx];
+    }
+  //FIXME: Should I look for commit message it a URL is given.
+  //
+  nsvn->err = svn_client_delete2 (&commit_info, apr_paths, force,
+                                  nsvn->ctx, nsvn->pool);
+
+  if (nsvn->err != SVN_NO_ERROR )
+    {
+      MSG_DEBUG("Delete operation failed ...");
+      if (instance == NULL)
+        nsvn = nsvn_base_uninit (nsvn);
+      return EXIT_FAILURE;
+    };
+
+  if (instance == NULL)
+    nsvn = nsvn_base_uninit (nsvn);
+
+  return EXIT_SUCCESS;
+}
+
+
+int
+nsvn_wc_move (nsvn_t *instance,
+              const char *src_path,
+              const char *dst_path,
+              int force)
+{
+  nsvn_t *nsvn;
+  svn_commit_info_t *commit_info = NULL;
+
+  if (instance == NULL)
+    nsvn = nsvn_base_init (NULL);
+  else
+    nsvn = (nsvn_t*) instance;
+
+  if (src_path == NULL || dst_path == NULL)
+    return EXIT_SUCCESS;
+
+  //FIXME: Should I look for commit message it a URL is given.
+  //
+  nsvn->err = svn_client_move3 (&commit_info, src_path,
+                                dst_path, force,
+                                nsvn->ctx, nsvn->pool);
+
+  if (nsvn->err != SVN_NO_ERROR )
+    {
+      MSG_DEBUG("Move operation failed ...");
       if (instance == NULL)
         nsvn = nsvn_base_uninit (nsvn);
       return EXIT_FAILURE;
