@@ -268,6 +268,12 @@ nsvn_wc_blame (nsvn_t *instance,
                void *callback,
                void *callback_data);
 
+int
+nsvn_wc_copy (nsvn_t *instance,
+              const char *src_path,
+              const char *dst_path,
+              const char *rev);
+
 
 /* Repository functions. */
 

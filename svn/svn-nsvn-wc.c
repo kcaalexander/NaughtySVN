@@ -570,6 +570,47 @@ nsvn_wc_blame (nsvn_t *instance,
 }
 
 
+int
+nsvn_wc_copy (nsvn_t *instance,
+              const char *src_path,
+              const char *dst_path, 
+              const char *rev)
+{
+  nsvn_t *nsvn;
+  svn_opt_revision_t revision;
+  svn_commit_info_t *commit_info = NULL;
+
+  if (instance == NULL)
+    nsvn = nsvn_base_init (NULL);
+  else
+    nsvn = (nsvn_t*) instance;
+
+  if (src_path == NULL || dst_path == NULL)
+    return EXIT_SUCCESS;
+
+  nsvn_common_parse_revision (nsvn, &revision, NULL,
+                              rev ? rev : "HEAD");
+  //FIXME: Should I look for commit message it a URL is given.
+  //
+  nsvn->err = svn_client_copy2 (&commit_info, src_path,
+                                &revision, dst_path,
+                                nsvn->ctx, nsvn->pool);
+
+  if (nsvn->err != SVN_NO_ERROR )
+    {
+      MSG_DEBUG("Copy operation failed ...");
+      if (instance == NULL)
+        nsvn = nsvn_base_uninit (nsvn);
+      return EXIT_FAILURE;
+    };
+
+  if (instance == NULL)
+    nsvn = nsvn_base_uninit (nsvn);
+
+  return EXIT_SUCCESS;
+}
+
+
 /*
  * vim: ts=2 : sw=2
  */
