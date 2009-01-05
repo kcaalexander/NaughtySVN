@@ -123,3 +123,89 @@ nsvn_repos_checkout (nsvn_t *n, const char *repos,
   return EXIT_SUCCESS;
 }
 
+
+int
+nsvn_repos_lock (nsvn_t *instance,
+                 const char **paths,
+                 const char *comment,
+                 int steal_lock)
+{
+  nsvn_t *nsvn;
+  apr_array_header_t *apr_paths = NULL;
+  const char *path;
+  unsigned int idx = 0;
+
+  if (instance == NULL)
+    nsvn = nsvn_base_init (NULL);
+  else
+    nsvn = (nsvn_t*) instance;
+
+  /* Converting PATHS to apr_array_header_t type. */
+  apr_paths = apr_array_make(nsvn->pool, 0, sizeof(const char*));
+  path = paths[idx];
+
+  while (path != NULL)
+    {
+      *(const char**)apr_array_push(apr_paths) = apr_pstrdup(nsvn->pool, path);
+      path = paths[++idx];
+    }
+
+  nsvn->err = svn_client_lock (apr_paths, comment, steal_lock,
+                               nsvn->ctx, nsvn->pool);
+
+  if (nsvn->err != SVN_NO_ERROR )
+    {
+      MSG_DEBUG("Lock operation failed ...");
+      if (instance == NULL)
+        nsvn = nsvn_base_uninit (nsvn);
+      return EXIT_FAILURE;
+    }
+
+  if (instance == NULL)
+    nsvn = nsvn_base_uninit (nsvn);
+
+  return EXIT_SUCCESS;
+}
+
+
+int
+nsvn_repos_unlock (nsvn_t *instance,
+                   const char **paths,
+                   int break_lock)
+{
+  nsvn_t *nsvn;
+  apr_array_header_t *apr_paths = NULL;
+  const char *path;
+  unsigned int idx = 0;
+
+  if (instance == NULL)
+    nsvn = nsvn_base_init (NULL);
+  else
+    nsvn = (nsvn_t*) instance;
+
+  /* Converting PATHS to apr_array_header_t type. */
+  apr_paths = apr_array_make(nsvn->pool, 0, sizeof(const char*));
+  path = paths[idx];
+
+  while (path != NULL)
+    {
+      *(const char**)apr_array_push(apr_paths) = apr_pstrdup(nsvn->pool, path);
+      path = paths[++idx];
+    }
+
+  nsvn->err = svn_client_unlock (apr_paths, break_lock,
+                                 nsvn->ctx, nsvn->pool);
+
+  if (nsvn->err != SVN_NO_ERROR )
+    {
+      MSG_DEBUG("Unlock operation failed ...");
+      if (instance == NULL)
+        nsvn = nsvn_base_uninit (nsvn);
+      return EXIT_FAILURE;
+    }
+
+  if (instance == NULL)
+    nsvn = nsvn_base_uninit (nsvn);
+
+  return EXIT_SUCCESS;
+}

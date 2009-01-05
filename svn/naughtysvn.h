@@ -316,6 +316,17 @@ nsvn_repos_checkout (nsvn_t *instance, const char *repos,
                      int ign_external);
 
 int
+nsvn_repos_lock (nsvn_t *instance,
+                 const char **paths,
+                 const char *comment,
+                 int steal_lock);
+
+int
+nsvn_repos_unlock (nsvn_t *instance,
+                   const char **paths,
+                   int break_lock);
+
+int
 nsvn_repos_propset (nsvn_t *instance,
                     const char *url,
                     const char *propname,
