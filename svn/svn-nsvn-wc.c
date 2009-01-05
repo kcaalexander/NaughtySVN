@@ -757,7 +757,7 @@ nsvn_wc_revert (nsvn_t *instance,
 
   if (nsvn->err != SVN_NO_ERROR )
     {
-      MSG_DEBUG("Resolved operation failed ...");
+      MSG_DEBUG("Revert operation failed ...");
       if (instance == NULL)
         nsvn = nsvn_base_uninit (nsvn);
       return EXIT_FAILURE;
