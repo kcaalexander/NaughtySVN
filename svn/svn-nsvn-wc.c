@@ -694,6 +694,82 @@ nsvn_wc_move (nsvn_t *instance,
 }
 
 
+int
+nsvn_wc_resolved (nsvn_t *instance,
+                  const char *path,
+                  int recurse)
+{
+  nsvn_t *nsvn;
+
+  if (instance == NULL)
+    nsvn = nsvn_base_init (NULL);
+  else
+    nsvn = (nsvn_t*) instance;
+
+  if (path == NULL )
+    return EXIT_SUCCESS;
+
+  nsvn->err = svn_client_resolved (path, recurse,
+                                   nsvn->ctx, nsvn->pool);
+
+  if (nsvn->err != SVN_NO_ERROR )
+    {
+      MSG_DEBUG("Resolved operation failed ...");
+      if (instance == NULL)
+        nsvn = nsvn_base_uninit (nsvn);
+      return EXIT_FAILURE;
+    };
+
+  if (instance == NULL)
+    nsvn = nsvn_base_uninit (nsvn);
+
+  return EXIT_SUCCESS;
+}
+
+
+int
+nsvn_wc_revert (nsvn_t *instance,
+                const char **paths,
+                int recurse)
+{
+  nsvn_t *nsvn;
+  apr_array_header_t *apr_paths = NULL;
+  const char *path;
+  unsigned int idx = 0;
+
+  if (instance == NULL)
+    nsvn = nsvn_base_init (NULL);
+  else
+    nsvn = (nsvn_t*) instance;
+
+  /* Converting PATHS to apr_array_header_t type. */
+  apr_paths = apr_array_make(nsvn->pool, 0, sizeof(const char*));
+  path = paths[idx];
+
+  while (path != NULL)
+    {
+      *(const char**)apr_array_push(apr_paths) = apr_pstrdup(nsvn->pool, path);
+      path = paths[++idx];
+    }
+
+  nsvn->err = svn_client_revert (apr_paths, recurse,
+                                 nsvn->ctx, nsvn->pool);
+
+  if (nsvn->err != SVN_NO_ERROR )
+    {
+      MSG_DEBUG("Resolved operation failed ...");
+      if (instance == NULL)
+        nsvn = nsvn_base_uninit (nsvn);
+      return EXIT_FAILURE;
+    };
+
+  if (instance == NULL)
+    nsvn = nsvn_base_uninit (nsvn);
+
+  return EXIT_SUCCESS;
+}
+
+
 /*
  * vim: ts=2 : sw=2
  */

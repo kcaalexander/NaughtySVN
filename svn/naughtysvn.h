@@ -285,6 +285,16 @@ nsvn_wc_move (nsvn_t *instance,
               const char *dst_path,
               int force);
 
+int
+nsvn_wc_resolved (nsvn_t *instance,
+                  const char *path,
+                  int recurse);
+
+int
+nsvn_wc_revert (nsvn_t *instance,
+                const char **paths,
+                int recurse);
+
 
 /* Repository functions. */
 
