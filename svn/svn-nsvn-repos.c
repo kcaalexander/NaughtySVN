@@ -209,3 +209,92 @@ nsvn_repos_unlock (nsvn_t *instance,
 
   return EXIT_SUCCESS;
 }
+
+
+int
+nsvn_repos_import (nsvn_t *instance,
+                   const char *path,
+                   const char *url,
+                   int norecurse,
+                   int noignore)
+{
+  nsvn_t *nsvn;
+  svn_commit_info_t *commit_info = NULL;
+
+  if (instance == NULL)
+    nsvn = nsvn_base_init (NULL);
+  else
+    nsvn = (nsvn_t*) instance;
+
+  if (path == NULL || url == NULL)
+    return EXIT_SUCCESS;
+
+  //FIXME: Should I look for commit message it a URL is given.
+  //
+  nsvn->err = svn_client_import2 (&commit_info, path, url,
+                                  norecurse, noignore,
+                                  nsvn->ctx, nsvn->pool);
+
+  if (nsvn->err != SVN_NO_ERROR )
+    {
+      MSG_DEBUG("Import operation failed ...");
+      if (instance == NULL)
+        nsvn = nsvn_base_uninit (nsvn);
+      return EXIT_FAILURE;
+    };
+
+  if (instance == NULL)
+    nsvn = nsvn_base_uninit (nsvn);
+
+  return EXIT_SUCCESS;
+}
+
+
+int
+nsvn_repos_export (nsvn_t *instance,
+                   const char *from,
+                   const char *to,
+                   const char *peg_rev,
+                   const char *export_rev,
+                   int overwrite,
+                   int ignore_externals,
+                   int recurse,
+                   const char *native_eol)
+{
+  nsvn_t *nsvn;
+  svn_revnum_t repos_rev = SVN_INVALID_REVNUM;
+  svn_opt_revision_t peg_revision;
+  svn_opt_revision_t revision;
+
+  if (instance == NULL)
+    nsvn = nsvn_base_init (NULL);
+  else
+    nsvn = (nsvn_t*) instance;
+
+  if (from == NULL || to == NULL)
+    return EXIT_SUCCESS;
+
+  nsvn_common_parse_revision (nsvn, &revision, NULL,
+                              export_rev ? export_rev : "HEAD");
+  nsvn_common_parse_revision (nsvn, &peg_revision, NULL,
+                              peg_rev ? peg_rev : "HEAD");
+
+  nsvn->err = svn_client_export3 (&repos_rev, from, to,
+                                  &peg_revision, &revision,
+                                  overwrite, ignore_externals,
+                                  recurse, native_eol,
+                                  nsvn->ctx, nsvn->pool);
+
+  if (nsvn->err != SVN_NO_ERROR )
+    {
+      MSG_DEBUG("Export operation failed ...");
+      if (instance == NULL)
+        nsvn = nsvn_base_uninit (nsvn);
+      return EXIT_FAILURE;
+    };
+
+  if (instance == NULL)
+    nsvn = nsvn_base_uninit (nsvn);
+
+  return EXIT_SUCCESS;
+}

@@ -327,6 +327,24 @@ nsvn_repos_unlock (nsvn_t *instance,
                    int break_lock);
 
 int
+nsvn_repos_import (nsvn_t *instance,
+                   const char *path,
+                   const char *url,
+                   int norecurse,
+                   int noignore);
+
+int
+nsvn_repos_export (nsvn_t *instance,
+                   const char *from,
+                   const char *to,
+                   const char *peg_rev,
+                   const char *export_rev,
+                   int overwrite,
+                   int ignore_externals,
+                   int recurse,
+                   const char *native_eol);
+
+int
 nsvn_repos_propset (nsvn_t *instance,
                     const char *url,
                     const char *propname,
