@@ -217,6 +217,7 @@ nsvn_wc_log (nsvn_t *instance,
 int
 nsvn_wc_info (nsvn_t *instance,
               const char *path,
+              const char *peg_rev,
               const char *rev,
               int recurse,
               void *callback,

@@ -272,15 +272,15 @@ nsvn_wc_log (nsvn_t *instance,
 int
 nsvn_wc_info (nsvn_t *instance,
               const char *path,
+              const char *peg_rev,
               const char *rev,
               int recurse,
               void *callback,
               void *callback_data)
 {
   nsvn_t *nsvn;
-  svn_opt_revision_t peg_rev;
+  svn_opt_revision_t peg_revision;
   svn_opt_revision_t revision;
-  const char *truepath;
 
   if (instance == NULL)
     nsvn = nsvn_base_init (NULL);
@@ -288,15 +288,16 @@ nsvn_wc_info (nsvn_t *instance,
     nsvn = instance;
 
   nsvn_common_parse_revision (nsvn, &revision, NULL, rev ? rev : "HEAD");
-  nsvn->err = svn_opt_parse_path (&peg_rev, &truepath, path, nsvn->pool);
+  nsvn_common_parse_revision (nsvn, &peg_revision, NULL,
+                              peg_rev ? peg_rev : "HEAD");
 
   if (!nsvn->err)
     {
       if ((svn_path_is_url(path))
-          && (peg_rev.kind == svn_opt_revision_unspecified))
-        peg_rev.kind = svn_opt_revision_head;
+          && (peg_revision.kind == svn_opt_revision_unspecified))
+        peg_revision.kind = svn_opt_revision_head;
 
-      nsvn->err = svn_client_info (path, &peg_rev, &revision,
+      nsvn->err = svn_client_info (path, &peg_revision, &revision,
                                    callback, callback_data,
                                    recurse, nsvn->ctx, nsvn->pool);
     }
