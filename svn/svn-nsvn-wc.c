@@ -164,6 +164,18 @@ nsvn_wc_propset (nsvn_t *instance,
 
 
 int
+nsvn_wc_propdel (nsvn_t *instance,
+                 const char *wc_path,
+                 const char *propname,
+                 int recurse,
+                 int skip_check)
+{
+  return nsvn_wc_propset(instance, wc_path, propname,
+                         NULL, recurse, skip_check);
+}
+
+
+int
 nsvn_wc_commit (nsvn_t *instance,
                 const char **target_list,
                 int recurse,
