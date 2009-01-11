@@ -100,64 +100,54 @@ nsvn_auth_register (nsvn_t *n,
                     const char *def_password,
                     int non_interactive,
                     int store_passwd,
-                    int auth_cache,
+                    int auth_cache
                 //  int store_passwd_as_plaintext,
                 //  int store_ssl_cert_passphrase,
-                //  int store_ssl_cert_passphrase_as_plaintext,
-                    apr_array_header_t *providers);
+                //  int store_ssl_cert_passphrase_as_plaintext
+                   );
 
 int
-nsvn_auth_get_simple_provider (nsvn_t *n,
-                               apr_array_header_t **providers);
+nsvn_auth_get_simple_provider (nsvn_t *n);
 
 int
-nsvn_auth_get_username_provider (nsvn_t *n,
-                                 apr_array_header_t **providers);
+nsvn_auth_get_username_provider (nsvn_t *n);
 
 int
-nsvn_auth_get_ssl_server_trust_file_provider (nsvn_t *n,
-                                              apr_array_header_t **providers);
+nsvn_auth_get_ssl_server_trust_file_provider (nsvn_t *n);
 
 int
-nsvn_auth_get_ssl_client_cert_file_provider (nsvn_t *n,
-                                             apr_array_header_t **providers);
+nsvn_auth_get_ssl_client_cert_file_provider (nsvn_t *n);
 
 int
-nsvn_auth_get_ssl_client_cert_pw_file_provider (nsvn_t *n,
-                                                apr_array_header_t **providers);
+nsvn_auth_get_ssl_client_cert_pw_file_provider (nsvn_t *n);
 
 int
 nsvn_auth_get_simple_prompt_provider (nsvn_t *n,
                                       svn_auth_simple_prompt_func_t prompt_func,
-                                      int retry_limit,
-                                      apr_array_header_t **providers);
+                                      int retry_limit);
 
 int
 nsvn_auth_get_username_prompt_provider (
                                     nsvn_t *n,
                                     svn_auth_username_prompt_func_t prompt_func,
-                                    int retry_limit,
-                                    apr_array_header_t **providers);
+                                    int retry_limit);
 
 int
 nsvn_auth_get_ssl_server_trust_prompt_provider (
                       nsvn_t *n,
-                      svn_auth_ssl_server_trust_prompt_func_t prompt_func,
-                      apr_array_header_t **providers);
+                      svn_auth_ssl_server_trust_prompt_func_t prompt_func);
 
 int
 nsvn_auth_get_ssl_client_cert_prompt_provider (
                      nsvn_t *n,
                      svn_auth_ssl_client_cert_prompt_func_t prompt_func,
-                     int retry_limit,
-                     apr_array_header_t **providers);
+                     int retry_limit);
 
 int
 nsvn_auth_get_ssl_client_cert_pw_prompt_provider (
                   nsvn_t *n,
                   svn_auth_ssl_client_cert_pw_prompt_func_t prompt_func,
-                  int retry_limit,
-                  apr_array_header_t **providers);
+                  int retry_limit);
 
 
 

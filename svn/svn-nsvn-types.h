@@ -12,7 +12,8 @@
 
 #ifndef SVN_NSVN_PRIVATE_H
 #define SVN_NSVN_PRIVATE_H
-#include "apr_pools.h"
+#include <apr_pools.h>
+#include <apr_tables.h>
 #include "svn_error.h"
 #include "svn_client.h"
 #include "svn_config.h"
@@ -23,6 +24,7 @@ typedef struct naughtysvn_t {
   apr_status_t apr_err;
   apr_allocator_t *allocator;
   apr_pool_t *pool;
+  apr_array_header_t *auth_providers;
   svn_client_ctx_t *ctx;
 
   const char *config_dir;

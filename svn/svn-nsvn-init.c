@@ -96,6 +96,9 @@ nsvn_base_init (const char *config_dir)
                                    nsvn->allocator);
   apr_allocator_owner_set (nsvn->allocator, nsvn->pool);
 
+  /* Initializing auth provider array. */
+  nsvn->auth_providers = NULL;
+
   /* Check svn library version, which are used here */
   #ifdef NSVN_DEBUG
   //nsvn->err = nsvn_base__check_svnlib_ver();
