@@ -461,40 +461,36 @@ nsvn_auth_ssl_client_cert_pw_prompt (svn_auth_cred_ssl_client_cert_pw_t **cred_p
 gboolean
 nsvn_setup_auth(nsvn_t *nsvn, nsvn_config_t *config)
 {
-  apr_array_header_t *providers = NULL;
-
   if (nsvn == NULL)
     return FALSE;
 
   /* Disk based auth providers. */
-  nsvn_auth_get_simple_provider(nsvn, &providers);
-  nsvn_auth_get_username_provider(nsvn, &providers);
+  nsvn_auth_get_simple_provider(nsvn);
+  nsvn_auth_get_username_provider(nsvn);
 
   /* Disk based ssl auth providers. */
-  nsvn_auth_get_ssl_server_trust_file_provider(nsvn, &providers);
-  nsvn_auth_get_ssl_client_cert_file_provider(nsvn, &providers);
-  nsvn_auth_get_ssl_client_cert_pw_file_provider(nsvn, &providers);
+  nsvn_auth_get_ssl_server_trust_file_provider(nsvn);
+  nsvn_auth_get_ssl_client_cert_file_provider(nsvn);
+  nsvn_auth_get_ssl_client_cert_pw_file_provider(nsvn);
 
   /* Interactive username/password auth provider. */
-  nsvn_auth_get_simple_prompt_provider(nsvn, nsvn_auth_simple_prompt,
-                                       2, &providers);
+  nsvn_auth_get_simple_prompt_provider(nsvn, nsvn_auth_simple_prompt, 2);
   /* Interactive username auth provider. */
-  nsvn_auth_get_username_prompt_provider(nsvn, nsvn_auth_username_prompt,
-                                         2, &providers);
+  nsvn_auth_get_username_prompt_provider(nsvn, nsvn_auth_username_prompt, 2);
 
   /* Interactive ssl auth providers. */
   nsvn_auth_get_ssl_server_trust_prompt_provider(nsvn,
-                    nsvn_auth_ssl_server_trust_prompt, &providers);
+                                            nsvn_auth_ssl_server_trust_prompt);
   nsvn_auth_get_ssl_client_cert_prompt_provider(nsvn,
-                    nsvn_auth_ssl_client_cert_prompt, 2, &providers);
+                                          nsvn_auth_ssl_client_cert_prompt, 2);
   nsvn_auth_get_ssl_client_cert_pw_prompt_provider(nsvn,
-                    nsvn_auth_ssl_client_cert_pw_prompt, 2, &providers);
+                                       nsvn_auth_ssl_client_cert_pw_prompt, 2);
 
   // TODO: Should get the values of non_interactive, store_passwd,
   // auth_cache from gconf.
   nsvn_auth_register(nsvn, config->def_username, config->def_passwd,
                      !config->no_prompt_auth, !config->no_save_passwd,
-                     !config->no_cache_auth, providers);
+                     !config->no_cache_auth);
 
   return TRUE;
 }
