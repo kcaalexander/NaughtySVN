@@ -1,4 +1,4 @@
-##**NaughtySVN** ###_A Nautilus extension for Subversion_
+##**NaughtySVN**
 
 **NaughtySVN (NSVN) is an easy-to-use GUI based Subversion client which works as an extension to Nautilus File Manager (Graphical shell for the GNOME desktop environment). Inspired by TortoiseSVN, Its an effort primarily for non-technical people to use subversion.**
 
