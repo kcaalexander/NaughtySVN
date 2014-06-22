@@ -1,15 +1,12 @@
-#**NaughtySVN - _A Nautilus extension for Subversion_**
+##**NaughtySVN** ###_A Nautilus extension for Subversion_
 
-**NaughtySVN (NSVN) is an easy-to-use GUI based Subversion client which works as an extension to Nautilus File Manager (Graphical shell for
-the GNOME desktop environment). Inspired by TortoiseSVN, Its an effort primarily for non-technical people to use subversion.**
+**NaughtySVN (NSVN) is an easy-to-use GUI based Subversion client which works as an extension to Nautilus File Manager (Graphical shell for the GNOME desktop environment). Inspired by TortoiseSVN, Its an effort primarily for non-technical people to use subversion.**
 
-NSVN has a graphical interface which can be activated from Nautilus file browsing window. Its graphical windows are designed to be simple and
-easy to use, which  will allow users to create and administer subversion repository, checkout and commit working copies, handling working copies,
-browsing repositories and working copies, handling remote repositories and working copies etc.
+NSVN has a graphical interface which can be activated from Nautilus file browsing window. Its graphical windows are designed to be simple and easy to use, which  will allow users to create and administer subversion repository, checkout and commit working copies, handling working copies, browsing repositories and working copies, handling remote repositories and working copies etc.  
 
 
 
-##Building NaughtySVN
+###Building NaughtySVN
 
 See ./INSTALL for a details building and installation document. Following is a simple way to build and install NSVN. Subversion include and library
 paths are all  hard coded, so in case of problems please make appropriate changes in ./svn/Makefile.am.
@@ -22,7 +19,7 @@ paths are all  hard coded, so in case of problems please make appropriate change
 
 
 
-##Directory Layout
+###Directory Layout
 
 *doc/*
    User and Developer documentation build using doxygen.
@@ -47,7 +44,7 @@ paths are all  hard coded, so in case of problems please make appropriate change
 
 
 
-##Invocation/Running
+###Invocation/Running
 
 NaughtySVN is tightly coupled with subversion and nautilus and is not designed to invoke it separately from command line. But in the interest
 of developers and to test svn and nsvn modules faster, they can call the 'naughtysvn' executable from command line use following format
@@ -63,7 +60,7 @@ of developers and to test svn and nsvn modules faster, they can call the 'naught
 
 
 
-##Authors
+###Authors
 
  - **The LibGit2Sharp [contributors][2]
  - **Logo:** [Jason "blackant" Long][18]
@@ -72,7 +69,7 @@ of developers and to test svn and nsvn modules faster, they can call the 'naught
 
 
 
-## License
+###License
 
 NaughtySVN is licensed under GPL2 (Refer to the [LICENSE.md][3] file)
 
