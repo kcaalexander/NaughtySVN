@@ -62,8 +62,8 @@ of developers and to test svn and nsvn modules faster, they can call the 'naught
 
 ###Authors
 
- - ** Project Owner: [Alexander Thomas "thomasalex"][1]
- - ** [The NaughtySVN Contributors][2]
+ - Project Owner: [Alexander Thomas "thomasalex"][1]
+ - [The NaughtySVN Contributors][2]
 
  [1]: https://github.com/kcaalexander
  [2]: https://github.com/kcaalexander/NaughtySVN/blob/master/AUTHORS
