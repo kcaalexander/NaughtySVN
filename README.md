@@ -62,9 +62,10 @@ of developers and to test svn and nsvn modules faster, they can call the 'naught
 
 ###Authors
 
- - **The LibGit2Sharp [contributors][2]
- - **Logo:** [Jason "blackant" Long][18]
+ - ** Project Owner: [Alexander Thomas "thomasalex"][1]
+ - ** [The NaughtySVN Contributors][2]
 
+ [1]: https://github.com/kcaalexander
  [2]: https://github.com/kcaalexander/NaughtySVN/blob/master/AUTHORS
 
 
@@ -75,8 +76,10 @@ NaughtySVN is licensed under GPL2 (Refer to the [LICENSE.md][3] file)
 
  [3]: https://github.com/kcaalexander/NaughtySVN/blob/master/LICENSE.md
 
+
+
 ##Further Information
 
-The official NaughtySVN homepage is located at tigris.org[0]
+The official NaughtySVN homepage is located at [tigris.org][0]
 
 [0]http://naughtysvn.tigris.org
